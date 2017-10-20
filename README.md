@@ -33,7 +33,7 @@ TXD           | RXD
 ## Tested platforms
 
 - Windows 7/10
-- ~~Linux~~
+- Linux (The ownership of device `/dev/ttyUSB0` is `dialout` group so add yourself and re-login or run with `sudo`)
 - ~~macOS~~
 
 ## Build and run
