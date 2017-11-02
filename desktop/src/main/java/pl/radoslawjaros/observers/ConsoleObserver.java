@@ -18,7 +18,7 @@ public class ConsoleObserver implements PlanTowerObserver {
             jTextArea.setText(Instant.now().toString() + "PlanTower not ready");
         } else {
             jTextArea.setText(
-                    sample.getDateTime()
+                    JframeComponentsObserver.dateFormat.format(sample.getDate())
                             + " >>> PM1.0: " + sample.getPm1_0()
                             + ", PM2.5: " + sample.getPm2_5()
                             + ", PM10: " + sample.getPm10()

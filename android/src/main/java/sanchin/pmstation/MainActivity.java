@@ -17,6 +17,7 @@ import com.felhr.usbserial.CDCSerialDevice;
 import com.felhr.usbserial.UsbSerialDevice;
 import com.felhr.usbserial.UsbSerialInterface;
 
+import java.text.SimpleDateFormat;
 import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
@@ -24,6 +25,8 @@ import java.util.Map;
 import pl.radoslawjaros.plantower.ParticulateMatterSample;
 
 public class MainActivity extends AppCompatActivity {
+    private static final SimpleDateFormat dateFormat = new SimpleDateFormat("d MMM yyyy HH:mm:ss",
+                                                                            Locale.getDefault());
     public static final String ACTION_USB_READY = "sanchin.pmstation.USB_READY";
     public static final String ACTION_USB_ATTACHED = "android.hardware.usb.action.USB_DEVICE_ATTACHED";
     public static final String ACTION_USB_DETACHED = "android.hardware.usb.action.USB_DEVICE_DETACHED";
@@ -144,7 +147,7 @@ public class MainActivity extends AppCompatActivity {
                 pm1.setText(String.format(Locale.getDefault(), "%d", sample.getPm1_0()));
                 pm25.setText(String.format(Locale.getDefault(), "%d", sample.getPm2_5()));
                 pm10.setText(String.format(Locale.getDefault(), "%d", sample.getPm10()));
-                time.setText(sample.getDateTime());
+                time.setText(dateFormat.format(sample.getDate()));
             }
         });
     }
