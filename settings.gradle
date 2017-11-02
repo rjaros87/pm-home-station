@@ -2,4 +2,4 @@ rootProject.name = 'PMStation'
 
 include ':android'
 include ':core'
-include ':pm-station-desktop'
+include ':desktop'

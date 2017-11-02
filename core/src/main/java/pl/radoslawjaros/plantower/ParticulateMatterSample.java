@@ -1,22 +1,23 @@
 package pl.radoslawjaros.plantower;
 
-import java.time.Instant;
+import java.util.Date;
 
 public class ParticulateMatterSample {
     private int pm1_0;
     private int pm2_5;
     private int pm10;
-    private String dateTime;
+    private Date date;
+
 
     public ParticulateMatterSample(int pm1_0, int pm2_5, int pm10) {
-        dateTime = Instant.now().toString();
+        date = new Date();
         this.pm1_0 = pm1_0;
         this.pm2_5 = pm2_5;
         this.pm10 = pm10;
     }
 
-    public String getDateTime() {
-        return dateTime;
+    public Date getDate() {
+        return date;
     }
 
     public int getPm1_0() {
