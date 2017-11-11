@@ -8,4 +8,7 @@
     <string name="status_connected">connected</string>
     <string name="status_disconnected">disconnected</string>
     <string name="status_permission_denied">permission denied</string>
+
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
 </resources>
