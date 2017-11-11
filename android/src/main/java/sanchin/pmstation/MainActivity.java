@@ -9,23 +9,18 @@ import android.hardware.usb.UsbDevice;
 import android.hardware.usb.UsbDeviceConnection;
 import android.hardware.usb.UsbManager;
 import android.os.Bundle;
-import android.support.v4.graphics.ColorUtils;
 import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.CardView;
 import android.util.Log;
-import android.widget.TextView;
 import com.felhr.usbserial.UsbSerialDevice;
 import com.felhr.usbserial.UsbSerialInterface;
 import pl.radoslawjaros.plantower.ParticulateMatterSample;
 
-import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Locale;
+import java.util.List;
 import java.util.Map;
 
 public class MainActivity extends AppCompatActivity {
-    private static final SimpleDateFormat dateFormat = new SimpleDateFormat("d MMM yyyy HH:mm:ss",
-                                                                            Locale.getDefault());
     public static final String ACTION_USB_ATTACHED = "android.hardware.usb.action.USB_DEVICE_ATTACHED";
     public static final String ACTION_USB_DETACHED = "android.hardware.usb.action.USB_DEVICE_DETACHED";
     private static final String TAG = "MainActivity";
@@ -37,14 +32,11 @@ public class MainActivity extends AppCompatActivity {
     private UsbDevice device;
     private UsbDeviceConnection connection;
     private UsbSerialDevice serialPort;
-    private CardView pm1Card;
-    private CardView pm25Card;
-    private CardView pm10Card;
-    private TextView pm1;
-    private TextView pm25;
-    private TextView pm10;
-    private TextView time;
-    private TextView status;
+
+    ValuesFragment valuesFragment;
+    ChartFragment chartFragment;
+    private List<ParticulateMatterSample> values = new ArrayList<>();
+
     private boolean asked = false;
 
     /*
@@ -67,11 +59,11 @@ public class MainActivity extends AppCompatActivity {
                     }
                     boolean granted = extras.getBoolean(UsbManager.EXTRA_PERMISSION_GRANTED);
                     if (granted) { // User accepted our USB connection. Try to open the device as a serial port
-                        status.setText(R.string.status_connected);
+                        valuesFragment.setStatus(R.string.status_connected);
                         connection = usbManager.openDevice(device);
                         new ConnectionThread().start();
                     } else { // User not accepted our USB connection.
-                        status.setText(R.string.status_permission_denied);
+                        valuesFragment.setStatus(R.string.status_permission_denied);
                     }
                     break;
                 case ACTION_USB_ATTACHED:
@@ -81,7 +73,7 @@ public class MainActivity extends AppCompatActivity {
                     break;
                 case ACTION_USB_DETACHED:
                     // Usb device was disconnected.
-                    status.setText(R.string.status_disconnected);
+                    valuesFragment.setStatus(R.string.status_disconnected);
                     if (serialPortConnected) {
                         serialPort.close();
                     }
@@ -90,19 +82,15 @@ public class MainActivity extends AppCompatActivity {
             }
         }
     };
-    private UsbSerialInterface.UsbReadCallback readCallback = new UsbSerialInterface.UsbReadCallback() {
-        @Override
-        public void onReceivedData(byte[] bytes) {
-            final ParticulateMatterSample sample = read(bytes);
-            if (sample != null) {
-                Log.d(TAG, sample.toString());
-                updateValues(sample);
-            }
-            try {
-                Thread.sleep(1000L);
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
+    private UsbSerialInterface.UsbReadCallback readCallback = bytes -> {
+        final ParticulateMatterSample sample = read(bytes);
+        if (sample != null) {
+            updateValues(sample);
+        }
+        try {
+            Thread.sleep(1000L);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
         }
     };
 
@@ -131,37 +119,38 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        pm1Card = findViewById(R.id.pm1_card);
-        pm25Card = findViewById(R.id.pm25_card);
-        pm10Card = findViewById(R.id.pm10_card);
-        pm1 = pm1Card.findViewById(R.id.pm_value);
-        pm25 = pm25Card.findViewById(R.id.pm_value);
-        pm10 = pm10Card.findViewById(R.id.pm_value);
-        ((TextView) pm1Card.findViewById(R.id.pm_label)).setText(R.string.pm1);
-        ((TextView) pm25Card.findViewById(R.id.pm_label)).setText(R.string.pm25);
-        ((TextView) pm10Card.findViewById(R.id.pm_label)).setText(R.string.pm10);
-
-        time = findViewById(R.id.time);
-        status = findViewById(R.id.status);
-
         serialPortConnected = false;
         usbManager = (UsbManager) getSystemService(Context.USB_SERVICE);
+
+        if (savedInstanceState != null) {
+            return;
+        }
+
+        // Create a new Fragment to be placed in the activity layout
+        valuesFragment = new ValuesFragment();
+
+        // In case this activity was started with special instructions from an
+        // Intent, pass the Intent's extras to the fragment as arguments
+        valuesFragment.setArguments(getIntent().getExtras());
+
+        // Add the fragment to the 'fragment_container' FrameLayout
+        getSupportFragmentManager().beginTransaction().add(R.id.fragment_container, valuesFragment).commit();
+
     }
 
     void updateValues(final ParticulateMatterSample sample) {
-        runOnUiThread(new Runnable() {
-            @Override
-            public void run() {
-                pm1.setText(String.format(Locale.getDefault(), "%d", sample.getPm1_0()));
-                pm25.setText(String.format(Locale.getDefault(), "%d", sample.getPm2_5()));
-                pm25Card.setCardBackgroundColor(
-                        ColorUtils.setAlphaComponent(AQIColor.fromPM25Level(sample.getPm2_5()).getColor(), 136));
-                pm10.setText(String.format(Locale.getDefault(), "%d", sample.getPm10()));
-                pm10Card.setCardBackgroundColor(
-                        ColorUtils.setAlphaComponent(AQIColor.fromPM10Level(sample.getPm10()).getColor(), 136));
-                time.setText(dateFormat.format(sample.getDate()));
-            }
-        });
+        values.add(sample);
+        valuesFragment.updateValues(sample);
+        if (chartFragment == null) {
+            chartFragment = (ChartFragment) getSupportFragmentManager().findFragmentByTag("chartFragment");
+        }
+        if (chartFragment != null) {
+            chartFragment.updateValues(sample);
+        }
+    }
+
+    public List<ParticulateMatterSample> getValues() {
+        return values;
     }
 
     @Override
