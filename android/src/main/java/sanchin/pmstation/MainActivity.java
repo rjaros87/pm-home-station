@@ -8,17 +8,20 @@ import android.content.IntentFilter;
 import android.hardware.usb.UsbDevice;
 import android.hardware.usb.UsbDeviceConnection;
 import android.hardware.usb.UsbManager;
+import android.os.Build;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
+
 import com.felhr.usbserial.UsbSerialDevice;
 import com.felhr.usbserial.UsbSerialInterface;
-import pl.radoslawjaros.plantower.ParticulateMatterSample;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
+import pl.radoslawjaros.plantower.ParticulateMatterSample;
 
 public class MainActivity extends AppCompatActivity {
     public static final String ACTION_USB_ATTACHED = "android.hardware.usb.action.USB_DEVICE_ATTACHED";
@@ -27,14 +30,13 @@ public class MainActivity extends AppCompatActivity {
     private static final String ACTION_USB_PERMISSION = "sanchin.pmstation.USB_PERMISSION";
     private static final int BAUD_RATE = 9600; // BaudRate. Change this value if you need
     static final private byte START_CHARACTERS = 0x42;
+    ValuesFragment valuesFragment;
+    ChartFragment chartFragment;
     private boolean serialPortConnected;
     private UsbManager usbManager;
     private UsbDevice device;
     private UsbDeviceConnection connection;
     private UsbSerialDevice serialPort;
-
-    ValuesFragment valuesFragment;
-    ChartFragment chartFragment;
     private List<ParticulateMatterSample> values = new ArrayList<>();
 
     private boolean asked = false;
@@ -94,6 +96,17 @@ public class MainActivity extends AppCompatActivity {
         }
     };
 
+    public static boolean isEmulator() {
+        return Build.FINGERPRINT.startsWith("generic")
+                || Build.FINGERPRINT.startsWith("unknown")
+                || Build.MODEL.contains("google_sdk")
+                || Build.MODEL.contains("Emulator")
+                || Build.MODEL.contains("Android SDK built for x86")
+                || Build.MANUFACTURER.contains("Genymotion")
+                || (Build.BRAND.startsWith("generic") && Build.DEVICE.startsWith("generic"))
+                || "google_sdk".equals(Build.PRODUCT);
+    }
+
     public ParticulateMatterSample read(byte[] readBuffer) {
         int headIndex = indexOfArray(readBuffer, START_CHARACTERS);
         if (headIndex >= 0 && readBuffer.length >= headIndex + 16) {
@@ -135,7 +148,22 @@ public class MainActivity extends AppCompatActivity {
 
         // Add the fragment to the 'fragment_container' FrameLayout
         getSupportFragmentManager().beginTransaction().add(R.id.fragment_container, valuesFragment).commit();
-
+        if (isEmulator()) {
+            Thread t = new Thread(() -> {
+                int i = 0;
+                while (!Thread.currentThread().isInterrupted()) {
+                    i = (i + 1) % 14;
+                    try {
+                        updateValues(new ParticulateMatterSample(20, i * 10, 100));
+                        Thread.sleep(3000L);
+                    } catch (InterruptedException e) {
+                        System.out.println("Thread interrupted");
+                        Thread.currentThread().interrupt();
+                    }
+                }
+            });
+            t.start();
+        }
     }
 
     void updateValues(final ParticulateMatterSample sample) {

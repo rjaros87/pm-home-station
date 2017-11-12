@@ -1,6 +1,6 @@
 <resources>
     <string name="app_name">PM Station</string>
-    <string name="pm1">PM1</string>
+    <string name="pm1">PM1.0</string>
     <string name="pm25">PM2.5</string>
     <string name="pm10">PM10</string>
     <string name="time">Time</string>

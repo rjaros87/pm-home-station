@@ -13,11 +13,13 @@ import android.support.v7.widget.CardView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.TextView;
-import pl.radoslawjaros.plantower.ParticulateMatterSample;
 
 import java.text.SimpleDateFormat;
 import java.util.Locale;
+
+import pl.radoslawjaros.plantower.ParticulateMatterSample;
 
 public class ValuesFragment extends Fragment {
     private static final SimpleDateFormat dateFormat = new SimpleDateFormat("d MMM yyyy HH:mm:ss", Locale.getDefault());
@@ -29,6 +31,7 @@ public class ValuesFragment extends Fragment {
     private TextView pm10;
     private TextView time;
     private TextView status;
+    private ImageView smog;
 
     private long lastClickTime = 0;
 
@@ -58,6 +61,8 @@ public class ValuesFragment extends Fragment {
 
         time = view.findViewById(R.id.time);
         status = view.findViewById(R.id.status);
+        smog = view.findViewById(R.id.smog);
+        smog.setAlpha(0f);
 
         view.setOnClickListener(view1 -> {
             // Preventing multiple clicks, using threshold of 1 second
@@ -80,11 +85,13 @@ public class ValuesFragment extends Fragment {
         activity.runOnUiThread(() -> {
             pm1.setText(String.format(Locale.getDefault(), "%d", sample.getPm1_0()));
             pm25.setText(String.format(Locale.getDefault(), "%d", sample.getPm2_5()));
+            AQIColor pm25Color = AQIColor.fromPM25Level(sample.getPm2_5());
             pm25Card.setCardBackgroundColor(
-                    ColorUtils.setAlphaComponent(AQIColor.fromPM25Level(sample.getPm2_5()).getColor(), 136));
+                    ColorUtils.setAlphaComponent(pm25Color.getColor(), 136));
             pm10.setText(String.format(Locale.getDefault(), "%d", sample.getPm10()));
             pm10Card.setCardBackgroundColor(
                     ColorUtils.setAlphaComponent(AQIColor.fromPM10Level(sample.getPm10()).getColor(), 136));
+            smog.animate().alpha(pm25Color.getAlpha());
             time.setText(dateFormat.format(sample.getDate()));
         });
     }
