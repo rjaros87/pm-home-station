@@ -7,17 +7,19 @@ import android.graphics.Color;
  */
 
 public enum AQIColor {
-    VERY_GOOD(Color.parseColor("#00ccff")),
-    GOOD(Color.parseColor("#00e400")),
-    MODERATE(Color.parseColor("#ffff00")),
-    SATISFACTORY(Color.parseColor("#ff7e00")),
-    BAD(Color.parseColor("#ff0000")),
-    HAZARDOUS(Color.parseColor("#7e0023"));
+    VERY_GOOD(Color.parseColor("#00ccff"), 0f),
+    GOOD(Color.parseColor("#00e400"), 0.2f),
+    MODERATE(Color.parseColor("#ffff00"), 0.4f),
+    SATISFACTORY(Color.parseColor("#ff7e00"), 0.6f),
+    BAD(Color.parseColor("#ff0000"), 0.8f),
+    HAZARDOUS(Color.parseColor("#7e0023"), 0.9f);
 
     private final int color;
+    private final float alpha;
 
-    AQIColor(int color) {
+    AQIColor(int color, float alpha) {
         this.color = color;
+        this.alpha = alpha;
     }
 
     public int getColor() {
@@ -54,5 +56,9 @@ public enum AQIColor {
         } else {
             return VERY_GOOD;
         }
+    }
+
+    public float getAlpha() {
+        return alpha;
     }
 }
