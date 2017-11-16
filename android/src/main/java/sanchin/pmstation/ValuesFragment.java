@@ -1,25 +1,29 @@
 package sanchin.pmstation;
 
 
+import android.graphics.Color;
+import android.graphics.PorterDuff;
+import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.os.SystemClock;
 import android.support.annotation.Nullable;
-import android.support.annotation.StringRes;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.graphics.ColorUtils;
 import android.support.v7.widget.CardView;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
+import pl.radoslawjaros.plantower.ParticulateMatterSample;
 
 import java.text.SimpleDateFormat;
 import java.util.Locale;
-
-import pl.radoslawjaros.plantower.ParticulateMatterSample;
 
 public class ValuesFragment extends Fragment {
     private static final SimpleDateFormat dateFormat = new SimpleDateFormat("d MMM yyyy HH:mm:ss", Locale.getDefault());
@@ -30,10 +34,10 @@ public class ValuesFragment extends Fragment {
     private TextView pm25;
     private TextView pm10;
     private TextView time;
-    private TextView status;
     private ImageView smog;
 
     private long lastClickTime = 0;
+    private Menu menu;
 
     public ValuesFragment() {
         // Required empty public constructor
@@ -42,8 +46,9 @@ public class ValuesFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_values, container, false);
+        View view = inflater.inflate(R.layout.fragment_values, container, false);
+        setHasOptionsMenu(true);
+        return view;
     }
 
     @Override
@@ -60,7 +65,6 @@ public class ValuesFragment extends Fragment {
         ((TextView) pm10Card.findViewById(R.id.pm_label)).setText(R.string.pm10);
 
         time = view.findViewById(R.id.time);
-        status = view.findViewById(R.id.status);
         smog = view.findViewById(R.id.smog);
         smog.setAlpha(0f);
 
@@ -77,6 +81,33 @@ public class ValuesFragment extends Fragment {
         });
     }
 
+
+    @Override
+    public void onActivityCreated(@Nullable Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);
+        MainActivity activity = (MainActivity) getActivity();
+        activity.setValuesFragment(this);
+    }
+
+    @Override
+    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+        // Inflate the menu; this adds items to the action bar if it is present.
+        this.menu = menu;
+        inflater.inflate(R.menu.menu_status, menu);
+        setStatus(((MainActivity) getActivity()).isConnected());
+
+        MenuItem item = menu.getItem(0);
+        tintMenuItem(item);
+        item = menu.getItem(1);
+        tintMenuItem(item);
+    }
+
+    private void tintMenuItem(MenuItem item) {
+        Drawable icon = item.getIcon();
+        icon.mutate();
+        icon.setColorFilter(Color.WHITE, PorterDuff.Mode.SRC_IN);
+    }
+
     void updateValues(final ParticulateMatterSample sample) {
         FragmentActivity activity = getActivity();
         if (activity == null) {
@@ -86,6 +117,8 @@ public class ValuesFragment extends Fragment {
             pm1.setText(String.format(Locale.getDefault(), "%d", sample.getPm1_0()));
             pm25.setText(String.format(Locale.getDefault(), "%d", sample.getPm2_5()));
             AQIColor pm25Color = AQIColor.fromPM25Level(sample.getPm2_5());
+            pm1Card.setCardBackgroundColor(
+                    ColorUtils.setAlphaComponent(pm25Color.getColor(), 136));
             pm25Card.setCardBackgroundColor(
                     ColorUtils.setAlphaComponent(pm25Color.getColor(), 136));
             pm10.setText(String.format(Locale.getDefault(), "%d", sample.getPm10()));
@@ -96,7 +129,8 @@ public class ValuesFragment extends Fragment {
         });
     }
 
-    void setStatus(@StringRes int resId) {
-        status.setText(resId);
+    void setStatus(boolean connected) {
+        menu.getItem(0).setVisible(connected);
+        menu.getItem(1).setVisible(!connected);
     }
 }
