@@ -10,6 +10,7 @@ import android.hardware.usb.UsbDeviceConnection;
 import android.hardware.usb.UsbManager;
 import android.os.Build;
 import android.os.Bundle;
+import android.support.v4.app.Fragment;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 
@@ -40,6 +41,7 @@ public class MainActivity extends AppCompatActivity {
     private List<ParticulateMatterSample> values = new ArrayList<>();
 
     private boolean asked = false;
+    private boolean connected = false;
 
     /*
      * Different notifications from OS will be received here (USB attached, detached, permission responses...)
@@ -61,11 +63,15 @@ public class MainActivity extends AppCompatActivity {
                     }
                     boolean granted = extras.getBoolean(UsbManager.EXTRA_PERMISSION_GRANTED);
                     if (granted) { // User accepted our USB connection. Try to open the device as a serial port
-                        valuesFragment.setStatus(R.string.status_connected);
+                        connected = true;
+                        if (valuesFragment != null) {
+                            valuesFragment.setStatus(connected);
+                        }
                         connection = usbManager.openDevice(device);
                         new ConnectionThread().start();
                     } else { // User not accepted our USB connection.
-                        valuesFragment.setStatus(R.string.status_permission_denied);
+                        connected = false;
+                        valuesFragment.setStatus(connected);
                     }
                     break;
                 case ACTION_USB_ATTACHED:
@@ -75,7 +81,10 @@ public class MainActivity extends AppCompatActivity {
                     break;
                 case ACTION_USB_DETACHED:
                     // Usb device was disconnected.
-                    valuesFragment.setStatus(R.string.status_disconnected);
+                    connected = false;
+                    if (valuesFragment != null) {
+                        valuesFragment.setStatus(connected);
+                    }
                     if (serialPortConnected) {
                         serialPort.close();
                     }
@@ -140,7 +149,7 @@ public class MainActivity extends AppCompatActivity {
         }
 
         // Create a new Fragment to be placed in the activity layout
-        valuesFragment = new ValuesFragment();
+        Fragment valuesFragment = new ValuesFragment();
 
         // In case this activity was started with special instructions from an
         // Intent, pass the Intent's extras to the fragment as arguments
@@ -168,7 +177,9 @@ public class MainActivity extends AppCompatActivity {
 
     void updateValues(final ParticulateMatterSample sample) {
         values.add(sample);
-        valuesFragment.updateValues(sample);
+        if (valuesFragment != null) {
+            valuesFragment.updateValues(sample);
+        }
         if (chartFragment == null) {
             chartFragment = (ChartFragment) getSupportFragmentManager().findFragmentByTag("chartFragment");
         }
@@ -179,6 +190,14 @@ public class MainActivity extends AppCompatActivity {
 
     public List<ParticulateMatterSample> getValues() {
         return values;
+    }
+
+    public boolean isConnected() {
+        return connected;
+    }
+
+    public void setValuesFragment(ValuesFragment valuesFragment) {
+        this.valuesFragment = valuesFragment;
     }
 
     @Override
