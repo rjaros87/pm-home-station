@@ -5,6 +5,9 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.graphics.Color;
+import android.graphics.PorterDuff;
+import android.graphics.drawable.Drawable;
 import android.hardware.usb.UsbDevice;
 import android.hardware.usb.UsbDeviceConnection;
 import android.hardware.usb.UsbManager;
@@ -14,6 +17,8 @@ import android.support.v4.app.Fragment;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 
+import android.view.MenuItem;
+import android.view.WindowManager;
 import com.felhr.usbserial.UsbSerialDevice;
 import com.felhr.usbserial.UsbSerialInterface;
 
@@ -69,6 +74,7 @@ public class MainActivity extends AppCompatActivity {
                         }
                         connection = usbManager.openDevice(device);
                         new ConnectionThread().start();
+                        getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
                     } else { // User not accepted our USB connection.
                         connected = false;
                         valuesFragment.setStatus(connected);
@@ -89,6 +95,7 @@ public class MainActivity extends AppCompatActivity {
                         serialPort.close();
                     }
                     serialPortConnected = false;
+                    getWindow().clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
                     break;
             }
         }
@@ -258,6 +265,12 @@ public class MainActivity extends AppCompatActivity {
             PendingIntent pendingIntent = PendingIntent.getBroadcast(this, 0, new Intent(ACTION_USB_PERMISSION), 0);
             usbManager.requestPermission(device, pendingIntent);
         }
+    }
+
+    public static void tintMenuItem(MenuItem item) {
+        Drawable icon = item.getIcon();
+        icon.mutate();
+        icon.setColorFilter(Color.WHITE, PorterDuff.Mode.SRC_IN);
     }
 
     /*

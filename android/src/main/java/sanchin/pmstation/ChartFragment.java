@@ -6,6 +6,9 @@ import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import com.github.mikephil.charting.charts.LineChart;
@@ -36,7 +39,9 @@ public class ChartFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_chart, container, false);
+        View view = inflater.inflate(R.layout.fragment_chart, container, false);
+        setHasOptionsMenu(true);
+        return view;
     }
 
     @Override
@@ -152,5 +157,21 @@ public class ChartFragment extends Fragment {
 
         // move to the latest entry
         chart.moveViewToX(data.getEntryCount());
+    }
+
+    @Override
+    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+        // Inflate the menu; this adds items to the action bar if it is present.
+        inflater.inflate(R.menu.menu_status, menu);
+        boolean connected = ((MainActivity) getActivity()).isConnected();
+
+        MenuItem item = menu.getItem(0);
+        MainActivity.tintMenuItem(item);
+        item = menu.getItem(1);
+        MainActivity.tintMenuItem(item);
+        item = menu.getItem(2);
+        item.setVisible(false);
+        menu.getItem(0).setVisible(connected);
+        menu.getItem(1).setVisible(!connected);
     }
 }

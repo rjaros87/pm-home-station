@@ -67,18 +67,18 @@ public class ValuesFragment extends Fragment {
         time = view.findViewById(R.id.time);
         smog = view.findViewById(R.id.smog);
         smog.setAlpha(0f);
+    }
 
-        view.setOnClickListener(view1 -> {
-            // Preventing multiple clicks, using threshold of 1 second
-            if (SystemClock.elapsedRealtime() - lastClickTime < 500) {
-                return;
-            }
-            lastClickTime = SystemClock.elapsedRealtime();
-            ChartFragment chartFragment = new ChartFragment();
-            FragmentTransaction fragmentTransaction = getActivity().getSupportFragmentManager().beginTransaction();
-            fragmentTransaction.replace(R.id.fragment_container, chartFragment, "chartFragment").addToBackStack(null)
-                               .commit();
-        });
+    private void showChart() {
+//        // Preventing multiple clicks, using threshold of 0.5 second
+//        if (SystemClock.elapsedRealtime() - lastClickTime < 500) {
+//            return;
+//        }
+        lastClickTime = SystemClock.elapsedRealtime();
+        ChartFragment chartFragment = new ChartFragment();
+        FragmentTransaction fragmentTransaction = getActivity().getSupportFragmentManager().beginTransaction();
+        fragmentTransaction.replace(R.id.fragment_container, chartFragment, "chartFragment").addToBackStack(null)
+                           .commit();
     }
 
 
@@ -92,20 +92,27 @@ public class ValuesFragment extends Fragment {
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
         // Inflate the menu; this adds items to the action bar if it is present.
-        this.menu = menu;
         inflater.inflate(R.menu.menu_status, menu);
+        this.menu = menu;
         setStatus(((MainActivity) getActivity()).isConnected());
 
         MenuItem item = menu.getItem(0);
-        tintMenuItem(item);
+        MainActivity.tintMenuItem(item);
         item = menu.getItem(1);
-        tintMenuItem(item);
+        MainActivity.tintMenuItem(item);
+        item = menu.getItem(2);
+        MainActivity.tintMenuItem(item);
     }
 
-    private void tintMenuItem(MenuItem item) {
-        Drawable icon = item.getIcon();
-        icon.mutate();
-        icon.setColorFilter(Color.WHITE, PorterDuff.Mode.SRC_IN);
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        int id = item.getItemId();
+
+        if (id == R.id.action_chart) {
+            showChart();
+            return true;
+        }
+        return super.onOptionsItemSelected(item);
     }
 
     void updateValues(final ParticulateMatterSample sample) {
@@ -130,6 +137,9 @@ public class ValuesFragment extends Fragment {
     }
 
     void setStatus(boolean connected) {
+        if (menu == null) {
+            return;
+        }
         menu.getItem(0).setVisible(connected);
         menu.getItem(1).setVisible(!connected);
     }
