@@ -11,4 +11,9 @@
           android:icon="@drawable/ic_disconnected"
           android:tint="@android:color/white"
           app:showAsAction="always"/>
+    <item android:id="@+id/action_chart"
+          android:title="@string/status_connected"
+          android:icon="@drawable/ic_show_chart_black_24dp"
+          android:tint="@android:color/white"
+          app:showAsAction="always"/>
 </menu>
