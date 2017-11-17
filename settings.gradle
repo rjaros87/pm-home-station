@@ -1,2 +1,5 @@
 rootProject.name = 'PMStation'
 
+include ':android'
+include ':core'
+include ':desktop'

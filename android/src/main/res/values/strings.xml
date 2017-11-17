@@ -1,0 +1,14 @@
+<resources>
+    <string name="app_name">PM Station</string>
+    <string name="pm1">PM1.0</string>
+    <string name="pm25">PM2.5</string>
+    <string name="pm10">PM10</string>
+    <string name="time">Time</string>
+    <string name="unit">µg/m³</string>
+    <string name="status_connected">connected</string>
+    <string name="status_disconnected">disconnected</string>
+    <string name="status_permission_denied">permission denied</string>
+
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+</resources>
