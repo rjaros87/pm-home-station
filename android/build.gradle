@@ -36,3 +36,5 @@ dependencies {
     implementation project(':core')
     implementation 'com.github.PhilJay:MPAndroidChart:v3.0.2'
 }
+
+apply plugin: 'com.google.gms.google-services'

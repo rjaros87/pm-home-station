@@ -14,11 +14,13 @@ import android.hardware.usb.UsbManager;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
-
+import android.view.Menu;
 import android.view.MenuItem;
 import android.view.WindowManager;
+
 import com.felhr.usbserial.UsbSerialDevice;
 import com.felhr.usbserial.UsbSerialInterface;
 
@@ -32,6 +34,8 @@ import pl.radoslawjaros.plantower.ParticulateMatterSample;
 public class MainActivity extends AppCompatActivity {
     public static final String ACTION_USB_ATTACHED = "android.hardware.usb.action.USB_DEVICE_ATTACHED";
     public static final String ACTION_USB_DETACHED = "android.hardware.usb.action.USB_DEVICE_DETACHED";
+    static final public byte[] MODE_WAKEUP = {0x42, 0x4d, (byte) 0xe4, 0x00, 0x01, 0x01, 0x74};
+    static final public byte[] MODE_SLEEP = {0x42, 0x4d, (byte) 0xe4, 0x00, 0x00, 0x01, 0x73};
     private static final String TAG = "MainActivity";
     private static final String ACTION_USB_PERMISSION = "sanchin.pmstation.USB_PERMISSION";
     private static final int BAUD_RATE = 9600; // BaudRate. Change this value if you need
@@ -43,11 +47,12 @@ public class MainActivity extends AppCompatActivity {
     private UsbDevice device;
     private UsbDeviceConnection connection;
     private UsbSerialDevice serialPort;
+    private Menu menu;
+
     private List<ParticulateMatterSample> values = new ArrayList<>();
-
     private boolean asked = false;
-    private boolean connected = false;
 
+    private boolean connected = false;
     /*
      * Different notifications from OS will be received here (USB attached, detached, permission responses...)
      * About BroadcastReceiver: http://developer.android.com/reference/android/content/BroadcastReceiver.html
@@ -69,15 +74,13 @@ public class MainActivity extends AppCompatActivity {
                     boolean granted = extras.getBoolean(UsbManager.EXTRA_PERMISSION_GRANTED);
                     if (granted) { // User accepted our USB connection. Try to open the device as a serial port
                         connected = true;
-                        if (valuesFragment != null) {
-                            valuesFragment.setStatus(connected);
-                        }
+                        setStatus(true);
                         connection = usbManager.openDevice(device);
                         new ConnectionThread().start();
                         getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
                     } else { // User not accepted our USB connection.
                         connected = false;
-                        valuesFragment.setStatus(connected);
+                        setStatus(false);
                     }
                     break;
                 case ACTION_USB_ATTACHED:
@@ -88,9 +91,7 @@ public class MainActivity extends AppCompatActivity {
                 case ACTION_USB_DETACHED:
                     // Usb device was disconnected.
                     connected = false;
-                    if (valuesFragment != null) {
-                        valuesFragment.setStatus(connected);
-                    }
+                    setStatus(false);
                     if (serialPortConnected) {
                         serialPort.close();
                     }
@@ -100,9 +101,11 @@ public class MainActivity extends AppCompatActivity {
             }
         }
     };
+    private List<ValueObserver> valueObservers = new ArrayList<>();
     private UsbSerialInterface.UsbReadCallback readCallback = bytes -> {
         final ParticulateMatterSample sample = read(bytes);
         if (sample != null) {
+//            if (sample)
             updateValues(sample);
         }
         try {
@@ -121,6 +124,35 @@ public class MainActivity extends AppCompatActivity {
                 || Build.MANUFACTURER.contains("Genymotion")
                 || (Build.BRAND.startsWith("generic") && Build.DEVICE.startsWith("generic"))
                 || "google_sdk".equals(Build.PRODUCT);
+    }
+
+    public static void tintMenuItem(MenuItem item) {
+        Drawable icon = item.getIcon();
+        icon.mutate();
+        icon.setColorFilter(Color.WHITE, PorterDuff.Mode.SRC_IN);
+    }
+
+    private boolean write(byte[] data) {
+        if (serialPort != null) {
+            serialPort.write(data);
+        }
+        return connected;
+    }
+
+    public boolean sleep() {
+        return write(MODE_SLEEP);
+    }
+
+    public boolean wakeUp() {
+        return write(MODE_WAKEUP);
+    }
+
+    public void addValueObserver(ValueObserver observer) {
+        valueObservers.add(observer);
+    }
+
+    public void removeValueObserver(ValueObserver observer) {
+        valueObservers.remove(observer);
     }
 
     public ParticulateMatterSample read(byte[] readBuffer) {
@@ -177,7 +209,7 @@ public class MainActivity extends AppCompatActivity {
                     i = (i + 1) % 14;
                     try {
                         updateValues(new ParticulateMatterSample(20, i * 10, 100));
-                        Thread.sleep(3000L);
+                        Thread.sleep(1000L);
                     } catch (InterruptedException e) {
                         System.out.println("Thread interrupted");
                         Thread.currentThread().interrupt();
@@ -190,14 +222,8 @@ public class MainActivity extends AppCompatActivity {
 
     void updateValues(final ParticulateMatterSample sample) {
         values.add(sample);
-        if (valuesFragment != null) {
-            valuesFragment.updateValues(sample);
-        }
-        if (chartFragment == null) {
-            chartFragment = (ChartFragment) getSupportFragmentManager().findFragmentByTag("chartFragment");
-        }
-        if (chartFragment != null) {
-            chartFragment.updateValues(sample);
+        for (ValueObserver valueObserver : valueObservers) {
+            valueObserver.onNewValue(sample);
         }
     }
 
@@ -209,8 +235,62 @@ public class MainActivity extends AppCompatActivity {
         return connected;
     }
 
-    public void setValuesFragment(ValuesFragment valuesFragment) {
-        this.valuesFragment = valuesFragment;
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        // Inflate the menu; this adds items to the action bar if it is present.
+        getMenuInflater().inflate(R.menu.menu_status, menu);
+        this.menu = menu;
+        setStatus(isConnected());
+
+        MenuItem item = menu.getItem(0);
+        MainActivity.tintMenuItem(item);
+        item = menu.getItem(1);
+        MainActivity.tintMenuItem(item);
+        item = menu.getItem(2);
+        MainActivity.tintMenuItem(item);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        int id = item.getItemId();
+        switch (id) {
+            case R.id.action_chart:
+                showChart();
+                return true;
+            case R.id.action_connected:
+                Log.d(TAG, "Trying to disconnect");
+                if (sleep()) {
+                    setStatus(false);
+                }
+                return true;
+            case R.id.action_disconnected:
+                Log.d(TAG, "Trying to connect");
+                if (wakeUp()) {
+                    setStatus(true);
+                }
+                return true;
+        }
+        return super.onOptionsItemSelected(item);
+    }
+
+    private void showChart() {
+        Fragment fragment = getSupportFragmentManager().findFragmentByTag("chartFragment");
+        if (fragment != null && !fragment.isDetached()) {
+            return;
+        }
+        ChartFragment chartFragment = new ChartFragment();
+        FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
+        fragmentTransaction.replace(R.id.fragment_container, chartFragment, "chartFragment").addToBackStack(null)
+                           .commit();
+    }
+
+    void setStatus(boolean connected) {
+        if (menu == null) {
+            return;
+        }
+        menu.getItem(0).setVisible(connected);
+        menu.getItem(1).setVisible(!connected);
     }
 
     @Override
@@ -271,12 +351,6 @@ public class MainActivity extends AppCompatActivity {
             PendingIntent pendingIntent = PendingIntent.getBroadcast(this, 0, new Intent(ACTION_USB_PERMISSION), 0);
             usbManager.requestPermission(device, pendingIntent);
         }
-    }
-
-    public static void tintMenuItem(MenuItem item) {
-        Drawable icon = item.getIcon();
-        icon.mutate();
-        icon.setColorFilter(Color.WHITE, PorterDuff.Mode.SRC_IN);
     }
 
     /*

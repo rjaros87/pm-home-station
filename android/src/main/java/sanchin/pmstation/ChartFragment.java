@@ -6,11 +6,9 @@ import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
-import android.view.Menu;
-import android.view.MenuInflater;
-import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+
 import com.github.mikephil.charting.charts.LineChart;
 import com.github.mikephil.charting.components.XAxis;
 import com.github.mikephil.charting.components.YAxis;
@@ -19,15 +17,14 @@ import com.github.mikephil.charting.data.LineData;
 import com.github.mikephil.charting.data.LineDataSet;
 import com.github.mikephil.charting.formatter.IAxisValueFormatter;
 import com.github.mikephil.charting.interfaces.datasets.ILineDataSet;
-import pl.radoslawjaros.plantower.ParticulateMatterSample;
 
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 
-public class ChartFragment extends Fragment {
-    List<Entry> entries = new ArrayList<>();
+import pl.radoslawjaros.plantower.ParticulateMatterSample;
+
+public class ChartFragment extends Fragment implements ValueObserver {
     private static final SimpleDateFormat dateFormat = new SimpleDateFormat("HH:mm:ss", Locale.getDefault());
     private String pm1Label;
     private String pm25Label;
@@ -39,9 +36,7 @@ public class ChartFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        View view = inflater.inflate(R.layout.fragment_chart, container, false);
-        setHasOptionsMenu(true);
-        return view;
+        return inflater.inflate(R.layout.fragment_chart, container, false);
     }
 
     @Override
@@ -55,9 +50,16 @@ public class ChartFragment extends Fragment {
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
-        ((MainActivity) context).chartFragment = this;
+        MainActivity activity = (MainActivity) getActivity();
+        activity.addValueObserver(this);
     }
 
+    @Override
+    public void onDetach() {
+        super.onDetach();
+        MainActivity activity = (MainActivity) getActivity();
+        activity.removeValueObserver(this);
+    }
 
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
@@ -133,11 +135,12 @@ public class ChartFragment extends Fragment {
         set.setLineWidth(2f);
         set.setDrawValues(false);
         set.setDrawCircles(false);
-        set.setMode(LineDataSet.Mode.CUBIC_BEZIER);
+        set.setMode(LineDataSet.Mode.LINEAR);
         return set;
     }
 
-    void updateValues(ParticulateMatterSample sample) {
+    @Override
+    public void onNewValue(ParticulateMatterSample sample) {
         if (!ready) {
             return;
         }
@@ -157,21 +160,5 @@ public class ChartFragment extends Fragment {
 
         // move to the latest entry
         chart.moveViewToX(data.getEntryCount());
-    }
-
-    @Override
-    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
-        // Inflate the menu; this adds items to the action bar if it is present.
-        inflater.inflate(R.menu.menu_status, menu);
-        boolean connected = ((MainActivity) getActivity()).isConnected();
-
-        MenuItem item = menu.getItem(0);
-        MainActivity.tintMenuItem(item);
-        item = menu.getItem(1);
-        MainActivity.tintMenuItem(item);
-        item = menu.getItem(2);
-        item.setVisible(false);
-        menu.getItem(0).setVisible(connected);
-        menu.getItem(1).setVisible(!connected);
     }
 }

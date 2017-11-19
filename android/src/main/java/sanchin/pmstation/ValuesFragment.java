@@ -1,32 +1,28 @@
 package sanchin.pmstation;
 
 
-import android.graphics.Color;
-import android.graphics.PorterDuff;
-import android.graphics.drawable.Drawable;
+import android.content.Context;
 import android.os.Bundle;
-import android.os.SystemClock;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
-import android.support.v4.app.FragmentTransaction;
 import android.support.v4.graphics.ColorUtils;
 import android.support.v7.widget.CardView;
 import android.view.LayoutInflater;
-import android.view.Menu;
-import android.view.MenuInflater;
-import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
-import pl.radoslawjaros.plantower.ParticulateMatterSample;
 
 import java.text.SimpleDateFormat;
+import java.util.List;
 import java.util.Locale;
 
-public class ValuesFragment extends Fragment {
+import pl.radoslawjaros.plantower.ParticulateMatterSample;
+
+public class ValuesFragment extends Fragment implements ValueObserver {
     private static final SimpleDateFormat dateFormat = new SimpleDateFormat("d MMM yyyy HH:mm:ss", Locale.getDefault());
+    private static final String TAG = "ValuesFragment";
     private CardView pm1Card;
     private CardView pm25Card;
     private CardView pm10Card;
@@ -36,9 +32,6 @@ public class ValuesFragment extends Fragment {
     private TextView time;
     private ImageView smog;
 
-    private long lastClickTime = 0;
-    private Menu menu;
-
     public ValuesFragment() {
         // Required empty public constructor
     }
@@ -46,9 +39,7 @@ public class ValuesFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.fragment_values, container, false);
-        setHasOptionsMenu(true);
-        return view;
+        return inflater.inflate(R.layout.fragment_values, container, false);
     }
 
     @Override
@@ -67,55 +58,31 @@ public class ValuesFragment extends Fragment {
         time = view.findViewById(R.id.time);
         smog = view.findViewById(R.id.smog);
         smog.setAlpha(0f);
-    }
 
-    private void showChart() {
-//        // Preventing multiple clicks, using threshold of 0.5 second
-//        if (SystemClock.elapsedRealtime() - lastClickTime < 500) {
-//            return;
-//        }
-        lastClickTime = SystemClock.elapsedRealtime();
-        ChartFragment chartFragment = new ChartFragment();
-        FragmentTransaction fragmentTransaction = getActivity().getSupportFragmentManager().beginTransaction();
-        fragmentTransaction.replace(R.id.fragment_container, chartFragment, "chartFragment").addToBackStack(null)
-                           .commit();
-    }
-
-
-    @Override
-    public void onActivityCreated(@Nullable Bundle savedInstanceState) {
-        super.onActivityCreated(savedInstanceState);
-        MainActivity activity = (MainActivity) getActivity();
-        activity.setValuesFragment(this);
-    }
-
-    @Override
-    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
-        // Inflate the menu; this adds items to the action bar if it is present.
-        inflater.inflate(R.menu.menu_status, menu);
-        this.menu = menu;
-        setStatus(((MainActivity) getActivity()).isConnected());
-
-        MenuItem item = menu.getItem(0);
-        MainActivity.tintMenuItem(item);
-        item = menu.getItem(1);
-        MainActivity.tintMenuItem(item);
-        item = menu.getItem(2);
-        MainActivity.tintMenuItem(item);
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        int id = item.getItemId();
-
-        if (id == R.id.action_chart) {
-            showChart();
-            return true;
+        List<ParticulateMatterSample> values = ((MainActivity) getActivity()).getValues();
+        if (!values.isEmpty()) {
+            ParticulateMatterSample sample = values.get(values.size() - 1);
+            onNewValue(sample);
         }
-        return super.onOptionsItemSelected(item);
+
     }
 
-    void updateValues(final ParticulateMatterSample sample) {
+    @Override
+    public void onAttach(Context context) {
+        super.onAttach(context);
+        MainActivity activity = (MainActivity) getActivity();
+        activity.addValueObserver(this);
+    }
+
+    @Override
+    public void onDetach() {
+        super.onDetach();
+        MainActivity activity = (MainActivity) getActivity();
+        activity.removeValueObserver(this);
+    }
+
+    @Override
+    public void onNewValue(final ParticulateMatterSample sample) {
         FragmentActivity activity = getActivity();
         if (activity == null) {
             return;
@@ -134,13 +101,5 @@ public class ValuesFragment extends Fragment {
             smog.animate().alpha(pm25Color.getAlpha());
             time.setText(dateFormat.format(sample.getDate()));
         });
-    }
-
-    void setStatus(boolean connected) {
-        if (menu == null) {
-            return;
-        }
-        menu.getItem(0).setVisible(connected);
-        menu.getItem(1).setVisible(!connected);
     }
 }

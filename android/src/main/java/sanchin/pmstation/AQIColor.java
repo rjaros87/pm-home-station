@@ -2,10 +2,6 @@ package sanchin.pmstation;
 
 import android.graphics.Color;
 
-/**
- * Created by rgabiga on 04.11.17.
- */
-
 public enum AQIColor {
     VERY_GOOD(Color.parseColor("#00ccff"), 0f),
     GOOD(Color.parseColor("#00e400"), 0.2f),
