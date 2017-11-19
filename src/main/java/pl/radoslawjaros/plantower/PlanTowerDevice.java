@@ -54,9 +54,11 @@ public class PlanTowerDevice {
             }
 
             if (numRead == DATA_LENGTH && readBuffer[0] == START_CHARACTERS) {
-                int pm1_0 = readBuffer[10] * 0x100 + readBuffer[11];
-                int pm2_5 = readBuffer[12] * 0x100 + readBuffer[13];
-                int pm10 = readBuffer[14] * 0x100 + readBuffer[15];
+                // remark #1: check if compiler replaces *0x100 with << 8
+                // remark #2: seems to necessary to ensure usigned bytes stays unsigned in java - either by using & 0xFF or Byte#toUnsignedInt (java 8)
+                int pm1_0 = Byte.toUnsignedInt(readBuffer[10]) * 0x100 + Byte.toUnsignedInt(readBuffer[11]);
+                int pm2_5 = Byte.toUnsignedInt(readBuffer[12]) * 0x100 + Byte.toUnsignedInt(readBuffer[13]);
+                int pm10 = Byte.toUnsignedInt(readBuffer[14]) * 0x100 + Byte.toUnsignedInt(readBuffer[15]);
 
                 return new ParticulateMatterSample(pm1_0, pm2_5, pm10);
             }
