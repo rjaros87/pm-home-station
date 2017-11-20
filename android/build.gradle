@@ -38,4 +38,7 @@ dependencies {
     implementation 'com.github.PhilJay:MPAndroidChart:v3.0.2'
 }
 
-apply plugin: 'com.google.gms.google-services'
+if (project.file('google-services.json').exists()) {
+    apply plugin: 'com.google.gms.google-services'
+}
+
