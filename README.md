@@ -32,7 +32,7 @@ TXD           | RXD
 
 ## Assembly photos
 
-The photo gallery of assembly can be found [here](https://github.com/rjaros87/pm-station-usb/raw/master/www/assembly/index.html "Assembly of pm-station-usb").
+The photo gallery of assembly can be found [here](https://rawgit.com/rjaros87/pm-station-usb/master/www/assembly/index.html "Assembly of pm-station-usb").
 
 
 ## Tested platforms
