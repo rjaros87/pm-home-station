@@ -5,6 +5,9 @@
 # or
 # easy_install sigal
 
+# Override Locale to en-US for Exif info in html
+LANG="en_US.UTF-8"
+
 rm -rf *.JPG index.html thumbs static
 sigal build
 
