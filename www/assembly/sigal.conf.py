@@ -169,7 +169,7 @@ output_filename = 'index.html'
 # use_assets_cdn = True
 
 # A list of links (tuples (title, URL))
-links = [('Back to pm-station-usb @ github.com', 'https://github.com/rjaros87/pm-station-usb') ]
+links = [('Back to pm-station-usb @ github.com', 'https://github.com/rjaros87/pm-station-usb#assembly-photos') ]
 
 # Google Analytics tracking code (UA-xxxx-x)
 # google_analytics = ''
