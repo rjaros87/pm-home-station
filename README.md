@@ -12,10 +12,10 @@ Since we live in huge polluted cities, the air quality is on a very poor level. 
 
 ## Assemble the home PM station
 
-1. Connect the PlanTower device with ICD10 adapter (~~like on photo below~~). 
+1. Connect the PlanTower device with ICD10 adapter
 > Caution! The pins on the PlanTower device are located in the top right corner. Numeration starts from the right top corner (1) and ends in the left bottom corner (10). 
 
-2. Connect IDC10 adapter (bigger pins :smile:) to the UART-USB adapter. Wire connections are presented in table below.
+2. Connect IDC10 adapter (bigger pins :smile:) to the UART-USB adapter. Wire connections are presented in table below
 > Caution! The adapter must have separate VCC pin for 5V or switch between 3.3V and 5V. The PlanTower device works on 5V voltage.
 
 ICD10 adapter | UART-USB adapter
@@ -25,10 +25,15 @@ GND           | GND
 RX            | TXD
 TXD           | RXD
 
-3. Connect the UART-USB adapter with a USB cable to your computer.
+3. Connect the UART-USB adapter with a USB cable to your computer
 > Caution for Windows users! - open the Device Manager, expand `Ports (COM & LPT)` and find your adapter. Ensure that the Device status has the following text `This device is working properly.`. If not, then you probably need to install  old drivers for this adapter (workaround).
 
-4. Start the application and check your air quality :smile:.
+4. Start the application and check your air quality :smile:
+
+## Assembly photos
+
+The photo gallery of assembly can be found [here](https://github.com/rjaros87/pm-station-usb/raw/master/www/assembly/index.html "Assembly of pm-station-usb").
+
 
 ## Tested platforms
 
@@ -51,7 +56,6 @@ TXD           | RXD
 
 ## TODO
 
-- Add photos to `Assemble the home PM station`
 - Add config file
 - Add observer which log measurements to file
 - Add support for others PlanTower devices
