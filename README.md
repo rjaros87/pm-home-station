@@ -1,4 +1,4 @@
-# Home particulate matter station on USB
+# Home use particulate matter sensor on USB
 
 Since we live in huge polluted cities the air quality is on a very poor level. We have created this little project for monitoring our home environment. Let's live healthier life and start from filtering air and measuring its quality.
 
@@ -10,7 +10,7 @@ Since we live in huge polluted cities the air quality is on a very poor level. W
 - UART to USB (PL2303) adapter ~ 2 $
 - USB cable ~ 2 $
 
-## Assemble the home PM station
+## Assemble the PM sensor
 
 1. Connect the PlanTower device with ICD10 adapter (~~like on photo below~~). 
 > Caution! The pins on the PlanTower device are located in the top right corner. Numeration starts from the right top corner (1) and ends in the left bottom corner (10). 
@@ -34,7 +34,7 @@ TXD           | RXD
 
 - Windows 7/10
 - Linux (The ownership of device `/dev/ttyUSB0` is `dialout` group so add yourself and re-login or run with `sudo`)
-- ~~macOS~~
+- macOS / OSX (you may need to install correct driver for your version of uart2usb, for PL2303 [this](http://www.prolific.com.tw/US/ShowProduct.aspx?p_id=229&pcid=41) one works well)
 
 ## Build and run
 

@@ -1,8 +1,16 @@
 package pl.radoslawjaros.plantower;
 
 import com.fazecast.jSerialComm.*;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class PlanTowerDevice {
+
+    private static final Logger logger = LoggerFactory.getLogger(PlanTowerDevice.class);
+
+    // TODO use 3rd party lib or move to seprate class and identify all supported OSes
+    private static boolean isOSX = System.getProperty("os.name").toLowerCase().indexOf("mac") >= 0 || System.getProperty("os.name").toLowerCase().indexOf("darwin") >= 0;
+
     //TODO: read values from config file
     static final private int TIMEOUT_READ = 2000; //[ms]
     static final private int TIMEOUT_WRITE = 2000; //[ms]
@@ -22,16 +30,30 @@ public class PlanTowerDevice {
     }
 
     public boolean openPort() {
-        if (SerialPort.getCommPorts().length == 0) {
+        SerialPort[] ports = SerialPort.getCommPorts();
+        if (ports.length == 0) {
+            logger.warn("No serial ports available!");
             return false;
         }
-        comPort = SerialPort.getCommPorts()[0];
+        logger.debug("Got {} serial ports available", SerialPort.getCommPorts().length);
+        int portToUse = 0;
+
+        for (int i = 0; i < ports.length; i++) {
+            SerialPort sp = ports[i];
+            logger.debug("\t- {}, {}", sp.getSystemPortName(), sp.getDescriptivePortName());
+            // TODO I don't have linux/windows, so somebody please check and update the names accordingly etc - don't use [0] device for god's sake
+            if (isOSX && sp.getSystemPortName().startsWith("cu") && sp.getSystemPortName().toLowerCase().contains("usbserial")) {
+                portToUse = i;
+            }
+        }
+        comPort = SerialPort.getCommPorts()[portToUse];
+        logger.info("Going to use the following port: {}", comPort.getSystemPortName());
+        
         comPort.setComPortTimeouts(
                 SerialPort.TIMEOUT_READ_BLOCKING | SerialPort.TIMEOUT_WRITE_BLOCKING,
                 TIMEOUT_READ,
                 TIMEOUT_WRITE
         );
-
         return comPort.openPort();
     }
 
@@ -54,9 +76,11 @@ public class PlanTowerDevice {
             }
 
             if (numRead == DATA_LENGTH && readBuffer[0] == START_CHARACTERS) {
-                int pm1_0 = readBuffer[10] * 0x100 + readBuffer[11];
-                int pm2_5 = readBuffer[12] * 0x100 + readBuffer[13];
-                int pm10 = readBuffer[14] * 0x100 + readBuffer[15];
+                // remark #1: << 8 is ~2 times faster than *0x100 - compiler does not optimize that, not even JIT in runtime
+                // remark #2: it's necessary to ensure usigned bytes stays unsigned in java - either by using & 0xFF or Byte#toUnsignedInt (java 8)
+                int pm1_0 = (Byte.toUnsignedInt(readBuffer[10]) << 8) + Byte.toUnsignedInt(readBuffer[11]);
+                int pm2_5 = (Byte.toUnsignedInt(readBuffer[12]) << 8) + Byte.toUnsignedInt(readBuffer[13]);
+                int pm10 = (Byte.toUnsignedInt(readBuffer[14]) << 8) + Byte.toUnsignedInt(readBuffer[15]);
 
                 return new ParticulateMatterSample(pm1_0, pm2_5, pm10);
             }
