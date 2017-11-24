@@ -214,7 +214,7 @@ plugins = ['sigal.plugins.adjust', 'sigal.plugins.copyright' ]
 #            'sigal.plugins.upload_s3', 'sigal.plugins.media_page']
 
 # Add a copyright text on the image (default: '')
-copyright = "https://github.com/rjaros87/pm-station-usb & https://skowro.net (CC BY-NC)"
+copyright = "https://github.com/rjaros87/pm-station-usb (CC BY-NC)"
 
 # Adjust the image after resizing it. A default value of 1.0 leaves the images
 # untouched.
