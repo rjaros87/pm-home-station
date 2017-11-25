@@ -10,6 +10,7 @@ public class PlanTowerDevice {
 
     // TODO use 3rd party lib or move to seprate class and identify all supported OSes
     private static boolean isOSX = System.getProperty("os.name").toLowerCase().indexOf("mac") >= 0 || System.getProperty("os.name").toLowerCase().indexOf("darwin") >= 0;
+    private static boolean isWindows = System.getProperty("os.name").toLowerCase().indexOf("windows") >= 0;
 
     //TODO: read values from config file
     static final private int TIMEOUT_READ = 2000; //[ms]
@@ -42,13 +43,13 @@ public class PlanTowerDevice {
             SerialPort sp = ports[i];
             logger.debug("\t- {}, {}", sp.getSystemPortName(), sp.getDescriptivePortName());
             // TODO I don't have linux/windows, so somebody please check and update the names accordingly etc - don't use [0] device for god's sake
-            if (isOSX && sp.getSystemPortName().startsWith("cu") && sp.getSystemPortName().toLowerCase().contains("usbserial")) {
+            if (isSerialPort(sp)) {
                 portToUse = i;
             }
         }
         comPort = SerialPort.getCommPorts()[portToUse];
         logger.info("Going to use the following port: {}", comPort.getSystemPortName());
-        
+
         comPort.setComPortTimeouts(
                 SerialPort.TIMEOUT_READ_BLOCKING | SerialPort.TIMEOUT_WRITE_BLOCKING,
                 TIMEOUT_READ,
@@ -61,6 +62,13 @@ public class PlanTowerDevice {
         if (comPort != null) {
             comPort.writeBytes(command, command.length);
         }
+    }
+
+    public boolean isSerialPort(SerialPort sp) {
+        return ((isOSX && sp.getSystemPortName().startsWith("cu") && sp.getSystemPortName().toLowerCase().contains("usbserial")) ||
+                (isWindows && sp.getDescriptivePortName().toLowerCase().contains("serial")) // ||
+                //(isLinux)
+        );
     }
 
 
