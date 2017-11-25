@@ -5,7 +5,7 @@
                                              android:layout_height="match_parent"
                                              android:background="@android:color/background_light"
                                              android:clickable="true"
-                                             tools:context="sanchin.pmstation.ChartFragment">
+                                             tools:context="pmstation.ChartFragment">
 
     <com.github.mikephil.charting.charts.LineChart
             android:id="@+id/chart"

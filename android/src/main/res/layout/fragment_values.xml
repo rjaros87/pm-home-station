@@ -6,7 +6,7 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:background="@drawable/bg"
-        tools:context="sanchin.pmstation.MainActivity">
+        tools:context="pmstation.MainActivity">
     <android.support.v7.widget.AppCompatImageView
         android:id="@+id/smog"
         android:layout_width="match_parent"
