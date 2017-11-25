@@ -30,6 +30,16 @@ TXD           | RXD
 
 4. Start the application and check the air quality of your environment :smile:
 
+## 3D enclosure for the PlanTower device & the UART-USB adapter
+
+- [Top v1](/3d_models/top_v1.stl)
+- [Bottom v1](/3d_models/bottom_v1.stl)
+
+Suggested printing parameters:
+- Infill: 20%
+- Resolution: 0.2
+- Supports: No
+
 ## Assembly photos
 
 The photo gallery of assembly can be found [here](https://rawgit.com/rjaros87/pm-station-usb/master/www/assembly/index.html "Assembly of pm-station-usb").
@@ -62,5 +72,4 @@ The screenshots gallery can be found [here](https://rawgit.com/rjaros87/pm-stati
 - Add config file
 - Add observer which log measurements to file
 - Add support for others PlanTower devices
-- Add 3D model project with convenient enclosure for the PlanTower device & the UART-USB adapter
 - Tests
