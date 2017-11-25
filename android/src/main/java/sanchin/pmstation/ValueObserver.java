@@ -1,6 +1,6 @@
 package sanchin.pmstation;
 
-import pl.radoslawjaros.plantower.ParticulateMatterSample;
+import pmstation.plantower.ParticulateMatterSample;
 
 public interface ValueObserver {
     void onNewValue(ParticulateMatterSample sample);
