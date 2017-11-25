@@ -1,4 +1,4 @@
-package pl.radoslawjaros.plantower;
+package pmstation.plantower;
 
 import java.util.Date;
 
