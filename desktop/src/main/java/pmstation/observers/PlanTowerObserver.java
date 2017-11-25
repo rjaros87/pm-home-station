@@ -1,6 +1,6 @@
-package pl.radoslawjaros.observers;
+package pmstation.observers;
 
-import pl.radoslawjaros.plantower.ParticulateMatterSample;
+import pmstation.plantower.ParticulateMatterSample;
 
 public interface PlanTowerObserver {
     public void notify(ParticulateMatterSample sample);

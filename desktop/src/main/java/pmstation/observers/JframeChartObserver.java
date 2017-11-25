@@ -1,7 +1,7 @@
-package pl.radoslawjaros.observers;
+package pmstation.observers;
 
 import org.knowm.xchart.XYChart;
-import pl.radoslawjaros.plantower.ParticulateMatterSample;
+import pmstation.plantower.ParticulateMatterSample;
 
 import javax.swing.*;
 import java.util.*;

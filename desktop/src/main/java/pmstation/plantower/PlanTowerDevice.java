@@ -1,4 +1,4 @@
-package pl.radoslawjaros.plantower;
+package pmstation.plantower;
 
 import com.fazecast.jSerialComm.*;
 import org.slf4j.Logger;

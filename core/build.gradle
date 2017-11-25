@@ -1,4 +1,4 @@
-group 'pl.radoslawjaros'
+group 'pmstation'
 version '1.0-SNAPSHOT'
 
 apply plugin: 'java'

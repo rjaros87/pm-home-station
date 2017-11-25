@@ -1,13 +1,13 @@
-package pl.radoslawjaros;
+package pmstation;
 
 import org.knowm.xchart.XChartPanel;
 import org.knowm.xchart.XYChart;
 import org.knowm.xchart.XYChartBuilder;
 import org.knowm.xchart.style.Styler;
-//import pl.radoslawjaros.observers.ConsoleObserver;
-import pl.radoslawjaros.observers.JframeChartObserver;
-import pl.radoslawjaros.observers.JframeComponentsObserver;
-import pl.radoslawjaros.plantower.PlanTowerSensor;
+//import pmstation.observers.ConsoleObserver;
+import pmstation.observers.JframeChartObserver;
+import pmstation.observers.JframeComponentsObserver;
+import pmstation.plantower.PlanTowerSensor;
 
 import javax.swing.*;
 import java.awt.*;

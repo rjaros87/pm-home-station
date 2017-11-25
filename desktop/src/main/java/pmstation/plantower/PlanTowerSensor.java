@@ -1,6 +1,6 @@
-package pl.radoslawjaros.plantower;
+package pmstation.plantower;
 
-import pl.radoslawjaros.observers.PlanTowerObserver;
+import pmstation.observers.PlanTowerObserver;
 
 import java.util.ArrayList;
 import java.util.List;

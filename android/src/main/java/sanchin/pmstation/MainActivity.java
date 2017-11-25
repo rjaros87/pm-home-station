@@ -29,7 +29,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import pl.radoslawjaros.plantower.ParticulateMatterSample;
+import pmstation.plantower.ParticulateMatterSample;
 
 public class MainActivity extends AppCompatActivity {
     public static final String ACTION_USB_ATTACHED = "android.hardware.usb.action.USB_DEVICE_ATTACHED";

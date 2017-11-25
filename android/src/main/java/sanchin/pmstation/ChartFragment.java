@@ -22,7 +22,7 @@ import java.text.SimpleDateFormat;
 import java.util.List;
 import java.util.Locale;
 
-import pl.radoslawjaros.plantower.ParticulateMatterSample;
+import pmstation.plantower.ParticulateMatterSample;
 
 public class ChartFragment extends Fragment implements ValueObserver {
     private static final SimpleDateFormat dateFormat = new SimpleDateFormat("HH:mm:ss", Locale.getDefault());
