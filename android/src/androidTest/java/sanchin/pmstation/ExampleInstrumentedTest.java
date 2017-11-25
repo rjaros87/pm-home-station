@@ -1,4 +1,4 @@
-package sanchin.pmstation;
+package pmstation;
 
 import android.content.Context;
 import android.support.test.InstrumentationRegistry;
@@ -21,6 +21,6 @@ public class ExampleInstrumentedTest {
         // Context of the app under test.
         Context appContext = InstrumentationRegistry.getTargetContext();
 
-        assertEquals("sanchin.pmstation", appContext.getPackageName());
+        assertEquals("pmstation", appContext.getPackageName());
     }
 }

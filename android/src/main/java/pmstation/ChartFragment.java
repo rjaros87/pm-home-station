@@ -1,4 +1,4 @@
-package sanchin.pmstation;
+package pmstation;
 
 import android.content.Context;
 import android.graphics.Color;

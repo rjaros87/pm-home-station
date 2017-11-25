@@ -1,4 +1,4 @@
-package sanchin.pmstation;
+package pmstation;
 
 import org.junit.Test;
 

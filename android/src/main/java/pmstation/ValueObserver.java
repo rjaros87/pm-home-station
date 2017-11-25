@@ -1,4 +1,4 @@
-package sanchin.pmstation;
+package pmstation;
 
 import pmstation.plantower.ParticulateMatterSample;
 

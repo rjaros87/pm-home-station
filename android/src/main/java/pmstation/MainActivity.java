@@ -1,4 +1,4 @@
-package sanchin.pmstation;
+package pmstation;
 
 import android.app.PendingIntent;
 import android.content.BroadcastReceiver;
@@ -37,7 +37,7 @@ public class MainActivity extends AppCompatActivity {
     static final public byte[] MODE_WAKEUP = {0x42, 0x4d, (byte) 0xe4, 0x00, 0x01, 0x01, 0x74};
     static final public byte[] MODE_SLEEP = {0x42, 0x4d, (byte) 0xe4, 0x00, 0x00, 0x01, 0x73};
     private static final String TAG = "MainActivity";
-    private static final String ACTION_USB_PERMISSION = "sanchin.pmstation.USB_PERMISSION";
+    private static final String ACTION_USB_PERMISSION = "pmstation.USB_PERMISSION";
     private static final int BAUD_RATE = 9600; // BaudRate. Change this value if you need
     static final private byte START_CHARACTERS = 0x42;
     ValuesFragment valuesFragment;
