@@ -16,7 +16,7 @@ public class PlanTowerDevice {
     static final private int TIMEOUT_READ = 2000; //[ms]
     static final private int TIMEOUT_WRITE = 2000; //[ms]
     static final private int DATA_LENGTH = 32; //[ms]
-    static final private byte START_CHARACTERS = 0x42;
+    static final private byte[] START_CHARACTERS = {0x42, 0x4d};
     static final public byte[] MODE_WAKEUP = {0x42, 0x4d, (byte) 0xe4, 0x00, 0x01, 0x01, 0x74};
     static final public byte[] MODE_SLEEP = {0x42, 0x4d, (byte) 0xe4, 0x00, 0x00, 0x01, 0x73};
     static final public byte[] MODE_ACTIVE = {0x42, 0x4d, (byte) 0xe4, 0x00, 0x00, 0x01, 0x71};
@@ -76,14 +76,14 @@ public class PlanTowerDevice {
         try {
             byte[] readBuffer = new byte[DATA_LENGTH];
             int numRead = this.comPort.readBytes(readBuffer, readBuffer.length);
-            int headIndex = indexOfArray(readBuffer, START_CHARACTERS);
+            int headIndex = indexOfArray(readBuffer, START_CHARACTERS[0]);
 
             if (headIndex > 0) {
                 this.comPort.readBytes(readBuffer, headIndex);
                 numRead = this.comPort.readBytes(readBuffer, readBuffer.length);
             }
 
-            if (numRead == DATA_LENGTH && readBuffer[0] == START_CHARACTERS) {
+            if (numRead == DATA_LENGTH && readBuffer[0] == START_CHARACTERS[0] && readBuffer[1] == START_CHARACTERS[1]) {
                 // remark #1: << 8 is ~2 times faster than *0x100 - compiler does not optimize that, not even JIT in runtime
                 // remark #2: it's necessary to ensure usigned bytes stays unsigned in java - either by using & 0xFF or Byte#toUnsignedInt (java 8)
                 int pm1_0 = (Byte.toUnsignedInt(readBuffer[10]) << 8) + Byte.toUnsignedInt(readBuffer[11]);
@@ -91,6 +91,14 @@ public class PlanTowerDevice {
                 int pm10 = (Byte.toUnsignedInt(readBuffer[14]) << 8) + Byte.toUnsignedInt(readBuffer[15]);
 
                 return new ParticulateMatterSample(pm1_0, pm2_5, pm10);
+            } else {
+                logger.debug(
+                        "Bad start characters: {}, {}, should be {} {}",
+                        String.format("0x%02X", readBuffer[0]),
+                        String.format("0x%02X", readBuffer[1]),
+                        String.format("0x%02X", START_CHARACTERS[0]),
+                        String.format("0x%02X", START_CHARACTERS[1])
+                );
             }
         } catch (Exception e) {
             e.printStackTrace();
