@@ -11,22 +11,28 @@ public class PlanTowerDevice {
     // TODO use 3rd party lib or move to seprate class and identify all supported OSes
     private static boolean isOSX = System.getProperty("os.name").toLowerCase().indexOf("mac") >= 0 || System.getProperty("os.name").toLowerCase().indexOf("darwin") >= 0;
     private static boolean isWindows = System.getProperty("os.name").toLowerCase().indexOf("windows") >= 0;
+    private static boolean isLinux = !isOSX && !isWindows;
 
     //TODO: read values from config file
-    static final private int TIMEOUT_READ = 2000; //[ms]
-    static final private int TIMEOUT_WRITE = 2000; //[ms]
-    static final private int DATA_LENGTH = 32; //[ms]
-    static final private byte[] START_CHARACTERS = {0x42, 0x4d};
-    static final public byte[] MODE_WAKEUP = {0x42, 0x4d, (byte) 0xe4, 0x00, 0x01, 0x01, 0x74};
-    static final public byte[] MODE_SLEEP = {0x42, 0x4d, (byte) 0xe4, 0x00, 0x00, 0x01, 0x73};
-    static final public byte[] MODE_ACTIVE = {0x42, 0x4d, (byte) 0xe4, 0x00, 0x00, 0x01, 0x71};
-    static final public byte[] MODE_PASSIVE = {0x42, 0x4d, (byte) 0xe4, 0x00, 0x00, 0x01, 0x70};
+    private static final int TIMEOUT_READ = 2000; //[ms]
+    private static final int TIMEOUT_WRITE = 2000; //[ms]
+    private static final int DATA_LENGTH = 32; //[ms]
+    private static final int BAUD_RATE = 9600;
+    private static final byte[] START_CHARACTERS = {0x42, 0x4d};
+    public static final byte[] MODE_WAKEUP = {0x42, 0x4d, (byte) 0xe4, 0x00, 0x01, 0x01, 0x74};
+    public static final byte[] MODE_SLEEP = {0x42, 0x4d, (byte) 0xe4, 0x00, 0x00, 0x01, 0x73};
+    public static final byte[] MODE_ACTIVE = {0x42, 0x4d, (byte) 0xe4, 0x00, 0x00, 0x01, 0x71};
+    public static final byte[] MODE_PASSIVE = {0x42, 0x4d, (byte) 0xe4, 0x00, 0x00, 0x01, 0x70};
 
     private SerialPort comPort;
 
     public void closePort() {
         if (comPort != null) {
-            comPort.closePort();
+            comPort.setComPortTimeouts(SerialPort.TIMEOUT_NONBLOCKING, 0, 0);
+            comPort.removeDataListener();
+            logger.debug("Going to close the port...");
+            boolean result = comPort.closePort();
+            logger.debug("Port closed? {}", result);
         }
     }
 
@@ -37,40 +43,43 @@ public class PlanTowerDevice {
             return false;
         }
         logger.debug("Got {} serial ports available", SerialPort.getCommPorts().length);
-        int portToUse = 0;
+        int portToUse = isLinux ? 0 : -1;
 
-        for (int i = 0; i < ports.length; i++) {
+        for (int i = 0; !isLinux && i < ports.length; i++) {
             SerialPort sp = ports[i];
             logger.debug("\t- {}, {}", sp.getSystemPortName(), sp.getDescriptivePortName());
-            // TODO I don't have linux/windows, so somebody please check and update the names accordingly etc - don't use [0] device for god's sake
             if (isSerialPort(sp)) {
                 portToUse = i;
             }
         }
+        if (portToUse < 0) {
+            logger.warn("No relevant serial usb found on this system!");
+            return false;
+        }
         comPort = SerialPort.getCommPorts()[portToUse];
         logger.info("Going to use the following port: {}", comPort.getSystemPortName());
 
+        comPort.setFlowControl(SerialPort.FLOW_CONTROL_DISABLED);
+        comPort.setComPortParameters(BAUD_RATE, 8,
+                SerialPort.ONE_STOP_BIT, SerialPort.NO_PARITY);
         comPort.setComPortTimeouts(
                 SerialPort.TIMEOUT_READ_BLOCKING | SerialPort.TIMEOUT_WRITE_BLOCKING,
                 TIMEOUT_READ,
                 TIMEOUT_WRITE
         );
-        return comPort.openPort();
+        
+        logger.debug("Going to open the port...");
+        boolean result = comPort.openPort();
+        logger.debug("Port opened? {}", result);
+        return result;
     }
 
     public void runCommand(byte[] command) {
         if (comPort != null) {
-            comPort.writeBytes(command, command.length);
+            int bytesWritten = comPort.writeBytes(command, command.length);
+            logger.debug("Wrote {} bytes of {} to the port.", bytesWritten, command.length);
         }
     }
-
-    public boolean isSerialPort(SerialPort sp) {
-        return ((isOSX && sp.getSystemPortName().startsWith("cu") && sp.getSystemPortName().toLowerCase().contains("usbserial")) ||
-                (isWindows && sp.getDescriptivePortName().toLowerCase().contains("serial")) // ||
-                //(isLinux)
-        );
-    }
-
 
     public ParticulateMatterSample read() {
         try {
@@ -115,5 +124,13 @@ public class PlanTowerDevice {
         }
 
         return -1;
+    }
+    
+    private boolean isSerialPort(SerialPort sp) {
+        // TODO I don't have linux/windows, so somebody please check and update the names accordingly etc - don't use [0] device for god's sake
+        return ((isOSX && sp.getSystemPortName().startsWith("cu") && sp.getSystemPortName().toLowerCase().contains("usbserial")) ||
+                (isWindows && sp.getDescriptivePortName().toLowerCase().contains("serial")) // ||
+                //(isLinux)
+        );
     }
 }
