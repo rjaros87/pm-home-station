@@ -1,6 +1,6 @@
 package pmstation;
 
-import pmstation.plantower.ParticulateMatterSample;
+import pmstation.core.plantower.ParticulateMatterSample;
 
 public interface ValueObserver {
     void onNewValue(ParticulateMatterSample sample);
