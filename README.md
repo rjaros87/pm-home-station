@@ -1,3 +1,8 @@
+[![EN](https://github.com/rjaros87/pm-station-usb/raw/master/www/flags/lang-US.png)](https://github.com/rjaros87/pm-station-usb) 
+[![PL](https://github.com/rjaros87/pm-station-usb/raw/master/www/flags/lang-PL.png)](https://translate.googleusercontent.com/translate_c?sl=en&tl=pl&u=https://github.com/rjaros87/pm-station-usb)
+[![DE](https://github.com/rjaros87/pm-station-usb/raw/master/www/flags/lang-DE.png)](https://translate.googleusercontent.com/translate_c?sl=en&tl=de&u=https://github.com/rjaros87/pm-station-usb) 
+
+
 # Home use particulate matter sensor on USB
 
 Since we live in huge polluted cities the air quality is on a very poor level. We have created this little project for monitoring our home environment. Let's live healthier life and start from filtering air and measuring its quality.
