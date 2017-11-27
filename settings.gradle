@@ -1,5 +1,9 @@
 rootProject.name = 'PMStation'
 
-include ':android'
 include ':core'
+
+if (System.env['ANDROID_HOME'] != null) {
+    include ':android'
+}
+
 include ':desktop'
