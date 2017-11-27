@@ -5,7 +5,7 @@
  */
 package pmstation.observers;
 
-import pmstation.plantower.ParticulateMatterSample;
+import pmstation.core.plantower.ParticulateMatterSample;
 
 public interface PlanTowerObserver {
     public void notify(ParticulateMatterSample sample);

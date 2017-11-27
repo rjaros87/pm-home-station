@@ -5,10 +5,13 @@
  */
 package pmstation.plantower;
 
-import pmstation.observers.PlanTowerObserver;
-
 import java.util.ArrayList;
 import java.util.List;
+
+import pmstation.core.plantower.ParticulateMatterSample;
+import pmstation.core.plantower.PlanTowerDevice;
+import pmstation.observers.PlanTowerObserver;
+import pmstation.serial.SerialUART;
 
 public class PlanTowerSensor {
     
@@ -17,14 +20,16 @@ public class PlanTowerSensor {
     private PlanTowerDevice planTowerDevice;
     private List<PlanTowerObserver> planTowerObserver;
     private Thread measurementsThread;
+    private SerialUART serialUART;
 
     public PlanTowerSensor() {
-        planTowerDevice = new PlanTowerDevice();
+        serialUART = new SerialUART();
+        planTowerDevice = new PlanTowerDevice(serialUART);
         planTowerObserver = new ArrayList<PlanTowerObserver>();
     }
 
     public boolean connectDevice() {
-        boolean openPort = planTowerDevice.openPort();
+        boolean openPort = serialUART.openPort();
         planTowerDevice.runCommand(PlanTowerDevice.MODE_WAKEUP);
         return openPort;
     }
@@ -34,7 +39,7 @@ public class PlanTowerSensor {
             measurementsThread.interrupt();
         }
         planTowerDevice.runCommand(PlanTowerDevice.MODE_SLEEP);
-        planTowerDevice.closePort();
+        serialUART.closePort();
     }
 
     public void startMeasurements() {

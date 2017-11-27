@@ -6,7 +6,7 @@
 package pmstation.observers;
 
 import org.knowm.xchart.XYChart;
-import pmstation.plantower.ParticulateMatterSample;
+import pmstation.core.plantower.ParticulateMatterSample;
 
 import javax.swing.*;
 import java.util.*;
