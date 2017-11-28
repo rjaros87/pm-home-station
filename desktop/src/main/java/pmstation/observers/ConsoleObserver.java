@@ -5,13 +5,13 @@
  */
 package pmstation.observers;
 
-import java.time.Instant;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.time.Instant;
+
 import pmstation.configuration.Constants;
-import pmstation.plantower.ParticulateMatterSample;
+import pmstation.core.plantower.ParticulateMatterSample;
 
 public class ConsoleObserver implements PlanTowerObserver {
     

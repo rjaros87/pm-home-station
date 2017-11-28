@@ -1,7 +1,6 @@
 package pmstation.core.plantower;
 
-import pmstation.core.serial.SerialUARTInterface;
-import pmstation.core.serial.SerialUARTUtils;
+import pmstation.core.serial.ISerialUART;
 
 public class PlanTowerDevice {
     //TODO: read values from config file
@@ -13,9 +12,9 @@ public class PlanTowerDevice {
     public static final byte[] MODE_ACTIVE = {0x42, 0x4d, (byte) 0xe4, 0x00, 0x00, 0x01, 0x71};
     public static final byte[] MODE_PASSIVE = {0x42, 0x4d, (byte) 0xe4, 0x00, 0x00, 0x01, 0x70};
 
-    private SerialUARTInterface serialUart;
+    private ISerialUART serialUart;
 
-    public PlanTowerDevice(SerialUARTInterface serialUart) {
+    public PlanTowerDevice(ISerialUART serialUart) {
         this.serialUart = serialUart;
     }
 
@@ -29,7 +28,7 @@ public class PlanTowerDevice {
         try {
             byte[] readBuffer;
             readBuffer = serialUart.readBytes(DATA_LENGTH);
-            int headIndex = indexOfArray(readBuffer, START_CHARACTERS[0]);
+            int headIndex = indexOfArray(readBuffer, START_CHARACTERS);
 
             if (headIndex > 0) {
                 serialUart.readBytes(headIndex);
@@ -45,14 +44,14 @@ public class PlanTowerDevice {
 
                 return new ParticulateMatterSample(pm1_0, pm2_5, pm10);
             } else {
-                SerialUARTUtils.simpleLog("Bad start characters: " +
-                        String.format("0x%02X", readBuffer[0]) +
-                        ", " + String.format("0x%02X", readBuffer[1])
-                        + ", should be " +
-                        String.format("0x%02X", START_CHARACTERS[0]) +
-                        " " + String.format("0x%02X", START_CHARACTERS[1]),
-                        "DEBUG",
-                        PlanTowerDevice.class);
+                //todo, however it might not be needed, since indexOfArray now looks for both chars
+//                logger.debug(
+//                        "Bad start characters: {}, {}, should be {} {}",
+//                        String.format("0x%02X", readBuffer[0]),
+//                        String.format("0x%02X", readBuffer[1]),
+//                        String.format("0x%02X", START_CHARACTERS[0]),
+//                        String.format("0x%02X", START_CHARACTERS[1])
+//                            );
             }
         } catch (Exception e) {
             e.printStackTrace();
@@ -61,13 +60,19 @@ public class PlanTowerDevice {
         return null;
     }
 
-    private int indexOfArray(byte[] sampleArray, byte needle) {
-        for (int i = 0; (i < sampleArray.length); i++) {
-            if (sampleArray[i] == needle) {
+    public static int indexOfArray(byte[] sampleArray, byte[] needle) {
+        for (int i = 0; i < sampleArray.length - needle.length + 1; ++i) {
+            boolean found = true;
+            for (int j = 0; j < needle.length; ++j) {
+                if (sampleArray[i + j] != needle[j]) {
+                    found = false;
+                    break;
+                }
+            }
+            if (found) {
                 return i;
             }
         }
-
         return -1;
     }
 }

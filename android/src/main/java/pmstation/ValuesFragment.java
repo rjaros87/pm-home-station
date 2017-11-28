@@ -71,14 +71,14 @@ public class ValuesFragment extends Fragment implements ValueObserver {
     public void onAttach(Context context) {
         super.onAttach(context);
         MainActivity activity = (MainActivity) getActivity();
-        activity.addValueObserver(this);
+        activity.getSensor().addValueObserver(this);
     }
 
     @Override
     public void onDetach() {
         super.onDetach();
         MainActivity activity = (MainActivity) getActivity();
-        activity.removeValueObserver(this);
+        activity.getSensor().removeValueObserver(this);
     }
 
     @Override

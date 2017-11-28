@@ -25,7 +25,7 @@ public class PlanTowerSensor {
     public PlanTowerSensor() {
         serialUART = new SerialUART();
         planTowerDevice = new PlanTowerDevice(serialUART);
-        planTowerObserver = new ArrayList<PlanTowerObserver>();
+        planTowerObserver = new ArrayList<>();
     }
 
     public boolean connectDevice() {
@@ -66,7 +66,7 @@ public class PlanTowerSensor {
         planTowerObserver.add(observer);
     }
 
-    public void notifyAllObservers(ParticulateMatterSample particulateMatterSample) {
+    private void notifyAllObservers(ParticulateMatterSample particulateMatterSample) {
         for (PlanTowerObserver observer : planTowerObserver) {
             observer.notify(particulateMatterSample);
         }
