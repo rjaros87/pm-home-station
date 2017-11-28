@@ -1,6 +1,6 @@
 package pmstation.observers;
 
-import pmstation.plantower.ParticulateMatterSample;
+import pmstation.core.plantower.ParticulateMatterSample;
 
 import javax.swing.*;
 import java.text.SimpleDateFormat;
