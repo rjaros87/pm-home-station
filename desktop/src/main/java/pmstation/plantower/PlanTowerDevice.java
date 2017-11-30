@@ -42,7 +42,7 @@ public class PlanTowerDevice {
             logger.warn("No serial ports available!");
             return false;
         }
-        logger.debug("Got {} serial ports available", SerialPort.getCommPorts().length);
+        logger.debug("Got {} serial ports available", ports.length);
         int portToUse = isLinux ? 0 : -1;
 
         for (int i = 0; !isLinux && i < ports.length; i++) {
@@ -56,7 +56,7 @@ public class PlanTowerDevice {
             logger.warn("No relevant serial usb found on this system!");
             return false;
         }
-        comPort = SerialPort.getCommPorts()[portToUse];
+        comPort = ports[portToUse];
         logger.info("Going to use the following port: {}", comPort.getSystemPortName());
 
         comPort.setFlowControl(SerialPort.FLOW_CONTROL_DISABLED);
