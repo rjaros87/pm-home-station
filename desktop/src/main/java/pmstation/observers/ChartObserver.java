@@ -11,7 +11,7 @@ import pmstation.plantower.ParticulateMatterSample;
 import javax.swing.*;
 import java.util.*;
 
-public class JframeChartObserver implements PlanTowerObserver {
+public class ChartObserver implements PlanTowerObserver {
     private XYChart chart;
     private JPanel chartPanel;
     private List<Integer> pm1_0 = new ArrayList<Integer>();
@@ -46,7 +46,6 @@ public class JframeChartObserver implements PlanTowerObserver {
                 chart.updateXYSeries("PM 2.5", null, pm2_5.subList(min, max), null);
                 chart.updateXYSeries("PM 10", null, pm10.subList(min, max), null);
             }
-//            pm1_0.
             chartPanel.revalidate();
             chartPanel.repaint();
         }

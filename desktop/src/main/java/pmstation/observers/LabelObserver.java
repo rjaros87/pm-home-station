@@ -5,22 +5,26 @@
  */
 package pmstation.observers;
 
+import java.util.HashMap;
+
+import javax.swing.JLabel;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import pmstation.configuration.Constants;
 import pmstation.plantower.ParticulateMatterSample;
 
-import javax.swing.*;
-import java.text.SimpleDateFormat;
-import java.util.HashMap;
-import java.util.Locale;
-
-public class JframeComponentsObserver implements PlanTowerObserver {
+public class LabelObserver implements PlanTowerObserver {
+    
+    private static final Logger logger = LoggerFactory.getLogger(LabelObserver.class);
+    
     private JLabel deviceStatus, measurmentTime, pm1_0, pm2_5, pm10;
-    static final SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss",
-                                                                            Locale.getDefault());
 
     public void setJframeComponents(HashMap<String, JLabel> components) {
         deviceStatus = get(components, "deviceStatus");
         measurmentTime = get(components, "measurmentTime");
-        pm1_0 = get(components, "pm1_0");
+        pm1_0 = get(components, "pm1_0");   // TODO don't use hardcoded labels like that
         pm2_5 = get(components, "pm2_5");
         pm10 = get(components, "pm10");
     }
@@ -32,18 +36,19 @@ public class JframeComponentsObserver implements PlanTowerObserver {
         } else {
             String unit = " \u03BCg/m\u00B3";
             deviceStatus.setText("Status: Measuring ...");
-            measurmentTime.setText(dateFormat.format(sample.getDate()));
+            measurmentTime.setText(Constants.DATE_FORMAT.format(sample.getDate()));
             pm1_0.setText(String.valueOf(sample.getPm1_0()) + unit);
             pm2_5.setText(String.valueOf(sample.getPm2_5()) + unit);
             pm10.setText(String.valueOf(sample.getPm10()) + unit);
         }
     }
-    
+
     private JLabel get(HashMap<String, JLabel> components, String name) {
-    		JLabel component = components.get(name);
-    		if (component == null) {
-    			throw new IllegalArgumentException("Component of name: " + name + " not found! Going down.");
-    		}
-    		return component;
+        JLabel component = components.get(name);
+        if (component == null) {
+            logger.error("Component of name: {} not found! Going down.", name);
+            throw new IllegalArgumentException("Component of name: " + name + " not found! Going down.");
+        }
+        return component;
     }
 }

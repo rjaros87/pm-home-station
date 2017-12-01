@@ -35,19 +35,23 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import net.miginfocom.swing.MigLayout;
-import pmstation.observers.JframeChartObserver;
-import pmstation.observers.JframeComponentsObserver;
+import pmstation.configuration.Constants;
+import pmstation.observers.ChartObserver;
+import pmstation.observers.ConsoleObserver;
+import pmstation.observers.LabelObserver;
 import pmstation.plantower.PlanTowerSensor;
 
 public class Station {
     
     private static final Logger logger = LoggerFactory.getLogger(Station.class);
-    private static final String PROJECT_URL = "https://github.com/rjaros87/pm-station-usb";
 
-    public static void main(String[] args) {
-        
-        PlanTowerSensor planTowerSensor = new PlanTowerSensor();
-
+    private final PlanTowerSensor planTowerSensor;
+    
+    public Station(PlanTowerSensor planTowerSensor) {
+        this.planTowerSensor = planTowerSensor;
+    }
+    
+    public void showUI() {
         JFrame frame = new JFrame("Particulate matter station");
         frame.getContentPane().setMinimumSize(new Dimension(100, 100));
         frame.getContentPane().setPreferredSize(new Dimension(740, 480));
@@ -69,10 +73,11 @@ public class Station {
 
         JPanel chartPanel = new XChartPanel<XYChart>(chart);
         chartPanel.setMinimumSize(new Dimension(50, 50));
-        JframeChartObserver chartObserve = new JframeChartObserver();
+        ChartObserver chartObserve = new ChartObserver();
         chartObserve.setChart(chart);
         chartObserve.setChartPanel(chartPanel);
         planTowerSensor.addObserver(chartObserve);
+        planTowerSensor.addObserver(new ConsoleObserver());
 
         JLabel deviceStatus = new JLabel("Status: ");
         jFrameComponentsMap.put("deviceStatus", deviceStatus);
@@ -102,19 +107,19 @@ public class Station {
             }
         });
         
-        JLabel appNameLink = new JLabel("pm-station-usb");
+        JLabel appNameLink = new JLabel(Constants.PROJECT_NAME);
         appNameLink.setCursor(new Cursor(Cursor.HAND_CURSOR));
         appNameLink.addMouseListener(new MouseAdapter() {
             @Override
             public void mouseClicked(MouseEvent e) {
                 try {
-                    Desktop.getDesktop().browse(new URI(PROJECT_URL));
+                    Desktop.getDesktop().browse(new URI(Constants.PROJECT_URL));
                 } catch (URISyntaxException | IOException ex) {
                     logger.warn("Failed to parse URI", ex);
                 }
             }
         });
-        appNameLink.setToolTipText("Visit: " + PROJECT_URL);
+        appNameLink.setToolTipText("Visit: " + Constants.PROJECT_URL);
         appNameLink.setHorizontalAlignment(SwingConstants.RIGHT);
         frame.getContentPane().setLayout(new MigLayout("", "[50px][46px][6px][137px][271px]", "[29px][16px][338px][16px]"));
         frame.getContentPane().add(connectionBtn, "cell 0 0,alignx left,aligny top");
@@ -157,7 +162,7 @@ public class Station {
         frame.getContentPane().add(chartPanel, "cell 0 2 5 1,grow");
         frame.getContentPane().add(appNameLink, "cell 2 3 3 1,alignx right,aligny top");
 
-        JframeComponentsObserver jframeComponentsObserver = new JframeComponentsObserver();
+        LabelObserver jframeComponentsObserver = new LabelObserver();
         jframeComponentsObserver.setJframeComponents(jFrameComponentsMap);
         planTowerSensor.addObserver(jframeComponentsObserver);
         frame.pack();

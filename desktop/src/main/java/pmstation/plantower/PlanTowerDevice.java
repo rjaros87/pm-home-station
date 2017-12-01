@@ -5,18 +5,15 @@
  */
 package pmstation.plantower;
 
-import com.fazecast.jSerialComm.*;
+import org.apache.commons.lang3.SystemUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import com.fazecast.jSerialComm.SerialPort;
 
 public class PlanTowerDevice {
 
     private static final Logger logger = LoggerFactory.getLogger(PlanTowerDevice.class);
-
-    // TODO use 3rd party lib or move to seprate class and identify all supported OSes
-    private static boolean isOSX = System.getProperty("os.name").toLowerCase().indexOf("mac") >= 0 || System.getProperty("os.name").toLowerCase().indexOf("darwin") >= 0;
-    private static boolean isWindows = System.getProperty("os.name").toLowerCase().indexOf("windows") >= 0;
-    private static boolean isLinux = !isOSX && !isWindows;
 
     //TODO: read values from config file
     private static final int TIMEOUT_READ = 2000; //[ms]
@@ -48,9 +45,9 @@ public class PlanTowerDevice {
             return false;
         }
         logger.debug("Got {} serial ports available", ports.length);
-        int portToUse = isLinux ? 0 : -1;
+        int portToUse = SystemUtils.IS_OS_LINUX ? 0 : -1;
 
-        for (int i = 0; !isLinux && i < ports.length; i++) {
+        for (int i = 0; !SystemUtils.IS_OS_LINUX && i < ports.length; i++) {
             SerialPort sp = ports[i];
             logger.debug("\t- {}, {}", sp.getSystemPortName(), sp.getDescriptivePortName());
             if (isSerialPort(sp)) {
@@ -132,9 +129,9 @@ public class PlanTowerDevice {
     }
     
     private boolean isSerialPort(SerialPort sp) {
-        // TODO I don't have linux/windows, so somebody please check and update the names accordingly etc - don't use [0] device for god's sake
-        return ((isOSX && sp.getSystemPortName().startsWith("cu") && sp.getSystemPortName().toLowerCase().contains("usbserial")) ||
-                (isWindows && sp.getDescriptivePortName().toLowerCase().contains("serial")) // ||
+        // TODO auto-discovery for linux
+        return ((SystemUtils.IS_OS_MAC_OSX && sp.getSystemPortName().startsWith("cu") && sp.getSystemPortName().toLowerCase().contains("usbserial")) ||
+                (SystemUtils.IS_OS_WINDOWS && sp.getDescriptivePortName().toLowerCase().contains("serial")) // ||
                 //(isLinux)
         );
     }

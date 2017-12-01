@@ -5,29 +5,24 @@
  */
 package pmstation.observers;
 
-import pmstation.plantower.ParticulateMatterSample;
-
-import javax.swing.*;
 import java.time.Instant;
 
-public class ConsoleObserver implements PlanTowerObserver {
-    private JTextArea jTextArea;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
-    public void setTextArea(JTextArea textArea) {
-        this.jTextArea = textArea;
-    }
+import pmstation.configuration.Constants;
+import pmstation.plantower.ParticulateMatterSample;
+
+public class ConsoleObserver implements PlanTowerObserver {
+    
+    private static final Logger logger = LoggerFactory.getLogger(ConsoleObserver.class);
 
     @Override
     public void notify(ParticulateMatterSample sample) {
         if (sample == null) {
-            jTextArea.setText(Instant.now().toString() + "PlanTower not ready");
+            logger.warn(Instant.now().toString() + " sensor not ready");
         } else {
-            jTextArea.setText(
-                    JframeComponentsObserver.dateFormat.format(sample.getDate())
-                            + " >>> PM1.0: " + sample.getPm1_0()
-                            + ", PM2.5: " + sample.getPm2_5()
-                            + ", PM10: " + sample.getPm10()
-            );
+            logger.info("{} >>> PM1.0: {}, PM2.5: {}, PM10: {}", Constants.DATE_FORMAT.format(sample.getDate()), sample.getPm1_0(), sample.getPm2_5(), sample.getPm10());
         }
     }
 }

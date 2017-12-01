@@ -11,6 +11,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class PlanTowerSensor {
+    
+    private static final long DEFAULT_INTERVAL = 3000L;
+
     private PlanTowerDevice planTowerDevice;
     private List<PlanTowerObserver> planTowerObserver;
     private Thread measurementsThread;
@@ -35,11 +38,15 @@ public class PlanTowerSensor {
     }
 
     public void startMeasurements() {
+        startMeasurements(DEFAULT_INTERVAL);
+    }
+    
+    public void startMeasurements(long interval) {
         measurementsThread = new Thread(() -> {
             while (!Thread.currentThread().isInterrupted()) {
                 try {
                     notifyAllObservers(planTowerDevice.read());
-                    Thread.sleep(3000L);
+                    Thread.sleep(interval);
                 } catch (InterruptedException e) {
                     System.out.println("Thread interrupted");
                     Thread.currentThread().interrupt();
@@ -48,7 +55,6 @@ public class PlanTowerSensor {
         });
 
         measurementsThread.start();
-
     }
 
     public void addObserver(PlanTowerObserver observer) {
