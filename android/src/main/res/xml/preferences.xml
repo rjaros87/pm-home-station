@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <PreferenceCategory
+        android:title="General">
+
+        <ListPreference
+            android:key="sampling_interval"
+            android:title="Sampling interval"
+            android:defaultValue="@string/pref_sampling_interval_default"
+            android:entries="@array/interval_labels"
+            android:entryValues="@array/interval_values"/>
+
+        <Preference
+            android:title="Licenses"
+            android:key="attribution"/>
+    </PreferenceCategory>
+</PreferenceScreen>

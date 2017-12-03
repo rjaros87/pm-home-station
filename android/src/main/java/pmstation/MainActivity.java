@@ -10,6 +10,7 @@ import android.graphics.drawable.Drawable;
 import android.hardware.usb.UsbManager;
 import android.os.Build;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
@@ -101,6 +102,7 @@ public class MainActivity extends AppCompatActivity implements IPlanTowerObserve
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        PreferenceManager.setDefaultValues(this, R.xml.preferences, false);
         setContentView(R.layout.activity_main);
         sensor = new Sensor(this);
         sensor.addValueObserver(this);
@@ -203,6 +205,11 @@ public class MainActivity extends AppCompatActivity implements IPlanTowerObserve
                 if (sensor.wakeUp()) {
                     setStatus(true);
                 }
+                return true;
+            case R.id.action_settings:
+                getFragmentManager().beginTransaction()
+                                    .replace(android.R.id.content, new SettingsFragment()).addToBackStack(null)
+                                    .commit();
                 return true;
         }
         return super.onOptionsItemSelected(item);

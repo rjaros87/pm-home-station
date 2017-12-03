@@ -3,9 +3,11 @@ package pmstation.plantower;
 import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.hardware.usb.UsbDevice;
 import android.hardware.usb.UsbDeviceConnection;
 import android.hardware.usb.UsbManager;
+import android.preference.PreferenceManager;
 import android.util.Log;
 
 import com.felhr.usbserial.UsbSerialDevice;
@@ -17,9 +19,9 @@ import java.util.List;
 import java.util.Map;
 
 import pmstation.MainActivity;
+import pmstation.core.plantower.IPlanTowerObserver;
 import pmstation.core.plantower.ParticulateMatterSample;
 import pmstation.core.plantower.PlanTowerDevice;
-import pmstation.core.plantower.IPlanTowerObserver;
 
 public class Sensor {
     private static final int BAUD_RATE = 9600;
@@ -27,13 +29,14 @@ public class Sensor {
     private UsbManager usbManager;
     private UsbDevice device;
     private UsbDeviceConnection connection;
-    //    private SerialUART serialUART;
     private UsbSerialDevice serialPort;
     private boolean serialPortConnected;
     private boolean running = true;
     private boolean requested = false;
     private Context context;
+    private SharedPreferences preferences;
     private List<IPlanTowerObserver> valueObservers = new ArrayList<>();
+    private int sampleCounter = 0;
 
     private UsbSerialInterface.UsbReadCallback readCallback = bytes -> {
         final ParticulateMatterSample sample = PlanTowerDevice.parse(bytes);
@@ -41,7 +44,14 @@ public class Sensor {
             notifyAllObservers(sample);
         }
         try {
-            Thread.sleep(1000L);
+            wakeUp();
+            sampleCounter = ++sampleCounter % 10;
+            String intervalPref = preferences.getString("sampling_interval", "1000");
+            int interval = Integer.parseInt(intervalPref);
+            if (interval > 3000 && sampleCounter == 0) {
+                sleep();
+            }
+            Thread.sleep(sampleCounter == 0 ? interval : 1000);
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
@@ -51,6 +61,7 @@ public class Sensor {
         this.context = context;
         this.serialPortConnected = false;
         this.usbManager = (UsbManager) context.getSystemService(Context.USB_SERVICE);
+        this.preferences = PreferenceManager.getDefaultSharedPreferences(context);
     }
 
     public void findSerialPortDevice() {
@@ -125,8 +136,10 @@ public class Sensor {
      * @return whether the sensor is connected or not
      */
     public boolean sleep() {
-        write(PlanTowerDevice.MODE_SLEEP);
-        running = false;
+        if (running) {
+            write(PlanTowerDevice.MODE_SLEEP);
+            running = false;
+        }
         return isConnected();
     }
 
@@ -136,8 +149,10 @@ public class Sensor {
      * @return whether the sensor is connected or not
      */
     public boolean wakeUp() {
-        write(PlanTowerDevice.MODE_WAKEUP);
-        running = true;
+        if (!running) {
+            write(PlanTowerDevice.MODE_WAKEUP);
+            running = true;
+        }
         return isConnected();
     }
 
