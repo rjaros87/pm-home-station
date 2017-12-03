@@ -123,7 +123,7 @@ public class Station {
                 if (planTowerSensor.connectDevice()) {
                     connectionBtn.setText("Disconnect");
                     deviceStatus.setText("Status: Connected");
-                    planTowerSensor.startMeasurements();
+                    planTowerSensor.startMeasurements(Config.instance().to().getInt(Config.Entry.INTERVAL.key(), Constants.DEFAULT_INTERVAL) * 1000L);
                 }
                 break;
             case "Disconnect":
@@ -215,7 +215,7 @@ public class Station {
             if (planTowerSensor.connectDevice()) {
                 connectionBtn.setText("Disconnect");
                 deviceStatus.setText("Status: Connected");
-                planTowerSensor.startMeasurements();
+                planTowerSensor.startMeasurements(Config.instance().to().getInt(Config.Entry.INTERVAL.key(), Constants.DEFAULT_INTERVAL) * 1000L);
             } else {
                 deviceStatus.setText("Status: Device not found");
             }
