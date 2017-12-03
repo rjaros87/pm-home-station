@@ -31,20 +31,18 @@ public class Start {
                 HelpFormatter formatter = new HelpFormatter();
                 System.out.println(Constants.PROJECT_NAME + ", " + Constants.PROJECT_URL);
                 formatter.printHelp(Constants.PROJECT_NAME, options, true);
-                return;
             } else if (line.hasOption("version")) {
                 System.out.println("version: " + Constants.VERSION);
-                return;
+            } else {
+                logger.info("Starting pm-station-usb ({})...", Constants.PROJECT_URL);
+                PlanTowerSensor planTowerSensor = new PlanTowerSensor();
+                Station station = new Station(planTowerSensor);
+                station.showUI();
             }
         } catch (ParseException e) {
             logger.error("Ooops", e);
             return;
         }
-        
-        logger.info("Starting pm-station-usb ({})...", Constants.PROJECT_URL);
-        PlanTowerSensor planTowerSensor = new PlanTowerSensor();
-        Station station = new Station(planTowerSensor);
-        station.showUI();
     }
     
     private static Options getOptions() {

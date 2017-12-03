@@ -17,5 +17,9 @@ public class Constants {
     public static final String PROJECT_URL = "https://github.com/rjaros87/pm-station-usb";
     public static final Locale DEFAULT_LOCALE = Locale.getDefault(); 
     public static final FastDateFormat DATE_FORMAT = FastDateFormat.getInstance("yyyy-MM-dd HH:mm:ss", DEFAULT_LOCALE);
+    public static final int DEFAULT_INTERVAL = 3; // in sec
+    public static final int MIN_INTERVAL = 1;
+    public static final int MAX_INTERVAL = 3600;
+    
 
 }
