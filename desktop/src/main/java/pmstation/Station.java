@@ -47,6 +47,7 @@ import net.miginfocom.swing.MigLayout;
 import pmstation.configuration.Config;
 import pmstation.configuration.Constants;
 import pmstation.dialogs.ConfigurationDlg;
+import pmstation.observers.AQIColor;
 import pmstation.observers.ChartObserver;
 import pmstation.observers.ConsoleObserver;
 import pmstation.observers.LabelObserver;
@@ -99,7 +100,7 @@ public class Station {
 
         });
 
-        HashMap<String, JLabel> jFrameComponentsMap = new HashMap<>();
+        HashMap<String, JLabel> labelsToBeUpdated = new HashMap<>();
         XYChart chart = new XYChartBuilder().xAxisTitle("sample").yAxisTitle("\u03BCg/m\u00B3").build();
         chart.getStyler().setLegendPosition(Styler.LegendPosition.OutsideE);
         chart.getStyler().setMarkerSize(2);
@@ -137,7 +138,7 @@ public class Station {
         frame.getContentPane().setLayout(new MigLayout("", "[50px][100px:200px,grow][100px]", "[29px][16px][338px][16px]"));
         frame.getContentPane().add(connectionBtn, "cell 0 0,alignx left,aligny center");
         
-        jFrameComponentsMap.put("deviceStatus", deviceStatus);
+        labelsToBeUpdated.put("deviceStatus", deviceStatus);
         frame.getContentPane().add(deviceStatus, "flowx,cell 1 0,alignx left,aligny center");
         
         JLabel appNameLink = new JLabel(Constants.PROJECT_NAME);
@@ -177,7 +178,7 @@ public class Station {
                         JLabel pm1_0 = new JLabel();
                         panel.add(pm1_0, "cell 2 0,growx,aligny top");
                         pm1_0.setText("----");
-                        jFrameComponentsMap.put("pm1_0", pm1_0);
+                        labelsToBeUpdated.put("pm1_0", pm1_0);
                         
                                 JLabel pm2_5Label = new JLabel("PM 2.5:");
                                 panel.add(pm2_5Label, "cell 4 0,alignx left,aligny top");
@@ -185,7 +186,7 @@ public class Station {
                                         JLabel pm2_5 = new JLabel();
                                         panel.add(pm2_5, "cell 6 0,growx,aligny top");
                                         pm2_5.setText("----");
-                                        jFrameComponentsMap.put("pm2_5", pm2_5);
+                                        labelsToBeUpdated.put("pm2_5", pm2_5);
                                         
                                                 JLabel pm10Label = new JLabel("PM 10:");
                                                 panel.add(pm10Label, "cell 8 0,alignx left,aligny top");
@@ -193,19 +194,19 @@ public class Station {
                                                         JLabel pm10 = new JLabel();
                                                         panel.add(pm10, "cell 10 0,alignx left,aligny top");
                                                         pm10.setText("----");
-                                                        jFrameComponentsMap.put("pm10", pm10);
+                                                        labelsToBeUpdated.put("pm10", pm10);
                                                         
                                                                 JLabel pmMeasurementTime_label = new JLabel("Time: ");
                                                                 panel.add(pmMeasurementTime_label, "cell 0 1 2 1,alignx left");
                                                                 JLabel pmMeasurementTime = new JLabel();
                                                                 panel.add(pmMeasurementTime, "cell 2 1 9 1");
-                                                                jFrameComponentsMap.put("measurementTime", pmMeasurementTime);
+                                                                labelsToBeUpdated.put("measurementTime", pmMeasurementTime);
         frame.getContentPane().add(chartPanel, "cell 0 2 3 1,grow");
         frame.getContentPane().add(appNameLink, "cell 2 3 3 1,alignx right,aligny top");
 
-        LabelObserver jframeComponentsObserver = new LabelObserver();
-        jframeComponentsObserver.setJframeComponents(jFrameComponentsMap);
-        planTowerSensor.addObserver(jframeComponentsObserver);
+        LabelObserver labelObserver = new LabelObserver();
+        labelObserver.setLabelsToUpdate(labelsToBeUpdated);
+        planTowerSensor.addObserver(labelObserver);
         frame.pack();
         setScreenAndDimensions(frame);  // must be after frame.pack()
         frame.setVisible(true);
