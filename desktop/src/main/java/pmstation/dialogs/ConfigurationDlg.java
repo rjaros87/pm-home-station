@@ -48,6 +48,7 @@ public class ConfigurationDlg {
         frame.setResizable(false);
         frame.setBounds(350, 350, 513, 397);
         frame.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
+        frame.setLocationRelativeTo(mainFrame);
         
         JPanel panel = new JPanel();
         panel.setBorder(new TitledBorder(null, "General", TitledBorder.LEADING, TitledBorder.TOP, null, null));

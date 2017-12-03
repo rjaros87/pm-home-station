@@ -1,4 +1,11 @@
-https://www.iconfinder.com/icons/430115/configuration_settings_icon#size=128
+btn_config.png:
 
+https://www.iconfinder.com/icons/430115/configuration_settings_icon#size=128
 Free for commercial use (http://bogdanrosu.com/)
+
+
+app-icon.png (copy of ic_launcher-web.png):
+
+https://github.com/rjaros87/pm-station-usb
+
 

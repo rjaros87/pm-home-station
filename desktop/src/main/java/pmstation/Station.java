@@ -11,6 +11,7 @@ import java.awt.Desktop;
 import java.awt.Dimension;
 import java.awt.GraphicsDevice;
 import java.awt.GraphicsEnvironment;
+import java.awt.Image;
 import java.awt.Point;
 import java.awt.Rectangle;
 import java.awt.event.ComponentAdapter;
@@ -20,6 +21,8 @@ import java.awt.event.MouseEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.io.IOException;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.HashMap;
@@ -65,6 +68,7 @@ public class Station {
      */
     public void showUI() {
         final JFrame frame = new JFrame("Particulate matter station");
+        setIcon(frame);
 
         frame.getContentPane().setMinimumSize(new Dimension(474, 180));
         frame.getContentPane().setPreferredSize(new Dimension(740, 480));
@@ -221,6 +225,24 @@ public class Station {
         connectionBtn.setEnabled(true);
     }
     
+    private void setIcon(JFrame frame) {
+        ImageIcon icon = new ImageIcon(Station.class.getResource("/pmstation/app-icon.png"));
+        frame.setIconImage(icon.getImage());
+        if (SystemUtils.IS_OS_MAC_OSX) {
+            try {
+                // equivalent of:
+                // com.apple.eawt.Application.getApplication().setDockIconImage( new ImageIcon(Station.class.getResource("/pmstation/btn_config.png")).getImage());
+                Class<?> clazz = Class.forName( "com.apple.eawt.Application", false, null);
+                Method methodGetApp = clazz.getMethod("getApplication");
+                Method methodSetDock = clazz.getMethod("setDockIconImage", Image.class);
+                methodSetDock.invoke(methodGetApp.invoke(null), icon.getImage());
+            } catch (ClassNotFoundException | NoSuchMethodException | SecurityException | IllegalAccessException | IllegalArgumentException | InvocationTargetException e) {
+                logger.error("Unable to set dock icon", e);
+            }
+            
+        }
+    }
+
     private void saveScreenAndDimensions(JFrame frame) {
         // check multiple displays
         GraphicsEnvironment ge = GraphicsEnvironment.getLocalGraphicsEnvironment();
