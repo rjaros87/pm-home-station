@@ -28,7 +28,9 @@ public class PlanTowerSensor {
 
     public boolean connectDevice() {
         boolean openPort = serialUART.openPort();
-        serialUART.writeBytes(PlanTowerDevice.MODE_WAKEUP);
+        if (openPort) {
+            serialUART.writeBytes(PlanTowerDevice.MODE_WAKEUP);
+        }
         return openPort;
     }
 
@@ -36,8 +38,10 @@ public class PlanTowerSensor {
         if (measurementsThread != null && !measurementsThread.isInterrupted()) {
             measurementsThread.interrupt();
         }
-        serialUART.writeBytes(PlanTowerDevice.MODE_SLEEP);
-        serialUART.closePort();
+        if (serialUART.isConnected()) {
+            serialUART.writeBytes(PlanTowerDevice.MODE_SLEEP);
+            serialUART.closePort();
+        }
     }
 
     public void startMeasurements() {

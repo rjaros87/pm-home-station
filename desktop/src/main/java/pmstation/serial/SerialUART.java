@@ -72,14 +72,18 @@ public class SerialUART implements ISerialUART {
     public byte[] readBytes(int dataLenght) {
         byte[] readBuffer = new byte[dataLenght];
         comPort.readBytes(readBuffer, readBuffer.length);
-        logger.debug("ReadBuffer:\n{}", SerialUARTUtils.bytesToHexString(readBuffer));
+        logger.trace("ReadBuffer:\n{}", SerialUARTUtils.bytesToHexString(readBuffer));
 
         return readBuffer;
     }
 
     public void writeBytes(byte[] writeBuffer) {
-        logger.debug("ReadBuffer:\n{}", SerialUARTUtils.bytesToHexString(writeBuffer));
+        logger.trace("ReadBuffer:\n{}", SerialUARTUtils.bytesToHexString(writeBuffer));
         comPort.writeBytes(writeBuffer, writeBuffer.length);
+    }
+
+    public boolean isConnected() {
+        return comPort.isOpen();
     }
 
     private boolean isSerialPort(SerialPort sp) {

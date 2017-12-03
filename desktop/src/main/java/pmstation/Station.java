@@ -6,6 +6,8 @@
 
 package pmstation;
 
+import java.awt.BorderLayout;
+import java.awt.Color;
 import java.awt.Cursor;
 import java.awt.Desktop;
 import java.awt.Dimension;
@@ -33,6 +35,7 @@ import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.SwingConstants;
+import javax.swing.border.BevelBorder;
 import javax.swing.border.TitledBorder;
 
 import org.apache.commons.lang3.SystemUtils;
@@ -47,7 +50,6 @@ import net.miginfocom.swing.MigLayout;
 import pmstation.configuration.Config;
 import pmstation.configuration.Constants;
 import pmstation.dialogs.ConfigurationDlg;
-import pmstation.observers.AQIColor;
 import pmstation.observers.ChartObserver;
 import pmstation.observers.ConsoleObserver;
 import pmstation.observers.LabelObserver;
@@ -115,6 +117,10 @@ public class Station {
         planTowerSensor.addObserver(new ConsoleObserver());
 
         JLabel deviceStatus = new JLabel("Status: ");
+        deviceStatus.setVisible(false); // TODO to be removed?
+        JLabel labelStatus = new JLabel("Status..."); // use this one instead...
+        labelsToBeUpdated.put("deviceStatus", labelStatus);
+        
         JButton connectionBtn = new JButton("Connect");
         connectionBtn.setFocusable(false);
         connectionBtn.setEnabled(false);
@@ -124,25 +130,88 @@ public class Station {
             case "Connect":
                 if (planTowerSensor.connectDevice()) {
                     connectionBtn.setText("Disconnect");
-                    deviceStatus.setText("Status: Connected");
+                    labelStatus.setText("Status: Connected");
                     planTowerSensor.startMeasurements(Config.instance().to().getInt(Config.Entry.INTERVAL.key(), Constants.DEFAULT_INTERVAL) * 1000L);
                 }
                 break;
             case "Disconnect":
                 planTowerSensor.disconnectDevice();
                 connectionBtn.setText("Connect");
-                deviceStatus.setText("Status: Disconnected");
+                labelStatus.setText("Status: Disconnected");
                 break;
             }
             connectionBtn.setEnabled(true);
         });
-        frame.getContentPane().setLayout(new MigLayout("", "[50px][100px:200px,grow][100px]", "[29px][16px][338px][16px]"));
-        frame.getContentPane().add(connectionBtn, "cell 0 0,alignx left,aligny center");
         
-        labelsToBeUpdated.put("deviceStatus", deviceStatus);
-        frame.getContentPane().add(deviceStatus, "flowx,cell 1 0,alignx left,aligny center");
+        final JPanel panelMain = new JPanel();
         
-        JLabel appNameLink = new JLabel(Constants.PROJECT_NAME);
+        panelMain.setLayout(new MigLayout("", "[50px][100px:200px,grow][100px]", "[29px][16px][338px][16px]"));
+        panelMain.add(connectionBtn, "cell 0 0,alignx left,aligny center");
+        
+        panelMain.add(deviceStatus, "flowx,cell 1 0,alignx left,aligny center");
+        
+        JButton btnCfg = new JButton("");
+        btnCfg.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseClicked(MouseEvent e) {
+                new ConfigurationDlg(frame, "Configuration").initGUI();
+            }
+        });
+        btnCfg.setToolTipText("Configuration");
+        btnCfg.setIcon(new ImageIcon(Station.class.getResource("/pmstation/btn_config.png")));
+        panelMain.add(btnCfg, "cell 2 0,alignx right,aligny center");
+        
+        JPanel panelMeasurements = new JPanel();
+        panelMeasurements.setBorder(new TitledBorder(null, "Last measurements", TitledBorder.LEADING, TitledBorder.TOP, null, null));
+        panelMain.add(panelMeasurements, "cell 0 1 3 1,grow");
+        panelMeasurements.setLayout(new MigLayout("", "[50px][6px][70px][6px][46px][6px][76px][6px][42px][12px][137px]", "[16px][]"));
+        
+                JLabel pm1_0Label = new JLabel("PM 1.0:");
+                panelMeasurements.add(pm1_0Label, "cell 0 0,alignx left,aligny top");
+                
+                        JLabel pm1_0 = new JLabel();
+                        panelMeasurements.add(pm1_0, "cell 2 0,growx,aligny top");
+                        pm1_0.setText("----");
+                        labelsToBeUpdated.put("pm1_0", pm1_0);
+                        
+                                JLabel pm2_5Label = new JLabel("PM 2.5:");
+                                panelMeasurements.add(pm2_5Label, "cell 4 0,alignx left,aligny top");
+                                
+                                        JLabel pm2_5 = new JLabel();
+                                        panelMeasurements.add(pm2_5, "cell 6 0,growx,aligny top");
+                                        pm2_5.setText("----");
+                                        labelsToBeUpdated.put("pm2_5", pm2_5);
+                                        
+                                                JLabel pm10Label = new JLabel("PM 10:");
+                                                panelMeasurements.add(pm10Label, "cell 8 0,alignx left,aligny top");
+                                                
+                                                        JLabel pm10 = new JLabel();
+                                                        panelMeasurements.add(pm10, "cell 10 0,alignx left,aligny top");
+                                                        pm10.setText("----");
+                                                        labelsToBeUpdated.put("pm10", pm10);
+                                                        
+                                                                JLabel pmMeasurementTime_label = new JLabel("Time: ");
+                                                                panelMeasurements.add(pmMeasurementTime_label, "cell 0 1 2 1,alignx left");
+                                                                JLabel pmMeasurementTime = new JLabel();
+                                                                panelMeasurements.add(pmMeasurementTime, "cell 2 1 9 1");
+                                                                labelsToBeUpdated.put("measurementTime", pmMeasurementTime);
+        panelMain.add(chartPanel, "cell 0 2 3 1,grow");
+
+        JPanel panelStatus = new JPanel();
+        panelStatus.setBorder(new BevelBorder(BevelBorder.LOWERED));
+        panelStatus.setPreferredSize(new Dimension(frame.getWidth(), 16));
+        panelStatus.setLayout(new BorderLayout(0, 0));
+        
+        labelStatus.setForeground(Color.GRAY);
+        labelStatus.setHorizontalAlignment(SwingConstants.LEFT);
+        panelStatus.add(labelStatus, BorderLayout.WEST);
+        
+        frame.getContentPane().setLayout(new BorderLayout(0, 0));
+        frame.getContentPane().add(panelMain); //, BorderLayout.NORTH);
+        frame.getContentPane().add(panelStatus, BorderLayout.SOUTH);
+        
+        JLabel appNameLink = new JLabel(" // " + Constants.PROJECT_NAME);
+        panelStatus.add(appNameLink, BorderLayout.EAST);
         appNameLink.setCursor(new Cursor(Cursor.HAND_CURSOR));
         appNameLink.addMouseListener(new MouseAdapter() {
             @Override
@@ -156,55 +225,7 @@ public class Station {
         });
         appNameLink.setToolTipText("Visit: " + Constants.PROJECT_URL);
         appNameLink.setHorizontalAlignment(SwingConstants.RIGHT);
-        
-        JButton btnCfg = new JButton("");
-        btnCfg.addMouseListener(new MouseAdapter() {
-            @Override
-            public void mouseClicked(MouseEvent e) {
-                new ConfigurationDlg(frame, "Configuration").initGUI();
-            }
-        });
-        btnCfg.setToolTipText("Configuration");
-        btnCfg.setIcon(new ImageIcon(Station.class.getResource("/pmstation/btn_config.png")));
-        frame.getContentPane().add(btnCfg, "cell 2 0,alignx right,aligny center");
-        
-        JPanel panel = new JPanel();
-        panel.setBorder(new TitledBorder(null, "Last measurements", TitledBorder.LEADING, TitledBorder.TOP, null, null));
-        frame.getContentPane().add(panel, "cell 0 1 3 1,grow");
-        panel.setLayout(new MigLayout("", "[50px][6px][70px][6px][46px][6px][76px][6px][42px][12px][137px]", "[16px][]"));
-        
-                JLabel pm1_0Label = new JLabel("PM 1.0:");
-                panel.add(pm1_0Label, "cell 0 0,alignx left,aligny top");
-                
-                        JLabel pm1_0 = new JLabel();
-                        panel.add(pm1_0, "cell 2 0,growx,aligny top");
-                        pm1_0.setText("----");
-                        labelsToBeUpdated.put("pm1_0", pm1_0);
-                        
-                                JLabel pm2_5Label = new JLabel("PM 2.5:");
-                                panel.add(pm2_5Label, "cell 4 0,alignx left,aligny top");
-                                
-                                        JLabel pm2_5 = new JLabel();
-                                        panel.add(pm2_5, "cell 6 0,growx,aligny top");
-                                        pm2_5.setText("----");
-                                        labelsToBeUpdated.put("pm2_5", pm2_5);
-                                        
-                                                JLabel pm10Label = new JLabel("PM 10:");
-                                                panel.add(pm10Label, "cell 8 0,alignx left,aligny top");
-                                                
-                                                        JLabel pm10 = new JLabel();
-                                                        panel.add(pm10, "cell 10 0,alignx left,aligny top");
-                                                        pm10.setText("----");
-                                                        labelsToBeUpdated.put("pm10", pm10);
-                                                        
-                                                                JLabel pmMeasurementTime_label = new JLabel("Time: ");
-                                                                panel.add(pmMeasurementTime_label, "cell 0 1 2 1,alignx left");
-                                                                JLabel pmMeasurementTime = new JLabel();
-                                                                panel.add(pmMeasurementTime, "cell 2 1 9 1");
-                                                                labelsToBeUpdated.put("measurementTime", pmMeasurementTime);
-        frame.getContentPane().add(chartPanel, "cell 0 2 3 1,grow");
-        frame.getContentPane().add(appNameLink, "cell 2 3 3 1,alignx right,aligny top");
-
+        labelStatus.setText("dfjodij oijfoidj oijr ogijfoigj foigj oifjgoi fjgoi jfoigj ofig");
         LabelObserver labelObserver = new LabelObserver();
         labelObserver.setLabelsToUpdate(labelsToBeUpdated);
         planTowerSensor.addObserver(labelObserver);
@@ -216,13 +237,13 @@ public class Station {
         if (autostart) {
             if (planTowerSensor.connectDevice()) {
                 connectionBtn.setText("Disconnect");
-                deviceStatus.setText("Status: Connected");
+                labelStatus.setText("Status: Connected");
                 planTowerSensor.startMeasurements(Config.instance().to().getInt(Config.Entry.INTERVAL.key(), Constants.DEFAULT_INTERVAL) * 1000L);
             } else {
-                deviceStatus.setText("Status: Device not found");
+                labelStatus.setText("Status: Device not found");
             }
         } else {
-            deviceStatus.setText("Status: not started");
+            labelStatus.setText("Status: not started");
         }
         connectionBtn.setEnabled(true);
     }
