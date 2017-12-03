@@ -62,11 +62,15 @@ Suggested printing parameters:
 
 - Java Development Kit 8+
 
+#### Android:
+- Android Studio 3.0 (Android Plugin for Gradle 3.0.0+)
+- Build tools and SDK 26+
+
 ### Useful commands
 
 #### Desktop:
 - `gradlew desktop:jar` - create a single Jar file with the desktop application
-- `gradlew desktp:run` - run the desktop application
+- `gradlew desktop:run` - run the desktop application
 
 #### Android:
 - `gradlew android:build` - create APK-s for Android devices
