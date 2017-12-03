@@ -38,6 +38,9 @@ TXD           | RXD
 
 ## 3D enclosure for the PlanTower device & the UART-USB adapter
 
+- [Top v2 with hidden screws](/3d_models/top_v2_hidden_screws.stl)
+- [Bottom v2 with hidden screws](/3d_models/bottom_v2_hidden_screws)
+
 - [Top v1](/3d_models/top_v1.stl)
 - [Bottom v1](/3d_models/bottom_v1.stl)
 
