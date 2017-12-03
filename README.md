@@ -64,14 +64,27 @@ Suggested printing parameters:
 
 ### Useful commands
 
-- `gradlew jar` - create a single Jar file
-- `gradlew run` - run the application
-- `gradlew distZip` - create a zip file with executable binary file and include all dependencies
+#### Desktop:
+- `gradlew desktop:jar` - create a single Jar file with the desktop application
+- `gradlew desktp:run` - run the desktop application
+
+#### Android:
+- `gradlew android:build` - create APK-s for Android devices
+
+## Contributing
+
+* [Contribution Guidelines](/CONTRIBUTING.md)
+
+## License
+
+- [License GPL-3.0](/LICENSE)
+
+## Authors
+
+- [Radoslaw Gabiga](https://github.com/sanchin)
+- [Radoslaw Jaros](https://github.com/rjaros87)
+- [Piotr Skowronek](https://github.com/pskowronek)
 
 ## TODOs
 
-- Add photos to `Assemble the home PM station`
-- Add config file
-- Add observer which log measurements to file
-- Add support for others PlanTower devices
-- Tests
+- [Release 1.0.0](https://github.com/rjaros87/pm-station-usb/projects/1)
