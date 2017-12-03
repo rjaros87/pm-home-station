@@ -25,6 +25,7 @@ public class Config {
         
         INTERVAL("interval"),
         AUTOSTART("autostart.measurements"),
+        ALWAYS_ON_TOP("always.on.top"),
         POS_X("pos.x"),
         POS_Y("pos.y"),
         POS_WIDTH("pos.width"),

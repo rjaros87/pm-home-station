@@ -26,6 +26,8 @@ import javax.swing.border.TitledBorder;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
+import org.apache.commons.lang3.SystemUtils;
+
 import pmstation.configuration.Config;
 import pmstation.configuration.Constants;
 
@@ -50,8 +52,8 @@ public class ConfigurationDlg {
         frame.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
         frame.setLocationRelativeTo(mainFrame);
         
-        JPanel panel = new JPanel();
-        panel.setBorder(new TitledBorder(null, "General", TitledBorder.LEADING, TitledBorder.TOP, null, null));
+        JPanel panelGeneral = new JPanel();
+        panelGeneral.setBorder(new TitledBorder(null, "General", TitledBorder.LEADING, TitledBorder.TOP, null, null));
         
         JButton btnClose = new JButton("OK");
         btnClose.addActionListener(new ActionListener() {
@@ -59,30 +61,54 @@ public class ConfigurationDlg {
                 frame.dispose();
             }
         });
+        
+        JPanel panelUI = new JPanel();
+        panelUI.setBorder(new TitledBorder(null, "User Interface", TitledBorder.LEADING, TitledBorder.TOP, null, null));
         GroupLayout groupLayout = new GroupLayout(frame.getContentPane());
         groupLayout.setHorizontalGroup(
             groupLayout.createParallelGroup(Alignment.LEADING)
-                .addGroup(groupLayout.createSequentialGroup()
+                .addGroup(Alignment.TRAILING, groupLayout.createSequentialGroup()
                     .addContainerGap()
-                    .addGroup(groupLayout.createParallelGroup(Alignment.LEADING)
-                        .addComponent(panel, GroupLayout.DEFAULT_SIZE, 474, Short.MAX_VALUE)
-                        .addComponent(btnClose, Alignment.TRAILING))
+                    .addGroup(groupLayout.createParallelGroup(Alignment.TRAILING)
+                        .addComponent(btnClose)
+                        .addComponent(panelGeneral, GroupLayout.DEFAULT_SIZE, 501, Short.MAX_VALUE)
+                        .addGroup(groupLayout.createSequentialGroup()
+                            .addComponent(panelUI, GroupLayout.PREFERRED_SIZE, 495, GroupLayout.PREFERRED_SIZE)
+                            .addGap(4)))
                     .addContainerGap())
         );
         groupLayout.setVerticalGroup(
             groupLayout.createParallelGroup(Alignment.LEADING)
-                .addGroup(groupLayout.createSequentialGroup()
+                .addGroup(Alignment.TRAILING, groupLayout.createSequentialGroup()
                     .addContainerGap()
-                    .addComponent(panel, GroupLayout.PREFERRED_SIZE, 272, GroupLayout.PREFERRED_SIZE)
-                    .addPreferredGap(ComponentPlacement.RELATED, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(panelGeneral, GroupLayout.PREFERRED_SIZE, 136, GroupLayout.PREFERRED_SIZE)
+                    .addPreferredGap(ComponentPlacement.RELATED)
+                    .addComponent(panelUI, GroupLayout.DEFAULT_SIZE, 186, Short.MAX_VALUE)
+                    .addPreferredGap(ComponentPlacement.UNRELATED)
                     .addComponent(btnClose))
         );
-        panel.setLayout(null);
+        panelUI.setLayout(null);
+        
+        JLabel labelAlwaysOnTop = new JLabel("Keep the window always on top:");
+        labelAlwaysOnTop.setBounds(6, 31, 386, 16);
+        panelUI.add(labelAlwaysOnTop);
+        
+        JCheckBox chbxAlwaysOnTop = new JCheckBox();
+        chbxAlwaysOnTop.addChangeListener(new ChangeListener() {
+            public void stateChanged(ChangeEvent e) {
+                Config.instance().to().setProperty(Config.Entry.ALWAYS_ON_TOP.key(), chbxAlwaysOnTop.isSelected());
+            }
+        });
+        chbxAlwaysOnTop.setSelected(Config.instance().to().getBoolean(Config.Entry.ALWAYS_ON_TOP.key(), false));
+        chbxAlwaysOnTop.setBounds(388, 24, 101, 29);
+        
+        panelUI.add(chbxAlwaysOnTop);
+        panelGeneral.setLayout(null);
         
         JLabel lblInterval = new JLabel("Measurements interval (in seconds):");
         lblInterval.setHorizontalAlignment(SwingConstants.LEFT);
         lblInterval.setBounds(6, 71, 363, 16);
-        panel.add(lblInterval);
+        panelGeneral.add(lblInterval);
         
         JCheckBox chkbxAutostart = new JCheckBox();
         chkbxAutostart.addChangeListener(new ChangeListener() {
@@ -91,11 +117,12 @@ public class ConfigurationDlg {
             }
         });
         chkbxAutostart.setBounds(393, 24, 101, 29);
-        panel.add(chkbxAutostart);
+        chkbxAutostart.setSelected(Config.instance().to().getBoolean(Config.Entry.AUTOSTART.key(), !SystemUtils.IS_OS_MAC_OSX));
+        panelGeneral.add(chkbxAutostart);
         
         JLabel lblAutostart = new JLabel("Autostart measurements (no recommended for OSX users):");
         lblAutostart.setBounds(6, 30, 386, 16);
-        panel.add(lblAutostart);
+        panelGeneral.add(lblAutostart);
         
         textInterval = new JSpinner(new SpinnerNumberModel(
                 Config.instance().to().getInt(Config.Entry.INTERVAL.key(), Constants.DEFAULT_INTERVAL),
@@ -128,7 +155,7 @@ public class ConfigurationDlg {
         });
 
         textInterval.setBounds(396, 64, 94, 26);
-        panel.add(textInterval);
+        panelGeneral.add(textInterval);
         frame.getContentPane().setLayout(groupLayout);
         frame.setVisible(true);
     }

@@ -69,6 +69,7 @@ public class Station {
      */
     public void showUI() {
         final JFrame frame = new JFrame("Particulate matter station");
+        frame.setAlwaysOnTop(Config.instance().to().getBoolean(Config.Entry.ALWAYS_ON_TOP.key(), false));
         setIcon(frame);
 
         frame.getContentPane().setMinimumSize(new Dimension(474, 180));
