@@ -6,12 +6,16 @@
 package pmstation.observers;
 
 import org.knowm.xchart.XYChart;
+
+import java.util.ArrayList;
+import java.util.List;
+
+import javax.swing.JPanel;
+
 import pmstation.core.plantower.ParticulateMatterSample;
+import pmstation.core.plantower.IPlanTowerObserver;
 
-import javax.swing.*;
-import java.util.*;
-
-public class ChartObserver implements PlanTowerObserver {
+public class ChartObserver implements IPlanTowerObserver {
     private XYChart chart;
     private JPanel chartPanel;
     private List<Integer> pm1_0 = new ArrayList<Integer>();
@@ -27,7 +31,7 @@ public class ChartObserver implements PlanTowerObserver {
     }
 
     @Override
-    public void notify(ParticulateMatterSample sample) {
+    public void onNewValue(ParticulateMatterSample sample) {
         if (sample != null) {
             pm1_0.add(sample.getPm1_0());
             pm2_5.add(sample.getPm2_5());

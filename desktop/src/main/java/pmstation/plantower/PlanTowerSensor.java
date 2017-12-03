@@ -10,27 +10,25 @@ import java.util.List;
 
 import pmstation.core.plantower.ParticulateMatterSample;
 import pmstation.core.plantower.PlanTowerDevice;
-import pmstation.observers.PlanTowerObserver;
+import pmstation.core.plantower.IPlanTowerObserver;
 import pmstation.serial.SerialUART;
 
 public class PlanTowerSensor {
     
     private static final long DEFAULT_INTERVAL = 3000L;
 
-    private PlanTowerDevice planTowerDevice;
-    private List<PlanTowerObserver> planTowerObserver;
+    private List<IPlanTowerObserver> planTowerObserver;
     private Thread measurementsThread;
     private SerialUART serialUART;
 
     public PlanTowerSensor() {
         serialUART = new SerialUART();
-        planTowerDevice = new PlanTowerDevice(serialUART);
         planTowerObserver = new ArrayList<>();
     }
 
     public boolean connectDevice() {
         boolean openPort = serialUART.openPort();
-        planTowerDevice.runCommand(PlanTowerDevice.MODE_WAKEUP);
+        serialUART.writeBytes(PlanTowerDevice.MODE_WAKEUP);
         return openPort;
     }
 
@@ -38,7 +36,7 @@ public class PlanTowerSensor {
         if (measurementsThread != null && !measurementsThread.isInterrupted()) {
             measurementsThread.interrupt();
         }
-        planTowerDevice.runCommand(PlanTowerDevice.MODE_SLEEP);
+        serialUART.writeBytes(PlanTowerDevice.MODE_SLEEP);
         serialUART.closePort();
     }
 
@@ -50,7 +48,16 @@ public class PlanTowerSensor {
         measurementsThread = new Thread(() -> {
             while (!Thread.currentThread().isInterrupted()) {
                 try {
-                    notifyAllObservers(planTowerDevice.read());
+                    byte[] readBuffer;
+                    readBuffer = serialUART.readBytes(2 * PlanTowerDevice.DATA_LENGTH);
+//                    int headIndex = indexOfArray(readBuffer, START_CHARACTERS);
+//
+//                    if (headIndex > 0) {
+//                        serialUART.readBytes(headIndex);
+//                        readBuffer = serialUART.readBytes(readBuffer.length);
+//                    }
+
+                    notifyAllObservers(PlanTowerDevice.parse(readBuffer));
                     Thread.sleep(interval);
                 } catch (InterruptedException e) {
                     System.out.println("Thread interrupted");
@@ -62,13 +69,13 @@ public class PlanTowerSensor {
         measurementsThread.start();
     }
 
-    public void addObserver(PlanTowerObserver observer) {
+    public void addObserver(IPlanTowerObserver observer) {
         planTowerObserver.add(observer);
     }
 
     private void notifyAllObservers(ParticulateMatterSample particulateMatterSample) {
-        for (PlanTowerObserver observer : planTowerObserver) {
-            observer.notify(particulateMatterSample);
+        for (IPlanTowerObserver observer : planTowerObserver) {
+            observer.onNewValue(particulateMatterSample);
         }
     }
 }

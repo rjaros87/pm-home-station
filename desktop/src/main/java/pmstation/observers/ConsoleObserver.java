@@ -12,13 +12,14 @@ import java.time.Instant;
 
 import pmstation.configuration.Constants;
 import pmstation.core.plantower.ParticulateMatterSample;
+import pmstation.core.plantower.IPlanTowerObserver;
 
-public class ConsoleObserver implements PlanTowerObserver {
+public class ConsoleObserver implements IPlanTowerObserver {
     
     private static final Logger logger = LoggerFactory.getLogger(ConsoleObserver.class);
 
     @Override
-    public void notify(ParticulateMatterSample sample) {
+    public void onNewValue(ParticulateMatterSample sample) {
         if (sample == null) {
             logger.warn(Instant.now().toString() + " sensor not ready");
         } else {

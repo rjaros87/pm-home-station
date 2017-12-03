@@ -17,14 +17,13 @@ import java.util.List;
 import java.util.Map;
 
 import pmstation.MainActivity;
-import pmstation.ValueObserver;
 import pmstation.core.plantower.ParticulateMatterSample;
 import pmstation.core.plantower.PlanTowerDevice;
+import pmstation.core.plantower.IPlanTowerObserver;
 
 public class Sensor {
     private static final int BAUD_RATE = 9600;
     private static final String TAG = "Sensor";
-    private static final byte[] START_CHARACTERS = {0x42, 0x4d};
     private UsbManager usbManager;
     private UsbDevice device;
     private UsbDeviceConnection connection;
@@ -34,12 +33,12 @@ public class Sensor {
     private boolean running = true;
     private boolean requested = false;
     private Context context;
-    private List<ValueObserver> valueObservers = new ArrayList<>();
+    private List<IPlanTowerObserver> valueObservers = new ArrayList<>();
 
     private UsbSerialInterface.UsbReadCallback readCallback = bytes -> {
-        final ParticulateMatterSample sample = read(bytes);
+        final ParticulateMatterSample sample = PlanTowerDevice.parse(bytes);
         if (sample != null) {
-            updateValues(sample);
+            notifyAllObservers(sample);
         }
         try {
             Thread.sleep(1000L);
@@ -80,8 +79,8 @@ public class Sensor {
         }
     }
 
-    void updateValues(final ParticulateMatterSample sample) {
-        for (ValueObserver valueObserver : valueObservers) {
+    private void notifyAllObservers(final ParticulateMatterSample sample) {
+        for (IPlanTowerObserver valueObserver : valueObservers) {
             valueObserver.onNewValue(sample);
         }
     }
@@ -90,11 +89,11 @@ public class Sensor {
         requested = false;
     }
 
-    public void addValueObserver(ValueObserver observer) {
+    public void addValueObserver(IPlanTowerObserver observer) {
         valueObservers.add(observer);
     }
 
-    public void removeValueObserver(ValueObserver observer) {
+    public void removeValueObserver(IPlanTowerObserver observer) {
         valueObservers.remove(observer);
     }
 
@@ -156,41 +155,6 @@ public class Sensor {
 
     public boolean isConnected() {
         return serialPortConnected;
-    }
-
-
-    public ParticulateMatterSample read(byte[] readBuffer) {
-        int headIndex = indexOfArray(readBuffer, START_CHARACTERS);
-        if (headIndex >= 0 && readBuffer.length >= headIndex + 16) {
-            // remark #1: << 8 is ~2 times faster than *0x100 - compiler does not optimize that, not even JIT in runtime
-            // remark #2: it's to necessary to ensure usigned bytes stays unsigned in java - either by using & 0xFF or Byte#toUnsignedInt (java 8)
-            //int pm1_0 = Byte.toUnsignedInt(readBuffer[10 + headIndex]) * 0x100 + Byte.toUnsignedInt(readBuffer[11 + headIndex]);
-            //int pm2_5 = Byte.toUnsignedInt(readBuffer[12 + headIndex]) * 0x100 + Byte.toUnsignedInt(readBuffer[13 + headIndex]);
-            //int pm10 = Byte.toUnsignedInt(readBuffer[14 + headIndex]) * 0x100 + Byte.toUnsignedInt(readBuffer[15 + headIndex]);
-
-            int pm1_0 = ((readBuffer[10 + headIndex] & 0xFF) << 8) + (readBuffer[11 + headIndex] & 0xFF);
-            int pm2_5 = ((readBuffer[12 + headIndex] & 0xFF) << 8) + (readBuffer[13 + headIndex] & 0xFF);
-            int pm10 = ((readBuffer[14 + headIndex] & 0xFF) << 8) + (readBuffer[15 + headIndex] & 0xFF);
-
-            return new ParticulateMatterSample(pm1_0, pm2_5, pm10);
-        }
-        return null;
-    }
-
-    public int indexOfArray(byte[] sampleArray, byte[] needle) {
-        for (int i = 0; i < sampleArray.length - needle.length + 1; ++i) {
-            boolean found = true;
-            for (int j = 0; j < needle.length; ++j) {
-                if (sampleArray[i + j] != needle[j]) {
-                    found = false;
-                    break;
-                }
-            }
-            if (found) {
-                return i;
-            }
-        }
-        return -1;
     }
 
     /*

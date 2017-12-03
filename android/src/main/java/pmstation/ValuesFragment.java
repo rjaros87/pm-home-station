@@ -14,14 +14,14 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import java.text.SimpleDateFormat;
 import java.util.List;
 import java.util.Locale;
 
+import pmstation.core.plantower.IPlanTowerObserver;
 import pmstation.core.plantower.ParticulateMatterSample;
+import pmstation.plantower.Settings;
 
-public class ValuesFragment extends Fragment implements ValueObserver {
-    private static final SimpleDateFormat dateFormat = new SimpleDateFormat("d MMM yyyy HH:mm:ss", Locale.getDefault());
+public class ValuesFragment extends Fragment implements IPlanTowerObserver {
     private static final String TAG = "ValuesFragment";
     private CardView pm1Card;
     private CardView pm25Card;
@@ -99,7 +99,7 @@ public class ValuesFragment extends Fragment implements ValueObserver {
             pm10Card.setCardBackgroundColor(
                     ColorUtils.setAlphaComponent(AQIColor.fromPM10Level(sample.getPm10()).getColor(), 136));
             smog.animate().alpha(pm25Color.getAlpha());
-            time.setText(dateFormat.format(sample.getDate()));
+            time.setText(Settings.dateFormat.format(sample.getDate()));
         });
     }
 }

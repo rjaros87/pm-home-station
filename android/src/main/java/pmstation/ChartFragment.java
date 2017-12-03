@@ -18,14 +18,13 @@ import com.github.mikephil.charting.data.LineDataSet;
 import com.github.mikephil.charting.formatter.IAxisValueFormatter;
 import com.github.mikephil.charting.interfaces.datasets.ILineDataSet;
 
-import java.text.SimpleDateFormat;
 import java.util.List;
-import java.util.Locale;
 
+import pmstation.core.plantower.IPlanTowerObserver;
 import pmstation.core.plantower.ParticulateMatterSample;
+import pmstation.plantower.Settings;
 
-public class ChartFragment extends Fragment implements ValueObserver {
-    private static final SimpleDateFormat dateFormat = new SimpleDateFormat("HH:mm:ss", Locale.getDefault());
+public class ChartFragment extends Fragment implements IPlanTowerObserver {
     private String pm1Label;
     private String pm25Label;
     private String pm10Label;
@@ -70,7 +69,7 @@ public class ChartFragment extends Fragment implements ValueObserver {
         final List<ParticulateMatterSample> values = ((MainActivity) getActivity()).getValues();
 
         IAxisValueFormatter formatter =
-                (value, axis) -> dateFormat.format(values.get((int) value).getDate());
+                (value, axis) -> Settings.dateFormat.format(values.get((int) value).getDate());
 
         XAxis xAxis = chart.getXAxis();
         xAxis.setPosition(XAxis.XAxisPosition.BOTTOM);

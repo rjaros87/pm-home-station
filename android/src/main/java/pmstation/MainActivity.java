@@ -21,10 +21,11 @@ import android.view.WindowManager;
 import java.util.ArrayList;
 import java.util.List;
 
+import pmstation.core.plantower.IPlanTowerObserver;
 import pmstation.core.plantower.ParticulateMatterSample;
 import pmstation.plantower.Sensor;
 
-public class MainActivity extends AppCompatActivity implements ValueObserver {
+public class MainActivity extends AppCompatActivity implements IPlanTowerObserver {
     public static final String ACTION_USB_ATTACHED = "android.hardware.usb.action.USB_DEVICE_ATTACHED";
     public static final String ACTION_USB_DETACHED = "android.hardware.usb.action.USB_DEVICE_DETACHED";
     public static final String ACTION_USB_PERMISSION = "pmstation.USB_PERMISSION";

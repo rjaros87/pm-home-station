@@ -6,11 +6,18 @@
 
 package pmstation;
 
+import net.miginfocom.swing.MigLayout;
+
+import org.knowm.xchart.XChartPanel;
+import org.knowm.xchart.XYChart;
+import org.knowm.xchart.XYChartBuilder;
+import org.knowm.xchart.style.Styler;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.awt.Cursor;
 import java.awt.Desktop;
 import java.awt.Dimension;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.WindowAdapter;
@@ -27,14 +34,6 @@ import javax.swing.JPanel;
 import javax.swing.SwingConstants;
 import javax.swing.border.TitledBorder;
 
-import org.knowm.xchart.XChartPanel;
-import org.knowm.xchart.XYChart;
-import org.knowm.xchart.XYChartBuilder;
-import org.knowm.xchart.style.Styler;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import net.miginfocom.swing.MigLayout;
 import pmstation.configuration.Constants;
 import pmstation.observers.ChartObserver;
 import pmstation.observers.ConsoleObserver;
@@ -85,26 +84,23 @@ public class Station {
         JButton connectionBtn = new JButton("Connect");
         connectionBtn.setFocusable(false);
         connectionBtn.setEnabled(false);
-        connectionBtn.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent actionEvent) {
-                connectionBtn.setEnabled(false);
-                switch (connectionBtn.getText()) {
-                case "Connect":
-                    if (planTowerSensor.connectDevice()) {
-                        connectionBtn.setText("Disconnect");
-                        deviceStatus.setText("Status: Connected");
-                        planTowerSensor.startMeasurements();
-                    }
-                    break;
-                case "Disconnect":
-                    planTowerSensor.disconnectDevice();
-                    connectionBtn.setText("Connect");
-                    deviceStatus.setText("Status: Disconnected");
-                    break;
+        connectionBtn.addActionListener(actionEvent -> {
+            connectionBtn.setEnabled(false);
+            switch (connectionBtn.getText()) {
+            case "Connect":
+                if (planTowerSensor.connectDevice()) {
+                    connectionBtn.setText("Disconnect");
+                    deviceStatus.setText("Status: Connected");
+                    planTowerSensor.startMeasurements();
                 }
-                connectionBtn.setEnabled(true);
+                break;
+            case "Disconnect":
+                planTowerSensor.disconnectDevice();
+                connectionBtn.setText("Connect");
+                deviceStatus.setText("Status: Disconnected");
+                break;
             }
+            connectionBtn.setEnabled(true);
         });
         
         JLabel appNameLink = new JLabel(Constants.PROJECT_NAME);
@@ -157,7 +153,7 @@ public class Station {
                                                                 panel.add(pmMeasurementTime_label, "cell 0 1 2 1,alignx left");
                                                                 JLabel pmMeasurementTime = new JLabel();
                                                                 panel.add(pmMeasurementTime, "cell 2 1 9 1");
-                                                                jFrameComponentsMap.put("measurmentTime", pmMeasurementTime);
+                                                                jFrameComponentsMap.put("measurementTime", pmMeasurementTime);
         frame.getContentPane().add(deviceStatus, "cell 1 0 4 1,alignx left,aligny center");
         frame.getContentPane().add(chartPanel, "cell 0 2 5 1,grow");
         frame.getContentPane().add(appNameLink, "cell 2 3 3 1,alignx right,aligny top");
