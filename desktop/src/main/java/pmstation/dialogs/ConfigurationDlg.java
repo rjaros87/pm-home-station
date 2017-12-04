@@ -48,45 +48,48 @@ public class ConfigurationDlg {
     public void initGUI() {
         final JDialog frame = new JDialog(mainFrame, title, true);
         frame.setResizable(false);
-        frame.setBounds(350, 350, 513, 397);
+        frame.setBounds(350, 350, 515, 386);
         frame.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
         frame.setLocationRelativeTo(mainFrame);
         
         JPanel panelGeneral = new JPanel();
         panelGeneral.setBorder(new TitledBorder(null, "General", TitledBorder.LEADING, TitledBorder.TOP, null, null));
         
+        JPanel panelUI = new JPanel();
+        panelUI.setBorder(new TitledBorder(null, "User Interface", TitledBorder.LEADING, TitledBorder.TOP, null, null));
+        
+        JPanel panel = new JPanel();
+        panel.setBorder(null);
+        GroupLayout groupLayout = new GroupLayout(frame.getContentPane());
+        groupLayout.setHorizontalGroup(
+            groupLayout.createParallelGroup(Alignment.TRAILING)
+                .addGroup(groupLayout.createSequentialGroup()
+                    .addContainerGap()
+                    .addGroup(groupLayout.createParallelGroup(Alignment.TRAILING)
+                        .addComponent(panel, Alignment.LEADING, GroupLayout.DEFAULT_SIZE, 503, Short.MAX_VALUE)
+                        .addComponent(panelUI, Alignment.LEADING, GroupLayout.DEFAULT_SIZE, 503, Short.MAX_VALUE)
+                        .addComponent(panelGeneral, GroupLayout.DEFAULT_SIZE, 503, Short.MAX_VALUE))
+                    .addContainerGap())
+        );
+        groupLayout.setVerticalGroup(
+            groupLayout.createParallelGroup(Alignment.TRAILING)
+                .addGroup(groupLayout.createSequentialGroup()
+                    .addContainerGap()
+                    .addComponent(panelGeneral, GroupLayout.PREFERRED_SIZE, 136, GroupLayout.PREFERRED_SIZE)
+                    .addPreferredGap(ComponentPlacement.RELATED, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(panelUI, GroupLayout.PREFERRED_SIZE, 92, GroupLayout.PREFERRED_SIZE)
+                    .addGap(82)
+                    .addComponent(panel, GroupLayout.PREFERRED_SIZE, 45, GroupLayout.PREFERRED_SIZE)
+                    .addContainerGap())
+        );
+        
         JButton btnClose = new JButton("OK");
+        panel.add(btnClose);
         btnClose.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 frame.dispose();
             }
         });
-        
-        JPanel panelUI = new JPanel();
-        panelUI.setBorder(new TitledBorder(null, "User Interface", TitledBorder.LEADING, TitledBorder.TOP, null, null));
-        GroupLayout groupLayout = new GroupLayout(frame.getContentPane());
-        groupLayout.setHorizontalGroup(
-            groupLayout.createParallelGroup(Alignment.LEADING)
-                .addGroup(Alignment.TRAILING, groupLayout.createSequentialGroup()
-                    .addContainerGap()
-                    .addGroup(groupLayout.createParallelGroup(Alignment.TRAILING)
-                        .addComponent(btnClose)
-                        .addComponent(panelGeneral, GroupLayout.DEFAULT_SIZE, 501, Short.MAX_VALUE)
-                        .addGroup(groupLayout.createSequentialGroup()
-                            .addComponent(panelUI, GroupLayout.PREFERRED_SIZE, 495, GroupLayout.PREFERRED_SIZE)
-                            .addGap(4)))
-                    .addContainerGap())
-        );
-        groupLayout.setVerticalGroup(
-            groupLayout.createParallelGroup(Alignment.LEADING)
-                .addGroup(Alignment.TRAILING, groupLayout.createSequentialGroup()
-                    .addContainerGap()
-                    .addComponent(panelGeneral, GroupLayout.PREFERRED_SIZE, 136, GroupLayout.PREFERRED_SIZE)
-                    .addPreferredGap(ComponentPlacement.RELATED)
-                    .addComponent(panelUI, GroupLayout.DEFAULT_SIZE, 186, Short.MAX_VALUE)
-                    .addPreferredGap(ComponentPlacement.UNRELATED)
-                    .addComponent(btnClose))
-        );
         panelUI.setLayout(null);
         
         JLabel labelAlwaysOnTop = new JLabel("Keep the window always on top:");
@@ -100,7 +103,7 @@ public class ConfigurationDlg {
             }
         });
         chbxAlwaysOnTop.setSelected(Config.instance().to().getBoolean(Config.Entry.ALWAYS_ON_TOP.key(), false));
-        chbxAlwaysOnTop.setBounds(388, 24, 101, 29);
+        chbxAlwaysOnTop.setBounds(393, 24, 76, 29);
         
         panelUI.add(chbxAlwaysOnTop);
         panelGeneral.setLayout(null);
@@ -116,7 +119,7 @@ public class ConfigurationDlg {
                 Config.instance().to().setProperty(Config.Entry.AUTOSTART.key(), chkbxAutostart.isSelected());
             }
         });
-        chkbxAutostart.setBounds(393, 24, 101, 29);
+        chkbxAutostart.setBounds(393, 24, 76, 29);
         chkbxAutostart.setSelected(Config.instance().to().getBoolean(Config.Entry.AUTOSTART.key(), !SystemUtils.IS_OS_MAC_OSX));
         panelGeneral.add(chkbxAutostart);
         
@@ -154,7 +157,7 @@ public class ConfigurationDlg {
             }
         });
 
-        textInterval.setBounds(396, 64, 94, 26);
+        textInterval.setBounds(396, 64, 78, 26);
         panelGeneral.add(textInterval);
         frame.getContentPane().setLayout(groupLayout);
         frame.setVisible(true);

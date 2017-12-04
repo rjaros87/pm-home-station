@@ -83,7 +83,7 @@ public class SerialUART implements ISerialUART {
     }
 
     public boolean isConnected() {
-        return comPort.isOpen();
+        return comPort != null && comPort.isOpen();
     }
 
     private boolean isSerialPort(SerialPort sp) {
