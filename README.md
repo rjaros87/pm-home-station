@@ -38,7 +38,7 @@ TXD           | RXD
 
 ## 3D enclosure for the PlanTower device & the UART-USB adapter
 
-- To assemly the enclosure you need 4x machine screws with nuts M3 x 25, head slot bolt screw.
+- 4x M3 x 25 machine screws with nuts are required to assemble the enclosure
 
 - [Top v2 with hidden screws](/3d_models/top_v2_hidden_screws.stl)
 - [Bottom v2 with hidden screws](/3d_models/bottom_v2_hidden_screws.stl)
