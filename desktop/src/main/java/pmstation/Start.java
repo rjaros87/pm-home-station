@@ -6,12 +6,16 @@
 
 package pmstation;
 
+import javax.swing.UIManager;
+import javax.swing.UnsupportedLookAndFeelException;
+
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.CommandLineParser;
 import org.apache.commons.cli.DefaultParser;
 import org.apache.commons.cli.HelpFormatter;
 import org.apache.commons.cli.Options;
 import org.apache.commons.cli.ParseException;
+import org.apache.commons.lang3.SystemUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -35,6 +39,7 @@ public class Start {
                 System.out.println("version: " + Constants.VERSION);
             } else {
                 logger.info("Starting pm-station-usb ({})...", Constants.PROJECT_URL);
+                setLookAndFeel();
                 PlanTowerSensor planTowerSensor = new PlanTowerSensor();
                 Station station = new Station(planTowerSensor);
                 station.showUI();
@@ -42,6 +47,19 @@ public class Start {
         } catch (ParseException e) {
             logger.error("Ooops", e);
             return;
+        }
+    }
+    
+    private static void setLookAndFeel() {
+        if (SystemUtils.IS_OS_MAC_OSX) {
+            System.setProperty("apple.laf.useScreenMenuBar", "true"); // place menubar (if any) in native menu bar
+            System.setProperty("apple.awt.application.name", Constants.PROJECT_NAME);
+        }
+        try {
+            UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
+        } catch (ClassNotFoundException | InstantiationException | IllegalAccessException
+                | UnsupportedLookAndFeelException e) {
+            logger.error("Ooops, problem setting system L&F", e);
         }
     }
     
