@@ -78,8 +78,8 @@ public class ConfigurationDlg {
                     .addComponent(panelGeneral, GroupLayout.PREFERRED_SIZE, 136, GroupLayout.PREFERRED_SIZE)
                     .addPreferredGap(ComponentPlacement.RELATED, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addComponent(panelUI, GroupLayout.PREFERRED_SIZE, 92, GroupLayout.PREFERRED_SIZE)
-                    .addGap(82)
-                    .addComponent(panel, GroupLayout.PREFERRED_SIZE, 45, GroupLayout.PREFERRED_SIZE)
+                    .addGap(69)
+                    .addComponent(panel, GroupLayout.PREFERRED_SIZE, 58, GroupLayout.PREFERRED_SIZE)
                     .addContainerGap())
         );
         
