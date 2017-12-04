@@ -100,6 +100,7 @@ public class ConfigurationDlg {
         chbxAlwaysOnTop.addChangeListener(new ChangeListener() {
             public void stateChanged(ChangeEvent e) {
                 Config.instance().to().setProperty(Config.Entry.ALWAYS_ON_TOP.key(), chbxAlwaysOnTop.isSelected());
+                mainFrame.setAlwaysOnTop(chbxAlwaysOnTop.isSelected());
             }
         });
         chbxAlwaysOnTop.setSelected(Config.instance().to().getBoolean(Config.Entry.ALWAYS_ON_TOP.key(), false));
@@ -123,7 +124,7 @@ public class ConfigurationDlg {
         chkbxAutostart.setSelected(Config.instance().to().getBoolean(Config.Entry.AUTOSTART.key(), !SystemUtils.IS_OS_MAC_OSX));
         panelGeneral.add(chkbxAutostart);
         
-        JLabel lblAutostart = new JLabel("Autostart measurements (no recommended for OSX users):");
+        JLabel lblAutostart = new JLabel("Autostart measurements (not recommended for OSX users):");
         lblAutostart.setBounds(6, 30, 386, 16);
         panelGeneral.add(lblAutostart);
         
