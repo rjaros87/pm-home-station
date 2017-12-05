@@ -56,6 +56,7 @@ public class Sensor {
             e.printStackTrace();
         }
     };
+    private Thread fakeDataThread;
 
     public Sensor(Context context) {
         this.context = context;
@@ -170,6 +171,29 @@ public class Sensor {
 
     public boolean isConnected() {
         return serialPortConnected;
+    }
+
+    public void startFakeDataThread() {
+        fakeDataThread = new Thread(() -> {
+            int i = 0;
+            while (!Thread.currentThread().isInterrupted()) {
+                i = (i + 1) % 14;
+                try {
+                    notifyAllObservers(new ParticulateMatterSample(20, i * 10, 100));
+                    String intervalPref = preferences.getString("sampling_interval", "1000");
+                    int interval = Integer.parseInt(intervalPref);
+                    Thread.sleep(sampleCounter == 0 ? interval : 1000);
+                } catch (InterruptedException e) {
+                    Log.d(TAG, "Thread interrupted");
+                    Thread.currentThread().interrupt();
+                }
+            }
+        });
+        fakeDataThread.start();
+    }
+
+    public void stopFakeDataThread() {
+        fakeDataThread.interrupt();
     }
 
     /*

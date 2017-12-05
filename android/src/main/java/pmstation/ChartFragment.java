@@ -1,6 +1,5 @@
 package pmstation;
 
-import android.content.Context;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -47,13 +46,6 @@ public class ChartFragment extends Fragment implements IPlanTowerObserver {
     }
 
     @Override
-    public void onAttach(Context context) {
-        super.onAttach(context);
-        MainActivity activity = (MainActivity) getActivity();
-        activity.getSensor().addValueObserver(this);
-    }
-
-    @Override
     public void onDetach() {
         super.onDetach();
         MainActivity activity = (MainActivity) getActivity();
@@ -66,8 +58,9 @@ public class ChartFragment extends Fragment implements IPlanTowerObserver {
         pm1Label = getString(R.string.pm1);
         pm25Label = getString(R.string.pm25);
         pm10Label = getString(R.string.pm10);
-        final List<ParticulateMatterSample> values = ((MainActivity) getActivity()).getValues();
-
+        MainActivity activity = (MainActivity) getActivity();
+        activity.getSensor().addValueObserver(this);
+        final List<ParticulateMatterSample> values = activity.getValues();
         IAxisValueFormatter formatter =
                 (value, axis) -> Settings.dateFormat.format(values.get((int) value).getDate());
 

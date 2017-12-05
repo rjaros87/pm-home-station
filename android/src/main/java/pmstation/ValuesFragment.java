@@ -10,7 +10,6 @@ import android.support.v7.widget.CardView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageView;
 import android.widget.TextView;
 
 import java.util.List;
@@ -29,7 +28,6 @@ public class ValuesFragment extends Fragment implements IPlanTowerObserver {
     private TextView pm25;
     private TextView pm10;
     private TextView time;
-    private ImageView smog;
 
     public ValuesFragment() {
         // Required empty public constructor
@@ -55,15 +53,12 @@ public class ValuesFragment extends Fragment implements IPlanTowerObserver {
         ((TextView) pm10Card.findViewById(R.id.pm_label)).setText(R.string.pm10);
 
         time = view.findViewById(R.id.time);
-        smog = view.findViewById(R.id.smog);
-        smog.setAlpha(0f);
 
         List<ParticulateMatterSample> values = ((MainActivity) getActivity()).getValues();
         if (!values.isEmpty()) {
             ParticulateMatterSample sample = values.get(values.size() - 1);
             onNewValue(sample);
         }
-
     }
 
     @Override
@@ -97,7 +92,6 @@ public class ValuesFragment extends Fragment implements IPlanTowerObserver {
             pm10.setText(String.format(Locale.getDefault(), "%d", sample.getPm10()));
             pm10Card.setCardBackgroundColor(
                     ColorUtils.setAlphaComponent(AQIColor.fromPM10Level(sample.getPm10()).getColor(), 136));
-            smog.animate().alpha(pm25Color.getAlpha());
             time.setText(Settings.dateFormat.format(sample.getDate()));
         });
     }

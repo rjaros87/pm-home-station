@@ -3,7 +3,6 @@ package pmstation;
 import android.os.Bundle;
 import android.preference.Preference;
 import android.preference.PreferenceFragment;
-import android.support.v7.app.AppCompatActivity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -36,8 +35,7 @@ public class SettingsFragment extends PreferenceFragment {
     }
 
     private void showAttribution() {
-        AppCompatActivity activity = (AppCompatActivity) getActivity();
         final LicensesDialogFragment fragment = new LicensesDialogFragment();
-        fragment.show(activity.getSupportFragmentManager(), null);
+        fragment.show(getFragmentManager(), null);
     }
 }

@@ -18,6 +18,7 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.WindowManager;
+import android.widget.ImageView;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -32,6 +33,7 @@ public class MainActivity extends AppCompatActivity implements IPlanTowerObserve
     public static final String ACTION_USB_PERMISSION = "pmstation.USB_PERMISSION";
     private static final String TAG = "MainActivity";
     private Menu menu;
+    private ImageView smog;
 
     private List<ParticulateMatterSample> values = new ArrayList<>();
 
@@ -104,6 +106,10 @@ public class MainActivity extends AppCompatActivity implements IPlanTowerObserve
         super.onCreate(savedInstanceState);
         PreferenceManager.setDefaultValues(this, R.xml.preferences, false);
         setContentView(R.layout.activity_main);
+
+        smog = findViewById(R.id.smog);
+        smog.setAlpha(0f);
+
         sensor = new Sensor(this);
         sensor.addValueObserver(this);
 
@@ -120,27 +126,21 @@ public class MainActivity extends AppCompatActivity implements IPlanTowerObserve
 
         // Add the fragment to the 'fragment_container' FrameLayout
         getSupportFragmentManager().beginTransaction().add(R.id.fragment_container, valuesFragment).commit();
+    }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
         if (isEmulator()) {
-            Thread t = new Thread(() -> {
-                int i = 0;
-                while (!Thread.currentThread().isInterrupted()) {
-                    i = (i + 1) % 14;
-                    try {
-                        //todo
-//                        updateValues(new ParticulateMatterSample(20, i * 10, 100));
-                        Thread.sleep(1000L);
-                    } catch (InterruptedException e) {
-                        System.out.println("Thread interrupted");
-                        Thread.currentThread().interrupt();
-                    }
-                }
-            });
-            t.start();
+            sensor.startFakeDataThread();
         }
     }
 
     @Override
     protected void onStop() {
+        if (isEmulator()) {
+            sensor.stopFakeDataThread();
+        }
         sensor.sleep();
         super.onStop();
     }
@@ -178,12 +178,14 @@ public class MainActivity extends AppCompatActivity implements IPlanTowerObserve
         this.menu = menu;
         setStatus(isRunning());
 
-        MenuItem item = menu.getItem(0);
-        MainActivity.tintMenuItem(item);
-        item = menu.getItem(1);
-        MainActivity.tintMenuItem(item);
-        item = menu.getItem(2);
-        MainActivity.tintMenuItem(item);
+        int[] arr = {R.id.action_chart, R.id.action_connected, R.id.action_disconnected};
+        for (int i : arr) {
+            MenuItem item = menu.findItem(i);
+            if (item != null) {
+                MainActivity.tintMenuItem(item);
+            }
+        }
+
         return true;
     }
 
@@ -246,6 +248,8 @@ public class MainActivity extends AppCompatActivity implements IPlanTowerObserve
     @Override
     public void onNewValue(ParticulateMatterSample sample) {
         values.add(sample);
+        AQIColor pm25Color = AQIColor.fromPM25Level(sample.getPm2_5());
+        smog.animate().alpha(pm25Color.getAlpha());
     }
 
     public Sensor getSensor() {
