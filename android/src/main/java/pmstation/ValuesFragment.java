@@ -1,7 +1,6 @@
 package pmstation;
 
 
-import android.content.Context;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
@@ -68,8 +67,8 @@ public class ValuesFragment extends Fragment implements IPlanTowerObserver {
     }
 
     @Override
-    public void onAttach(Context context) {
-        super.onAttach(context);
+    public void onActivityCreated(@Nullable Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);
         MainActivity activity = (MainActivity) getActivity();
         activity.getSensor().addValueObserver(this);
     }
