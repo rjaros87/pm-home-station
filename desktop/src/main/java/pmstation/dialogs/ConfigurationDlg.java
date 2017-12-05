@@ -58,15 +58,15 @@ public class ConfigurationDlg {
         JPanel panelUI = new JPanel();
         panelUI.setBorder(new TitledBorder(null, "User Interface", TitledBorder.LEADING, TitledBorder.TOP, null, null));
         
-        JPanel panel = new JPanel();
-        panel.setBorder(null);
+        JPanel panelBottom = new JPanel();
+        panelBottom.setBorder(null);
         GroupLayout groupLayout = new GroupLayout(frame.getContentPane());
         groupLayout.setHorizontalGroup(
             groupLayout.createParallelGroup(Alignment.TRAILING)
                 .addGroup(groupLayout.createSequentialGroup()
                     .addContainerGap()
                     .addGroup(groupLayout.createParallelGroup(Alignment.TRAILING)
-                        .addComponent(panel, Alignment.LEADING, GroupLayout.DEFAULT_SIZE, 503, Short.MAX_VALUE)
+                        .addComponent(panelBottom, Alignment.LEADING, GroupLayout.DEFAULT_SIZE, 503, Short.MAX_VALUE)
                         .addComponent(panelUI, Alignment.LEADING, GroupLayout.DEFAULT_SIZE, 503, Short.MAX_VALUE)
                         .addComponent(panelGeneral, GroupLayout.DEFAULT_SIZE, 503, Short.MAX_VALUE))
                     .addContainerGap())
@@ -79,12 +79,12 @@ public class ConfigurationDlg {
                     .addPreferredGap(ComponentPlacement.RELATED, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addComponent(panelUI, GroupLayout.PREFERRED_SIZE, 92, GroupLayout.PREFERRED_SIZE)
                     .addGap(69)
-                    .addComponent(panel, GroupLayout.PREFERRED_SIZE, 58, GroupLayout.PREFERRED_SIZE)
+                    .addComponent(panelBottom, GroupLayout.PREFERRED_SIZE, 58, GroupLayout.PREFERRED_SIZE)
                     .addContainerGap())
         );
         
         JButton btnClose = new JButton("OK");
-        panel.add(btnClose);
+        panelBottom.add(btnClose);
         btnClose.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 frame.dispose();

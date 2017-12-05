@@ -1,6 +1,9 @@
 btn_config.png:
+btn_help.png:
 
-https://www.iconfinder.com/icons/430115/configuration_settings_icon#size=128
+https://www.iconfinder.com/icons/430115/configuration_settings_icon#size=32
+https://www.iconfinder.com/icons/430101/help_question_icon#size=32
+
 Free for commercial use (http://bogdanrosu.com/)
 
 

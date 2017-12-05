@@ -52,6 +52,7 @@ public class Start {
     
     private static void setLookAndFeel() {
         if (SystemUtils.IS_OS_MAC_OSX) {
+            // must be before any AWT interaction
             System.setProperty("apple.laf.useScreenMenuBar", "true"); // place menubar (if any) in native menu bar
             System.setProperty("apple.awt.application.name", Constants.PROJECT_NAME);
         }

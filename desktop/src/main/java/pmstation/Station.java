@@ -49,11 +49,15 @@ import org.slf4j.LoggerFactory;
 import net.miginfocom.swing.MigLayout;
 import pmstation.configuration.Config;
 import pmstation.configuration.Constants;
+import pmstation.dialogs.AboutDlg;
 import pmstation.dialogs.ConfigurationDlg;
+import pmstation.helpers.MacOSIntegration;
 import pmstation.observers.ChartObserver;
 import pmstation.observers.ConsoleObserver;
 import pmstation.observers.LabelObserver;
 import pmstation.plantower.PlanTowerSensor;
+import java.awt.event.ActionListener;
+import java.awt.event.ActionEvent;
 
 public class Station {
     
@@ -78,6 +82,7 @@ public class Station {
         frame.getContentPane().setPreferredSize(new Dimension(740, 480));
         
         // Enforce min window size on OSX...
+        // TODO on Windows 7 the windows bounces too much :/
         frame.addComponentListener(new ComponentAdapter() {
             @Override
             public void componentResized(ComponentEvent e) {
@@ -93,11 +98,7 @@ public class Station {
         frame.addWindowListener(new WindowAdapter() {
             @Override
             public void windowClosing(WindowEvent windowEvent) {
-                if (!SystemUtils.IS_OS_MAC_OSX) {
-                    logger.info("Disconnecting device...");
-                    planTowerSensor.disconnectDevice();
-                }
-                saveScreenAndDimensions(frame);
+                closeApp(frame);
                 super.windowClosing(windowEvent);
             }
 
@@ -145,7 +146,7 @@ public class Station {
         
         final JPanel panelMain = new JPanel();
         
-        panelMain.setLayout(new MigLayout("", "[50px][100px:200px,grow][100px]", "[29px][16px][338px][16px]"));
+        panelMain.setLayout(new MigLayout("", "[50px][100px:120px,grow][150px]", "[29px][16px][338px][16px]"));
         panelMain.add(connectionBtn, "cell 0 0,alignx left,aligny center");
         
         panelMain.add(deviceStatus, "flowx,cell 1 0,alignx left,aligny center");
@@ -154,12 +155,25 @@ public class Station {
         btnCfg.addMouseListener(new MouseAdapter() {
             @Override
             public void mouseClicked(MouseEvent e) {
-                new ConfigurationDlg(frame, "Configuration").initGUI();
+                openConfigDlg(frame);
             }
         });
         btnCfg.setToolTipText("Configuration");
         btnCfg.setIcon(new ImageIcon(Station.class.getResource("/pmstation/btn_config.png")));
-        panelMain.add(btnCfg, "cell 2 0,alignx right,aligny center");
+        panelMain.add(btnCfg, "flowx,cell 2 0,alignx right,aligny center");
+        
+        JButton buttonAbout = new JButton("");
+        buttonAbout.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseClicked(MouseEvent e) {
+                openAboutDlg(frame);
+            }
+        });
+
+        buttonAbout.setIcon(new ImageIcon(Station.class.getResource("/pmstation/btn_about.png")));
+        buttonAbout.setToolTipText("About...");
+        
+        panelMain.add(buttonAbout, "cell 2 0,alignx right,aligny center");
         
         JPanel panelMeasurements = new JPanel();
         panelMeasurements.setBorder(new TitledBorder(null, "Last measurements", TitledBorder.LEADING, TitledBorder.TOP, null, null));
@@ -225,13 +239,14 @@ public class Station {
         });
         appNameLink.setToolTipText("Visit: " + Constants.PROJECT_URL);
         appNameLink.setHorizontalAlignment(SwingConstants.RIGHT);
-        labelStatus.setText("dfjodij oijfoidj oijr ogijfoigj foigj oifjgoi fjgoi jfoigj ofig");
+        labelStatus.setText("... .   .     .         .               .");
         LabelObserver labelObserver = new LabelObserver();
         labelObserver.setLabelsToUpdate(labelsToBeUpdated);
         planTowerSensor.addObserver(labelObserver);
         frame.pack();
         setScreenAndDimensions(frame);  // must be after frame.pack()
         frame.setVisible(true);
+        integrateNativeOS(frame);
 
         boolean autostart = Config.instance().to().getBoolean(Config.Entry.AUTOSTART.key(), !SystemUtils.IS_OS_MAC_OSX);
         if (autostart) {
@@ -248,6 +263,28 @@ public class Station {
         connectionBtn.setEnabled(true);
     }
     
+    public void openConfigDlg(final JFrame frame) {
+        new ConfigurationDlg(frame, "Configuration").initGUI();
+    }
+
+    public void openAboutDlg(JFrame frame) {
+        new AboutDlg(frame, "About").initGUI();
+    }
+    
+    public void closeApp(final JFrame frame) {
+        if (!SystemUtils.IS_OS_MAC_OSX) {
+            logger.info("Disconnecting device...");
+            planTowerSensor.disconnectDevice();
+        }
+        saveScreenAndDimensions(frame);
+    }
+    
+    private void integrateNativeOS(JFrame frame) {
+        if (SystemUtils.IS_OS_MAC_OSX) {
+            new MacOSIntegration(frame, this).integrate();
+        }
+    }
+
     private void setIcon(JFrame frame) {
         ImageIcon icon = new ImageIcon(Station.class.getResource("/pmstation/app-icon.png"));
         frame.setIconImage(icon.getImage());
@@ -334,4 +371,6 @@ public class Station {
             }
         }
     }
+
+
 }
