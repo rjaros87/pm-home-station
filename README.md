@@ -87,6 +87,7 @@ Suggested printing parameters:
 
 - [License GPL-3.0](/LICENSE)
 
+
 ## Authors
 
 - [Radoslaw Gabiga](https://github.com/sanchin)
@@ -96,3 +97,10 @@ Suggested printing parameters:
 ## TODOs
 
 - [Release 1.0.0](https://github.com/rjaros87/pm-station-usb/projects/1)
+
+## Disclaimer
+
+The information provided on this project is true and complete to the best of our knowledge. However, like various Do-It-Yourself (DIY) projects this DIY Project is at your own risk only.
+As with any DIY project, unfamiliarity with the tools and process can be dangerous. We are not liable for any damage or injury resulting from the assembly or use of this project including but not limited to hardware damage, body injuries etc.
+
+You have been warned.
