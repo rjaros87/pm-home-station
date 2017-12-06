@@ -78,8 +78,10 @@ public class PlanTowerSensor {
     }
 
     private void notifyAllObservers(ParticulateMatterSample particulateMatterSample) {
-        for (IPlanTowerObserver observer : planTowerObserver) {
-            observer.onNewValue(particulateMatterSample);
+        if (particulateMatterSample != null) {
+            for (IPlanTowerObserver observer : planTowerObserver) {
+                observer.onNewValue(particulateMatterSample);
+            }
         }
     }
 }

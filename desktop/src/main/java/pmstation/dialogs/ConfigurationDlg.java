@@ -5,6 +5,7 @@
  */
 package pmstation.dialogs;
 
+import java.awt.SystemTray;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
@@ -22,20 +23,26 @@ import javax.swing.JSpinner;
 import javax.swing.LayoutStyle.ComponentPlacement;
 import javax.swing.SpinnerNumberModel;
 import javax.swing.SwingConstants;
+import javax.swing.SwingUtilities;
 import javax.swing.border.TitledBorder;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
 import org.apache.commons.lang3.SystemUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import pmstation.configuration.Config;
 import pmstation.configuration.Constants;
 
 public class ConfigurationDlg {
 
+    private static final Logger logger = LoggerFactory.getLogger(ConfigurationDlg.class);
+    
     private JFrame mainFrame;
     private String title;
     private JSpinner textInterval;
+    private JDialog frame = null;
     
     public ConfigurationDlg(JFrame parent, String title) {
         this.mainFrame = parent;
@@ -45,18 +52,23 @@ public class ConfigurationDlg {
     /**
      * @wbp.parser.entryPoint
      */
-    public void initGUI() {
-        final JDialog frame = new JDialog(mainFrame, title, true);
+    public void show() {
+        if (frame != null) {
+            frame.toFront();
+            frame.requestFocus();
+            return;
+        }
+        frame = new JDialog(mainFrame, title, true);
         frame.setResizable(false);
-        frame.setBounds(350, 350, 515, 386);
+        frame.setBounds(350, 350, 515, 426);
         frame.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
         frame.setLocationRelativeTo(mainFrame);
         
         JPanel panelGeneral = new JPanel();
-        panelGeneral.setBorder(new TitledBorder(null, "General", TitledBorder.LEADING, TitledBorder.TOP, null, null));
+        panelGeneral.setBorder(new TitledBorder(null, "<html><b>General</b></html>", TitledBorder.LEADING, TitledBorder.TOP, null, null));
         
         JPanel panelUI = new JPanel();
-        panelUI.setBorder(new TitledBorder(null, "User Interface", TitledBorder.LEADING, TitledBorder.TOP, null, null));
+        panelUI.setBorder(new TitledBorder(null, "<html><b>User Interface</b></html>", TitledBorder.LEADING, TitledBorder.TOP, null, null));
         
         JPanel panelBottom = new JPanel();
         panelBottom.setBorder(null);
@@ -66,8 +78,8 @@ public class ConfigurationDlg {
                 .addGroup(groupLayout.createSequentialGroup()
                     .addContainerGap()
                     .addGroup(groupLayout.createParallelGroup(Alignment.TRAILING)
-                        .addComponent(panelBottom, Alignment.LEADING, GroupLayout.DEFAULT_SIZE, 503, Short.MAX_VALUE)
                         .addComponent(panelUI, Alignment.LEADING, GroupLayout.DEFAULT_SIZE, 503, Short.MAX_VALUE)
+                        .addComponent(panelBottom, Alignment.LEADING, GroupLayout.DEFAULT_SIZE, 503, Short.MAX_VALUE)
                         .addComponent(panelGeneral, GroupLayout.DEFAULT_SIZE, 503, Short.MAX_VALUE))
                     .addContainerGap())
         );
@@ -76,9 +88,9 @@ public class ConfigurationDlg {
                 .addGroup(groupLayout.createSequentialGroup()
                     .addContainerGap()
                     .addComponent(panelGeneral, GroupLayout.PREFERRED_SIZE, 136, GroupLayout.PREFERRED_SIZE)
-                    .addPreferredGap(ComponentPlacement.RELATED, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(panelUI, GroupLayout.PREFERRED_SIZE, 92, GroupLayout.PREFERRED_SIZE)
-                    .addGap(69)
+                    .addPreferredGap(ComponentPlacement.RELATED)
+                    .addComponent(panelUI, GroupLayout.PREFERRED_SIZE, 183, GroupLayout.PREFERRED_SIZE)
+                    .addPreferredGap(ComponentPlacement.RELATED, 18, Short.MAX_VALUE)
                     .addComponent(panelBottom, GroupLayout.PREFERRED_SIZE, 58, GroupLayout.PREFERRED_SIZE)
                     .addContainerGap())
         );
@@ -88,6 +100,7 @@ public class ConfigurationDlg {
         btnClose.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 frame.dispose();
+                frame = null;
             }
         });
         panelUI.setLayout(null);
@@ -107,9 +120,46 @@ public class ConfigurationDlg {
         chbxAlwaysOnTop.setBounds(393, 24, 76, 29);
         
         panelUI.add(chbxAlwaysOnTop);
-        panelGeneral.setLayout(null);
         
-        JLabel lblInterval = new JLabel("Measurements interval (in seconds):");
+        JLabel lblSystemTray = new JLabel("<html>Show app icon in the System Tray:<br><small><i>- only on selected operating systems<br>- requires app restart</i></html>");
+        lblSystemTray.setBounds(6, 66, 386, 60);
+        lblSystemTray.setEnabled(SystemTray.isSupported());
+        panelUI.add(lblSystemTray);
+        
+        JCheckBox chbxSystemTray = new JCheckBox("");
+
+        chbxSystemTray.setSelected(Config.instance().to().getBoolean(Config.Entry.SYSTEM_TRAY.key(), false));
+        chbxSystemTray.setBounds(393, 74, 76, 23);
+        chbxSystemTray.setEnabled(SystemTray.isSupported());
+        panelUI.add(chbxSystemTray);
+        
+        JLabel lblHideMainWindow = new JLabel("Hide the main window on start:");
+        lblHideMainWindow.setEnabled(chbxSystemTray.isSelected() && chbxSystemTray.isEnabled());
+        lblHideMainWindow.setBounds(6, 140, 386, 16);
+        panelUI.add(lblHideMainWindow);
+        
+        JCheckBox chbxHideMainWindow = new JCheckBox("");
+        chbxHideMainWindow.setEnabled(chbxSystemTray.isSelected() && chbxSystemTray.isEnabled());
+        chbxHideMainWindow.addChangeListener(new ChangeListener() {
+            public void stateChanged(ChangeEvent e) {
+                Config.instance().to().setProperty(Config.Entry.HIDE_MAIN_WINDOW.key(), chbxHideMainWindow.isSelected());
+            }
+        });
+        chbxHideMainWindow.setSelected(Config.instance().to().getBoolean(Config.Entry.HIDE_MAIN_WINDOW.key(), false));
+        chbxHideMainWindow.setBounds(393, 133, 76, 23);
+        panelUI.add(chbxHideMainWindow);
+        panelGeneral.setLayout(null);
+
+        chbxSystemTray.addChangeListener(new ChangeListener() {
+            @Override
+            public void stateChanged(ChangeEvent e) {
+                Config.instance().to().setProperty(Config.Entry.SYSTEM_TRAY.key(), chbxSystemTray.isSelected());
+                lblHideMainWindow.setEnabled(chbxSystemTray.isSelected());
+                chbxHideMainWindow.setEnabled(chbxSystemTray.isSelected());
+            }
+        });
+        
+        JLabel lblInterval = new JLabel("<html>Measurements interval <i>(in seconds)</i>:</html>");
         lblInterval.setHorizontalAlignment(SwingConstants.LEFT);
         lblInterval.setBounds(6, 71, 363, 16);
         panelGeneral.add(lblInterval);
@@ -124,8 +174,8 @@ public class ConfigurationDlg {
         chkbxAutostart.setSelected(Config.instance().to().getBoolean(Config.Entry.AUTOSTART.key(), !SystemUtils.IS_OS_MAC_OSX));
         panelGeneral.add(chkbxAutostart);
         
-        JLabel lblAutostart = new JLabel("Autostart measurements (not recommended for OSX users):");
-        lblAutostart.setBounds(6, 30, 386, 16);
+        JLabel lblAutostart = new JLabel("<html>Autostart measurements:<br><small><i>- not recommended for macOS users and PL2303</i></small></html>");
+        lblAutostart.setBounds(6, 30, 386, 29);
         panelGeneral.add(lblAutostart);
         
         textInterval = new JSpinner(new SpinnerNumberModel(
@@ -161,7 +211,10 @@ public class ConfigurationDlg {
         textInterval.setBounds(396, 64, 78, 26);
         panelGeneral.add(textInterval);
         frame.getContentPane().setLayout(groupLayout);
-        frame.setVisible(true);
+        frame.toFront();
+        frame.requestFocus();
+        frame.setVisible(true); // blocks for modals...
+        frame = null;
     }
     
     private boolean verifyInterval(int interval) {

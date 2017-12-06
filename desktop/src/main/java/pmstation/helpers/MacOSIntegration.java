@@ -5,10 +5,6 @@
  */
 package pmstation.helpers;
 
-import java.awt.event.WindowEvent;
-
-import javax.swing.JFrame;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -22,11 +18,9 @@ import pmstation.Station;
 public class MacOSIntegration implements MRJAboutHandler, MRJPrefsHandler, MRJQuitHandler{
     
     private static final Logger logger = LoggerFactory.getLogger(MacOSIntegration.class);
-    private final JFrame frame;
     private final Station station;
     
-    public MacOSIntegration(JFrame frame, Station station) {
-        this.frame = frame;
+    public MacOSIntegration(Station station) {
         this.station = station;
     }
     
@@ -36,24 +30,23 @@ public class MacOSIntegration implements MRJAboutHandler, MRJPrefsHandler, MRJQu
             MRJApplicationUtils.registerPrefsHandler(this);
             MRJApplicationUtils.registerQuitHandler(this);
         } catch (Exception e) {
-            logger.error("Ooops, there was problem integrating with OSX", e);
+            logger.error("Ooops, there was a problem integrating with OSX menu", e);
         }
-        
     }
 
     @Override
     public void handleQuit() {
-        frame.dispatchEvent(new WindowEvent(frame, WindowEvent.WINDOW_CLOSING));
+        station.closeApp();
     }
 
     @Override
     public void handlePrefs() {
-        station.openConfigDlg(frame);
+        station.openConfigDlg();
     }
 
     @Override
     public void handleAbout() {
-        station.openAboutDlg(frame);
+        station.openAboutDlg();
     }
 
 }

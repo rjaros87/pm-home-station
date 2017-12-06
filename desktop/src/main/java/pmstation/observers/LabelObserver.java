@@ -21,6 +21,9 @@ public class LabelObserver implements IPlanTowerObserver {
     private static final Logger logger = LoggerFactory.getLogger(LabelObserver.class);
 
     private JLabel deviceStatus, measurementTime, pm1_0, pm2_5, pm10;
+    private static final String UNIT = " \u03BCg/m\u00B3";
+    private static final String PRE_HTML = "<html><b>";
+    private static final String POST_HTML = "</b></html>";
 
     public void setLabelsToUpdate(HashMap<String, JLabel> components) {
         deviceStatus = get(components, "deviceStatus");
@@ -35,17 +38,17 @@ public class LabelObserver implements IPlanTowerObserver {
         if (sample == null) {
             deviceStatus.setText("Status: sensor not ready");
         } else {
-            String unit = " \u03BCg/m\u00B3";
-            deviceStatus.setText("Status: Measuring ...");
-            measurementTime.setText(Constants.DATE_FORMAT.format(sample.getDate()));
-            pm1_0.setText(String.valueOf(sample.getPm1_0()) + unit);
             
-            pm2_5.setText(String.valueOf(sample.getPm2_5()) + unit);
+            deviceStatus.setText("Status: Measuring ...");
+            measurementTime.setText("<html><small>" + Constants.DATE_FORMAT.format(sample.getDate()) + "</small></html>");
+            pm1_0.setText(PRE_HTML + String.valueOf(sample.getPm1_0()) + UNIT + POST_HTML);
+            
+            pm2_5.setText(PRE_HTML + String.valueOf(sample.getPm2_5()) + UNIT + POST_HTML);
             AQIColor color2_5 = AQIColor.fromPM25Level(sample.getPm2_5());
             pm2_5.setForeground(color2_5.getColor());
             pm2_5.setToolTipText(color2_5.getDescription());
             AQIColor color10 = AQIColor.fromPM10Level(sample.getPm10());
-            pm10.setText(String.valueOf(sample.getPm10()) + unit);
+            pm10.setText(PRE_HTML + String.valueOf(sample.getPm10()) + UNIT + POST_HTML);
             pm10.setForeground(color10.getColor());
             pm10.setToolTipText(color10.getDescription());
         }

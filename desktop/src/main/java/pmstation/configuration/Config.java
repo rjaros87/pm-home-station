@@ -26,6 +26,8 @@ public class Config {
         INTERVAL("interval"),
         AUTOSTART("autostart.measurements"),
         ALWAYS_ON_TOP("always.on.top"),
+        SYSTEM_TRAY("system.tray"),
+        HIDE_MAIN_WINDOW("hide.main.window"),
         POS_X("pos.x"),
         POS_Y("pos.y"),
         POS_WIDTH("pos.width"),

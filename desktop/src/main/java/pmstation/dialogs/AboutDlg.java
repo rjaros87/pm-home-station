@@ -12,7 +12,6 @@ import java.awt.event.ActionListener;
 import java.io.BufferedReader;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.net.URI;
 import java.net.URL;
 
 import javax.swing.GroupLayout;
@@ -36,7 +35,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import pmstation.Station;
-import pmstation.configuration.Constants;
 
 public class AboutDlg {
 
@@ -44,6 +42,7 @@ public class AboutDlg {
     
     private JFrame mainFrame;
     private String title;
+    private JDialog frame = null;
     
     public AboutDlg(JFrame parent, String title) {
         this.mainFrame = parent;
@@ -53,8 +52,13 @@ public class AboutDlg {
     /**
      * @wbp.parser.entryPoint
      */
-    public void initGUI() {
-        final JDialog frame = new JDialog(mainFrame, title, true);
+    public void show() {
+        if (frame != null) {
+            frame.toFront();
+            frame.requestFocus();
+            return;
+        }
+        frame = new JDialog(mainFrame, title, true);
         frame.setResizable(false);
         frame.setBounds(350, 350, 515, 386);
         frame.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
@@ -96,6 +100,7 @@ public class AboutDlg {
         btnClose.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 frame.dispose();
+                frame = null;
             }
         });
         
@@ -103,7 +108,10 @@ public class AboutDlg {
         tabs.addTab("License", null, panelLicence, null);
 
         frame.getContentPane().setLayout(groupLayout);
-        frame.setVisible(true);
+        frame.toFront();
+        frame.requestFocus();
+        frame.setVisible(true); // blocks for modals
+        frame = null;
     }
     
     private void loadHtml(JPanel panel, URL html, URL stylesheet) {

@@ -35,6 +35,7 @@ import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.SwingConstants;
+import javax.swing.SwingUtilities;
 import javax.swing.border.BevelBorder;
 import javax.swing.border.TitledBorder;
 
@@ -49,21 +50,24 @@ import org.slf4j.LoggerFactory;
 import net.miginfocom.swing.MigLayout;
 import pmstation.configuration.Config;
 import pmstation.configuration.Constants;
+import pmstation.core.plantower.IPlanTowerObserver;
 import pmstation.dialogs.AboutDlg;
 import pmstation.dialogs.ConfigurationDlg;
 import pmstation.helpers.MacOSIntegration;
+import pmstation.helpers.NativeTrayIntegration;
 import pmstation.observers.ChartObserver;
 import pmstation.observers.ConsoleObserver;
 import pmstation.observers.LabelObserver;
 import pmstation.plantower.PlanTowerSensor;
-import java.awt.event.ActionListener;
-import java.awt.event.ActionEvent;
 
 public class Station {
     
     private static final Logger logger = LoggerFactory.getLogger(Station.class);
 
     private final PlanTowerSensor planTowerSensor;
+    private JFrame frame = null;
+    private ConfigurationDlg configDlg = null;
+    private AboutDlg aboutDlg = null;
     
     public Station(PlanTowerSensor planTowerSensor) {
         this.planTowerSensor = planTowerSensor;
@@ -74,11 +78,11 @@ public class Station {
      * @wbp.parser.entryPoint
      */
     public void showUI() {
-        final JFrame frame = new JFrame("Particulate matter station");
+        frame = new JFrame("Particulate matter station");
         frame.setAlwaysOnTop(Config.instance().to().getBoolean(Config.Entry.ALWAYS_ON_TOP.key(), false));
         setIcon(frame);
 
-        frame.getContentPane().setMinimumSize(new Dimension(474, 180));
+        frame.getContentPane().setMinimumSize(new Dimension(484, 180));
         frame.getContentPane().setPreferredSize(new Dimension(740, 480));
         
         // Enforce min window size on OSX...
@@ -94,11 +98,16 @@ public class Station {
             }
         });
 
-        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        frame.setDefaultCloseOperation(
+                Config.instance().to().getBoolean(Config.Entry.SYSTEM_TRAY.key(), false) ? JFrame.HIDE_ON_CLOSE : JFrame.EXIT_ON_CLOSE);
         frame.addWindowListener(new WindowAdapter() {
             @Override
             public void windowClosing(WindowEvent windowEvent) {
-                closeApp(frame);
+                if (!SystemUtils.IS_OS_MAC_OSX && frame.getDefaultCloseOperation() == JFrame.EXIT_ON_CLOSE) {
+                    logger.info("Disconnecting device...");
+                    planTowerSensor.disconnectDevice();
+                }
+                saveScreenAndDimensions(frame);
                 super.windowClosing(windowEvent);
             }
 
@@ -114,8 +123,8 @@ public class Station {
         ChartObserver chartObserve = new ChartObserver();
         chartObserve.setChart(chart);
         chartObserve.setChartPanel(chartPanel);
-        planTowerSensor.addObserver(chartObserve);
-        planTowerSensor.addObserver(new ConsoleObserver());
+        addObserver(chartObserve);
+        addObserver(new ConsoleObserver());
 
         JLabel deviceStatus = new JLabel("Status: ");
         deviceStatus.setVisible(false); // TODO to be removed?
@@ -155,7 +164,7 @@ public class Station {
         btnCfg.addMouseListener(new MouseAdapter() {
             @Override
             public void mouseClicked(MouseEvent e) {
-                openConfigDlg(frame);
+                openConfigDlg();
             }
         });
         btnCfg.setToolTipText("Configuration");
@@ -166,7 +175,7 @@ public class Station {
         buttonAbout.addMouseListener(new MouseAdapter() {
             @Override
             public void mouseClicked(MouseEvent e) {
-                openAboutDlg(frame);
+                openAboutDlg();
             }
         });
 
@@ -176,9 +185,9 @@ public class Station {
         panelMain.add(buttonAbout, "cell 2 0,alignx right,aligny center");
         
         JPanel panelMeasurements = new JPanel();
-        panelMeasurements.setBorder(new TitledBorder(null, "Last measurements", TitledBorder.LEADING, TitledBorder.TOP, null, null));
+        panelMeasurements.setBorder(new TitledBorder(null, "<html><b>Last measurements</b></html>", TitledBorder.LEADING, TitledBorder.TOP, null, null));
         panelMain.add(panelMeasurements, "cell 0 1 3 1,grow");
-        panelMeasurements.setLayout(new MigLayout("", "[50px][6px][70px][6px][46px][6px][76px][6px][42px][12px][137px]", "[16px][]"));
+        panelMeasurements.setLayout(new MigLayout("", "[50px][6px][70px:100px][6px][50px][6px][70px:100px][6px][42px][12px][70px:137px]", "[16px][]"));
         
                 JLabel pm1_0Label = new JLabel("PM 1.0:");
                 panelMeasurements.add(pm1_0Label, "cell 0 0,alignx left,aligny top");
@@ -204,7 +213,7 @@ public class Station {
                                                         pm10.setText("----");
                                                         labelsToBeUpdated.put("pm10", pm10);
                                                         
-                                                                JLabel pmMeasurementTime_label = new JLabel("Time: ");
+                                                                JLabel pmMeasurementTime_label = new JLabel("<html><small>Time: </small></html>");
                                                                 panelMeasurements.add(pmMeasurementTime_label, "cell 0 1 2 1,alignx left");
                                                                 JLabel pmMeasurementTime = new JLabel();
                                                                 panelMeasurements.add(pmMeasurementTime, "cell 2 1 9 1");
@@ -242,10 +251,11 @@ public class Station {
         labelStatus.setText("... .   .     .         .               .");
         LabelObserver labelObserver = new LabelObserver();
         labelObserver.setLabelsToUpdate(labelsToBeUpdated);
-        planTowerSensor.addObserver(labelObserver);
+        addObserver(labelObserver);
+        
         frame.pack();
         setScreenAndDimensions(frame);  // must be after frame.pack()
-        frame.setVisible(true);
+        frame.setVisible(!Config.instance().to().getBoolean(Config.Entry.HIDE_MAIN_WINDOW.key(), false));
         integrateNativeOS(frame);
 
         boolean autostart = Config.instance().to().getBoolean(Config.Entry.AUTOSTART.key(), !SystemUtils.IS_OS_MAC_OSX);
@@ -261,27 +271,61 @@ public class Station {
             labelStatus.setText("Status: not started");
         }
         connectionBtn.setEnabled(true);
+        
+        // register dialogs (they can be opened from SystemTray and OSX menubar)
+        aboutDlg = new AboutDlg(frame, "About");
+        configDlg = new ConfigurationDlg(frame, "Configuration");
     }
     
-    public void openConfigDlg(final JFrame frame) {
-        new ConfigurationDlg(frame, "Configuration").initGUI();
+    public void addObserver(IPlanTowerObserver observer) {
+        planTowerSensor.addObserver(observer);
     }
 
-    public void openAboutDlg(JFrame frame) {
-        new AboutDlg(frame, "About").initGUI();
+    public void openConfigDlg() {
+        SwingUtilities.invokeLater(new Runnable() {
+            public void run() {
+                configDlg.show();
+            }
+         });
+        
+    }
+
+    public void openAboutDlg() {
+        SwingUtilities.invokeLater(new Runnable() {
+            public void run() { 
+                aboutDlg.show();
+            }
+         });
     }
     
-    public void closeApp(final JFrame frame) {
-        if (!SystemUtils.IS_OS_MAC_OSX) {
-            logger.info("Disconnecting device...");
-            planTowerSensor.disconnectDevice();
-        }
-        saveScreenAndDimensions(frame);
+    public void closeApp() {
+        SwingUtilities.invokeLater(new Runnable() {
+            public void run() { 
+                frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+                frame.dispatchEvent(new WindowEvent(frame, WindowEvent.WINDOW_CLOSING));
+            }
+         });
+    }
+    
+    public void setVisible(boolean visible) {
+        SwingUtilities.invokeLater(new Runnable() {
+            public void run() { 
+                frame.setVisible(visible);
+                if (visible) {
+                    frame.setExtendedState(JFrame.NORMAL);
+                    frame.toFront();
+                    frame.requestFocus();
+                }
+            }
+         });
     }
     
     private void integrateNativeOS(JFrame frame) {
         if (SystemUtils.IS_OS_MAC_OSX) {
-            new MacOSIntegration(frame, this).integrate();
+            new MacOSIntegration(this).integrate();
+        }
+        if (Config.instance().to().getBoolean(Config.Entry.SYSTEM_TRAY.key(), false)) {
+            new NativeTrayIntegration(this).integrate();
         }
     }
 
@@ -304,6 +348,10 @@ public class Station {
     }
 
     private void saveScreenAndDimensions(JFrame frame) {
+        if (!frame.isVisible()) {
+            return;
+        }
+
         // check multiple displays
         GraphicsEnvironment ge = GraphicsEnvironment.getLocalGraphicsEnvironment();
         GraphicsDevice[] screens = ge.getScreenDevices();
@@ -371,6 +419,5 @@ public class Station {
             }
         }
     }
-
 
 }
