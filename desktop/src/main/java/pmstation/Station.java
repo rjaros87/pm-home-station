@@ -16,8 +16,6 @@ import java.awt.GraphicsEnvironment;
 import java.awt.Image;
 import java.awt.Point;
 import java.awt.Rectangle;
-import java.awt.event.ComponentAdapter;
-import java.awt.event.ComponentEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.WindowAdapter;
@@ -82,21 +80,8 @@ public class Station {
         frame.setAlwaysOnTop(Config.instance().to().getBoolean(Config.Entry.ALWAYS_ON_TOP.key(), false));
         setIcon(frame);
 
-        frame.getContentPane().setMinimumSize(new Dimension(484, 180));
-        frame.getContentPane().setPreferredSize(new Dimension(740, 480));
-        
-        // Enforce min window size on OSX...
-        // TODO on Windows 7 the windows bounces too much :/
-        frame.addComponentListener(new ComponentAdapter() {
-            @Override
-            public void componentResized(ComponentEvent e) {
-                Dimension currentDim = frame.getSize();
-                Dimension minDim = frame.getMinimumSize();
-                Dimension toSetDim = new Dimension(Math.max(currentDim.width, minDim.width),
-                                                   Math.max(currentDim.height, minDim.height));
-                frame.setSize(toSetDim);
-            }
-        });
+        frame.setMinimumSize(new Dimension(484, 180));
+        frame.setPreferredSize(new Dimension(740, 480));
 
         frame.setDefaultCloseOperation(
                 Config.instance().to().getBoolean(Config.Entry.SYSTEM_TRAY.key(), false) ? JFrame.HIDE_ON_CLOSE : JFrame.EXIT_ON_CLOSE);
@@ -362,6 +347,7 @@ public class Station {
             Config.instance().to().setProperty(Config.Entry.POS_Y.key(), pos.y);
             Config.instance().to().setProperty(Config.Entry.POS_WIDTH.key(), size.width);
             Config.instance().to().setProperty(Config.Entry.POS_HEIGHT.key(), size.height);
+            logger.info("Saved window dimensions to config file (single screen found)");
         } else {
             Rectangle screenBounds = frame.getGraphicsConfiguration().getBounds();
             pos.x -= screenBounds.x;
@@ -373,7 +359,9 @@ public class Station {
             Config.instance().to().setProperty(Config.Entry.SCREEN_POS_HEIGHT.key(), size.height);
             
             Config.instance().to().setProperty(Config.Entry.SCREEN.key(), device.getIDstring());
+            logger.info("Saved window dimensions to config file (multi screen found)");
         }
+        
     }
     
     private void setDimensions(JFrame frame, int x, int y, int width, int height) {
