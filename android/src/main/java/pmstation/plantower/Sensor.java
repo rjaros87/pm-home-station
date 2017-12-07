@@ -93,7 +93,7 @@ public class Sensor {
 
     private void notifyAllObservers(final ParticulateMatterSample sample) {
         for (IPlanTowerObserver valueObserver : valueObservers) {
-            valueObserver.onNewValue(sample);
+            valueObserver.update(sample);
         }
     }
 

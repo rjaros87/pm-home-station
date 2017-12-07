@@ -246,7 +246,7 @@ public class MainActivity extends AppCompatActivity implements IPlanTowerObserve
     }
 
     @Override
-    public void onNewValue(ParticulateMatterSample sample) {
+    public void update(ParticulateMatterSample sample) {
         values.add(sample);
         AQIColor pm25Color = AQIColor.fromPM25Level(sample.getPm2_5());
         smog.animate().alpha(pm25Color.getAlpha());

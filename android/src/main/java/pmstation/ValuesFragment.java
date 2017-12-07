@@ -57,7 +57,7 @@ public class ValuesFragment extends Fragment implements IPlanTowerObserver {
         List<ParticulateMatterSample> values = ((MainActivity) getActivity()).getValues();
         if (!values.isEmpty()) {
             ParticulateMatterSample sample = values.get(values.size() - 1);
-            onNewValue(sample);
+            update(sample);
         }
     }
 
@@ -76,7 +76,7 @@ public class ValuesFragment extends Fragment implements IPlanTowerObserver {
     }
 
     @Override
-    public void onNewValue(final ParticulateMatterSample sample) {
+    public void update(final ParticulateMatterSample sample) {
         FragmentActivity activity = getActivity();
         if (activity == null) {
             return;

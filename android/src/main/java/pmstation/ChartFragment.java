@@ -132,7 +132,7 @@ public class ChartFragment extends Fragment implements IPlanTowerObserver {
     }
 
     @Override
-    public void onNewValue(ParticulateMatterSample sample) {
+    public void update(ParticulateMatterSample sample) {
         if (!ready) {
             return;
         }
