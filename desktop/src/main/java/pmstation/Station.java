@@ -243,6 +243,10 @@ public class Station {
         frame.setVisible(!Config.instance().to().getBoolean(Config.Entry.HIDE_MAIN_WINDOW.key(), false));
         integrateNativeOS(frame);
 
+        // register dialogs (they can be opened from SystemTray and OSX menubar)
+        aboutDlg = new AboutDlg(frame, "About");
+        configDlg = new ConfigurationDlg(frame, "Configuration");
+
         boolean autostart = Config.instance().to().getBoolean(Config.Entry.AUTOSTART.key(), !SystemUtils.IS_OS_MAC_OSX);
         if (autostart) {
             if (planTowerSensor.connectDevice()) {
@@ -256,10 +260,6 @@ public class Station {
             labelStatus.setText("Status: not started");
         }
         connectionBtn.setEnabled(true);
-        
-        // register dialogs (they can be opened from SystemTray and OSX menubar)
-        aboutDlg = new AboutDlg(frame, "About");
-        configDlg = new ConfigurationDlg(frame, "Configuration");
     }
     
     public void addObserver(IPlanTowerObserver observer) {
