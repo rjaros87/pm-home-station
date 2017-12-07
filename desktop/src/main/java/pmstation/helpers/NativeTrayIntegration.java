@@ -10,8 +10,6 @@ import java.awt.MenuItem;
 import java.awt.PopupMenu;
 import java.awt.SystemTray;
 import java.awt.TrayIcon;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.awt.image.BufferedImage;
 
 import javax.imageio.ImageIO;
@@ -40,29 +38,17 @@ public class NativeTrayIntegration {
         }
         PopupMenu menu = new PopupMenu();
         MenuItem itemMainWindow = new MenuItem("Main window");
-        itemMainWindow.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                station.setVisible(true);
-            }
-        });
+        itemMainWindow.addActionListener((e) -> { station.setVisible(true); } );
         menu.add(itemMainWindow);
         
         MenuItem itemPrefs = new MenuItem("Preferences");
-        itemPrefs.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                station.openConfigDlg();
-            }
-        });
+        itemPrefs.addActionListener((e) -> { station.openConfigDlg(); });
         menu.add(itemPrefs);
         
         menu.addSeparator();
         
         MenuItem itemQuit = new MenuItem("Quit");
-        itemQuit.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                station.closeApp();
-            }
-        });
+        itemQuit.addActionListener((e) -> { station.closeApp(); } );
         menu.add(itemQuit);
 
         try {
@@ -77,10 +63,10 @@ public class NativeTrayIntegration {
             
             station.addObserver(new IPlanTowerObserver() {
                 @Override
-                public void onNewValue(ParticulateMatterSample sample) {
-                    menuBarIcon.setToolTip("PM1.0: " + sample.getPm1_0() + UNIT + ", \n" +
-                                           "PM2.5: " + sample.getPm2_5() + UNIT + ", \n" +
-                                           "PM10: " + sample.getPm10() + UNIT);
+                public void update(ParticulateMatterSample sample) {
+                    menuBarIcon.setToolTip("PM1.0 : " + sample.getPm1_0() + UNIT + "\n" +
+                                           "PM2.5 : " + sample.getPm2_5() + UNIT + "\n" +
+                                           "PM10  : " + sample.getPm10() + UNIT);
                 }
                 
             });

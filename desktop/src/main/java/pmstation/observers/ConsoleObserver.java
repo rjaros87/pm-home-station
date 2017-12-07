@@ -19,7 +19,7 @@ public class ConsoleObserver implements IPlanTowerObserver {
     private static final Logger logger = LoggerFactory.getLogger(ConsoleObserver.class);
 
     @Override
-    public void onNewValue(ParticulateMatterSample sample) {
+    public void update(ParticulateMatterSample sample) {
         if (sample == null) {
             logger.warn(Instant.now().toString() + " sensor not ready");
         } else {

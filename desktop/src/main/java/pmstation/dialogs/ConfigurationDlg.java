@@ -5,6 +5,7 @@
  */
 package pmstation.dialogs;
 
+import java.awt.Dialog.ModalityType;
 import java.awt.SystemTray;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -23,7 +24,6 @@ import javax.swing.JSpinner;
 import javax.swing.LayoutStyle.ComponentPlacement;
 import javax.swing.SpinnerNumberModel;
 import javax.swing.SwingConstants;
-import javax.swing.SwingUtilities;
 import javax.swing.border.TitledBorder;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
@@ -37,6 +37,7 @@ import pmstation.configuration.Constants;
 
 public class ConfigurationDlg {
 
+    @SuppressWarnings("unused")
     private static final Logger logger = LoggerFactory.getLogger(ConfigurationDlg.class);
     
     private JFrame mainFrame;
@@ -58,7 +59,7 @@ public class ConfigurationDlg {
             frame.requestFocus();
             return;
         }
-        frame = new JDialog(mainFrame, title, true);
+        frame = new JDialog(mainFrame, title, ModalityType.APPLICATION_MODAL);
         frame.setResizable(false);
         frame.setBounds(350, 350, 515, 426);
         frame.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);

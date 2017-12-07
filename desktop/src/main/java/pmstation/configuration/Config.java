@@ -85,7 +85,7 @@ public class Config {
         
         try {
             config = builder.getConfiguration();
-            logger.info("User configuration is now loaded from: {}", configFile);
+            logger.info("User configuration has been loaded from: {}", configFile);
         } catch(ConfigurationException cex) {
             logger.error("Error loading configuration", cex);
             throw new IllegalStateException("Error loading/creating configuration");

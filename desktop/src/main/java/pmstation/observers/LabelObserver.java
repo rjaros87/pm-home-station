@@ -34,7 +34,7 @@ public class LabelObserver implements IPlanTowerObserver {
     }
 
     @Override
-    public void onNewValue(ParticulateMatterSample sample) {
+    public void update(ParticulateMatterSample sample) {
         if (sample == null) {
             deviceStatus.setText("Status: sensor not ready");
         } else {

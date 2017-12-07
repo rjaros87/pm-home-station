@@ -6,6 +6,7 @@
 
 package pmstation;
 
+import javax.swing.SwingUtilities;
 import javax.swing.UIManager;
 import javax.swing.UnsupportedLookAndFeelException;
 
@@ -42,7 +43,7 @@ public class Start {
                 setLookAndFeel();
                 PlanTowerSensor planTowerSensor = new PlanTowerSensor();
                 Station station = new Station(planTowerSensor);
-                station.showUI();
+                SwingUtilities.invokeLater(() -> { station.showUI(); });
             }
         } catch (ParseException e) {
             logger.error("Ooops", e);

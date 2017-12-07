@@ -7,6 +7,7 @@ package pmstation.dialogs;
 
 import java.awt.BorderLayout;
 import java.awt.Desktop;
+import java.awt.Dialog.ModalityType;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.BufferedReader;
@@ -58,7 +59,7 @@ public class AboutDlg {
             frame.requestFocus();
             return;
         }
-        frame = new JDialog(mainFrame, title, true);
+        frame = new JDialog(mainFrame, title, ModalityType.APPLICATION_MODAL);
         frame.setResizable(false);
         frame.setBounds(350, 350, 515, 386);
         frame.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);

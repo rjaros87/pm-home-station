@@ -31,7 +31,7 @@ public class ChartObserver implements IPlanTowerObserver {
     }
 
     @Override
-    public void onNewValue(ParticulateMatterSample sample) {
+    public void update(ParticulateMatterSample sample) {
         if (sample != null) {
             pm1_0.add(sample.getPm1_0());
             pm2_5.add(sample.getPm2_5());

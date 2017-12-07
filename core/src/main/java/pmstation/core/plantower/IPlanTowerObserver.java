@@ -6,5 +6,5 @@
 package pmstation.core.plantower;
 
 public interface IPlanTowerObserver {
-    void onNewValue(ParticulateMatterSample sample);
+    void update(ParticulateMatterSample sample);
 }

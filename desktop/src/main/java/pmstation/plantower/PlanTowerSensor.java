@@ -7,23 +7,35 @@ package pmstation.plantower;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.ScheduledFuture;
+import java.util.concurrent.TimeUnit;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import pmstation.core.plantower.IPlanTowerObserver;
 import pmstation.core.plantower.ParticulateMatterSample;
 import pmstation.core.plantower.PlanTowerDevice;
-import pmstation.core.plantower.IPlanTowerObserver;
 import pmstation.serial.SerialUART;
 
 public class PlanTowerSensor {
     
+    private static final Logger logger = LoggerFactory.getLogger(PlanTowerSensor.class);
+    
     private static final long DEFAULT_INTERVAL = 3000L;
 
     private List<IPlanTowerObserver> planTowerObserver;
-    private Thread measurementsThread;
     private SerialUART serialUART;
+    private ScheduledExecutorService executor;
+    private ScheduledFuture<?> scheduledMeasurements = null;
+    private long interval = -1;
 
     public PlanTowerSensor() {
         serialUART = new SerialUART();
         planTowerObserver = new ArrayList<>();
+        executor = Executors.newScheduledThreadPool(1);
     }
 
     public boolean connectDevice() {
@@ -35,8 +47,8 @@ public class PlanTowerSensor {
     }
 
     public void disconnectDevice() {
-        if (measurementsThread != null && !measurementsThread.isInterrupted()) {
-            measurementsThread.interrupt();
+        if (scheduledMeasurements != null) {
+            scheduledMeasurements.cancel(true);
         }
         if (serialUART.isConnected()) {
             serialUART.writeBytes(PlanTowerDevice.MODE_SLEEP);
@@ -48,39 +60,41 @@ public class PlanTowerSensor {
         startMeasurements(DEFAULT_INTERVAL);
     }
     
-    public void startMeasurements(long interval) {
-        measurementsThread = new Thread(() -> {
-            while (!Thread.currentThread().isInterrupted()) {
-                try {
-                    byte[] readBuffer;
-                    readBuffer = serialUART.readBytes(2 * PlanTowerDevice.DATA_LENGTH);
-//                    int headIndex = indexOfArray(readBuffer, START_CHARACTERS);
-//
-//                    if (headIndex > 0) {
-//                        serialUART.readBytes(headIndex);
-//                        readBuffer = serialUART.readBytes(readBuffer.length);
-//                    }
-
-                    notifyAllObservers(PlanTowerDevice.parse(readBuffer));
-                    Thread.sleep(interval);
-                } catch (InterruptedException e) {
-                    System.out.println("Thread interrupted");
-                    Thread.currentThread().interrupt();
-                }
+    public synchronized void startMeasurements(long interval) {
+        if (scheduledMeasurements != null) {
+            if (this.interval == interval) {
+                logger.info("Ignoring re-scheduling since the interval is the same as previous one");
+                return;
+            } else {
+                logger.info("Going to cancel scheduled measurement task as interval change is requested");
+                scheduledMeasurements.cancel(true);
             }
-        });
-
-        measurementsThread.start();
+        }
+        logger.info("Scheduling measurements at interval: {}ms...", interval);
+        scheduledMeasurements = executor.scheduleAtFixedRate(getMeasurementsRunnable(), 0, interval, TimeUnit.MILLISECONDS);
+        this.interval = interval;
     }
 
     public void addObserver(IPlanTowerObserver observer) {
         planTowerObserver.add(observer);
     }
+    
+    public boolean isConnected() {
+        return serialUART.isConnected();
+    }
+    
+    private Runnable getMeasurementsRunnable() {
+        return () -> {
+            byte[] readBuffer;
+            readBuffer = serialUART.readBytes(2 * PlanTowerDevice.DATA_LENGTH);
+            notifyAllObservers(PlanTowerDevice.parse(readBuffer));
+        };
+    }
 
     private void notifyAllObservers(ParticulateMatterSample particulateMatterSample) {
         if (particulateMatterSample != null) {
             for (IPlanTowerObserver observer : planTowerObserver) {
-                observer.onNewValue(particulateMatterSample);
+                observer.update(particulateMatterSample);
             }
         }
     }

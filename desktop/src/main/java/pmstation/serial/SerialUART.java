@@ -69,8 +69,8 @@ public class SerialUART implements ISerialUART {
         }
     }
 
-    public byte[] readBytes(int dataLenght) {
-        byte[] readBuffer = new byte[dataLenght];
+    public byte[] readBytes(int dataLength) {
+        byte[] readBuffer = new byte[dataLength];
         comPort.readBytes(readBuffer, readBuffer.length);
         logger.trace("ReadBuffer:\n{}", SerialUARTUtils.bytesToHexString(readBuffer));
 

@@ -10,6 +10,7 @@ import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Cursor;
 import java.awt.Desktop;
+import java.awt.Dialog.ModalExclusionType;
 import java.awt.Dimension;
 import java.awt.GraphicsDevice;
 import java.awt.GraphicsEnvironment;
@@ -78,6 +79,8 @@ public class Station {
     public void showUI() {
         frame = new JFrame("Particulate matter station");
         frame.setAlwaysOnTop(Config.instance().to().getBoolean(Config.Entry.ALWAYS_ON_TOP.key(), false));
+        frame.setModalExclusionType(ModalExclusionType.NO_EXCLUDE);
+        SwingUtilities.updateComponentTreeUI(frame);
         setIcon(frame);
 
         frame.setMinimumSize(new Dimension(484, 180));
@@ -88,9 +91,12 @@ public class Station {
         frame.addWindowListener(new WindowAdapter() {
             @Override
             public void windowClosing(WindowEvent windowEvent) {
-                if (!SystemUtils.IS_OS_MAC_OSX && frame.getDefaultCloseOperation() == JFrame.EXIT_ON_CLOSE) {
-                    logger.info("Disconnecting device...");
-                    planTowerSensor.disconnectDevice();
+                if (frame.getDefaultCloseOperation() == JFrame.EXIT_ON_CLOSE) {
+                    logger.info("Closing the application...");
+                    if (!SystemUtils.IS_OS_MAC_OSX) {
+                        logger.info("Disconnecting device...");
+                        planTowerSensor.disconnectDevice();
+                    }
                 }
                 saveScreenAndDimensions(frame);
                 super.windowClosing(windowEvent);
@@ -247,62 +253,70 @@ public class Station {
         aboutDlg = new AboutDlg(frame, "About");
         configDlg = new ConfigurationDlg(frame, "Configuration");
 
-        boolean autostart = Config.instance().to().getBoolean(Config.Entry.AUTOSTART.key(), !SystemUtils.IS_OS_MAC_OSX);
-        if (autostart) {
-            if (planTowerSensor.connectDevice()) {
-                connectionBtn.setText("Disconnect");
-                labelStatus.setText("Status: Connected");
-                planTowerSensor.startMeasurements(Config.instance().to().getInt(Config.Entry.INTERVAL.key(), Constants.DEFAULT_INTERVAL) * 1000L);
-            } else {
-                labelStatus.setText("Status: Device not found");
-            }
-        } else {
-            labelStatus.setText("Status: not started");
-        }
+        handleAutostart(labelStatus, connectionBtn);
         connectionBtn.setEnabled(true);
     }
-    
+
     public void addObserver(IPlanTowerObserver observer) {
         planTowerSensor.addObserver(observer);
     }
 
     public void openConfigDlg() {
-        SwingUtilities.invokeLater(new Runnable() {
-            public void run() {
-                configDlg.show();
-            }
-         });
-        
+        SwingUtilities.invokeLater(() -> { 
+            if (configDlg != null) {
+                configDlg.show(); // modal i.e. it blocks
+                scheduleMeasurements();
+            } 
+        });
     }
 
     public void openAboutDlg() {
-        SwingUtilities.invokeLater(new Runnable() {
-            public void run() { 
-                aboutDlg.show();
-            }
-         });
+        SwingUtilities.invokeLater(() -> { if (aboutDlg != null) { aboutDlg.show(); } });
     }
     
     public void closeApp() {
-        SwingUtilities.invokeLater(new Runnable() {
-            public void run() { 
-                frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-                frame.dispatchEvent(new WindowEvent(frame, WindowEvent.WINDOW_CLOSING));
-            }
-         });
+        SwingUtilities.invokeLater(() -> {
+            frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+            frame.dispatchEvent(new WindowEvent(frame, WindowEvent.WINDOW_CLOSING));
+        });
     }
     
     public void setVisible(boolean visible) {
-        SwingUtilities.invokeLater(new Runnable() {
-            public void run() { 
-                frame.setVisible(visible);
-                if (visible) {
-                    frame.setExtendedState(JFrame.NORMAL);
-                    frame.toFront();
-                    frame.requestFocus();
-                }
+        SwingUtilities.invokeLater(() -> {
+            frame.setVisible(visible);
+            if (visible) {
+                frame.setExtendedState(JFrame.NORMAL);
+                frame.toFront();
+                frame.requestFocus();
             }
-         });
+        });
+    }
+
+    private void handleAutostart(JLabel labelStatus, JButton connectionBtn) {
+        boolean autostart = Config.instance().to().getBoolean(Config.Entry.AUTOSTART.key(), !SystemUtils.IS_OS_MAC_OSX);
+        if (autostart) {
+            startMeasurements(labelStatus, connectionBtn);
+        } else {
+            labelStatus.setText("Status: not started");
+        }
+    }
+    
+    private void startMeasurements(JLabel labelStatus, JButton connectionBtn) {
+        SwingUtilities.invokeLater(() -> {
+            if (planTowerSensor.connectDevice()) {
+                connectionBtn.setText("Disconnect");
+                labelStatus.setText("Status: Connected");
+                scheduleMeasurements();
+            } else {
+                labelStatus.setText("Status: Device not found");
+            }
+        });
+    }
+    
+    private void scheduleMeasurements() {
+        if (planTowerSensor.isConnected()) {
+            planTowerSensor.startMeasurements(Config.instance().to().getInt(Config.Entry.INTERVAL.key(), Constants.DEFAULT_INTERVAL) * 1000L);
+        }
     }
     
     private void integrateNativeOS(JFrame frame) {
