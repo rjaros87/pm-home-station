@@ -61,7 +61,7 @@ public class PlanTowerSensor {
     }
     
     public synchronized void startMeasurements(long interval) {
-        if (scheduledMeasurements != null) {
+        if (scheduledMeasurements != null && !scheduledMeasurements.isDone()) {
             if (this.interval == interval) {
                 logger.info("Ignoring re-scheduling since the interval is the same as previous one");
                 return;

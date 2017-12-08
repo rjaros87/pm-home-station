@@ -32,6 +32,7 @@ import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.SwingConstants;
 import javax.swing.SwingUtilities;
@@ -91,7 +92,9 @@ public class Station {
         frame.addWindowListener(new WindowAdapter() {
             @Override
             public void windowClosing(WindowEvent windowEvent) {
+
                 if (frame.getDefaultCloseOperation() == JFrame.EXIT_ON_CLOSE) {
+                    diaplayWarnForDetach(frame);
                     logger.info("Closing the application...");
                     if (!SystemUtils.IS_OS_MAC_OSX) {
                         logger.info("Disconnecting device...");
@@ -101,7 +104,6 @@ public class Station {
                 saveScreenAndDimensions(frame);
                 super.windowClosing(windowEvent);
             }
-
         });
 
         HashMap<String, JLabel> labelsToBeUpdated = new HashMap<>();
@@ -136,6 +138,7 @@ public class Station {
                 }
                 break;
             case "Disconnect":
+                diaplayWarnForDetach(frame);
                 planTowerSensor.disconnectDevice();
                 connectionBtn.setText("Connect");
                 labelStatus.setText("Status: Disconnected");
@@ -293,7 +296,7 @@ public class Station {
     }
 
     private void handleAutostart(JLabel labelStatus, JButton connectionBtn) {
-        boolean autostart = Config.instance().to().getBoolean(Config.Entry.AUTOSTART.key(), !SystemUtils.IS_OS_MAC_OSX);
+        boolean autostart = Config.instance().to().getBoolean(Config.Entry.AUTOSTART.key(), true);
         if (autostart) {
             startMeasurements(labelStatus, connectionBtn);
         } else {
@@ -422,4 +425,20 @@ public class Station {
         }
     }
 
+    private void diaplayWarnForDetach(JFrame parent) {
+        if (Config.instance().to().getBoolean(Config.Entry.WARN_ON_OSX_TO_DETACH.key(), SystemUtils.IS_OS_MAC_OSX)) {
+            if (planTowerSensor.isConnected()) {
+                JOptionPane.showMessageDialog(parent,
+                        "<html>The sensor is still attached.<br><br>" +
+                        "This instance or the next start of the application may <b>hang</b><br>" +
+                        "when the device is attached and app is closing. In such a case only reboot helps.<br>" +
+                        "This behavior is being observed when using PL2303 and its original driver.<br><br>" +
+                        "You can now forcibly detach the device now.<br><br>" +
+                        "Press OK to continue closing.</html>",
+                        "Warning", JOptionPane.WARNING_MESSAGE);
+            }
+        }
+        
+    }
+    
 }

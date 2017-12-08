@@ -34,6 +34,8 @@ import org.slf4j.LoggerFactory;
 
 import pmstation.configuration.Config;
 import pmstation.configuration.Constants;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 
 public class ConfigurationDlg {
 
@@ -162,7 +164,7 @@ public class ConfigurationDlg {
         
         JLabel lblInterval = new JLabel("<html>Measurements interval <i>(in seconds)</i>:</html>");
         lblInterval.setHorizontalAlignment(SwingConstants.LEFT);
-        lblInterval.setBounds(6, 71, 363, 16);
+        lblInterval.setBounds(6, 98, 363, 16);
         panelGeneral.add(lblInterval);
         
         JCheckBox chkbxAutostart = new JCheckBox();
@@ -172,11 +174,11 @@ public class ConfigurationDlg {
             }
         });
         chkbxAutostart.setBounds(393, 24, 76, 29);
-        chkbxAutostart.setSelected(Config.instance().to().getBoolean(Config.Entry.AUTOSTART.key(), !SystemUtils.IS_OS_MAC_OSX));
+        chkbxAutostart.setSelected(Config.instance().to().getBoolean(Config.Entry.AUTOSTART.key(), true));
         panelGeneral.add(chkbxAutostart);
         
-        JLabel lblAutostart = new JLabel("<html>Autostart measurements:<br><small><i>- not recommended for macOS users and PL2303</i></small></html>");
-        lblAutostart.setBounds(6, 30, 386, 29);
+        JLabel lblAutostart = new JLabel("<html>Autostart measurements:</html>");
+        lblAutostart.setBounds(6, 30, 386, 16);
         panelGeneral.add(lblAutostart);
         
         textInterval = new JSpinner(new SpinnerNumberModel(
@@ -209,8 +211,24 @@ public class ConfigurationDlg {
             }
         });
 
-        textInterval.setBounds(396, 64, 78, 26);
+        textInterval.setBounds(391, 93, 78, 26);
         panelGeneral.add(textInterval);
+
+        JLabel lblWarnUserOSX = new JLabel("<html>Warn before close / disconnect if device is not detached:<br><small><i>- a workaround for macOS and faulty PL2303 drivers</i></small></html>");
+        lblWarnUserOSX.setBounds(6, 50, 363, 45);
+        panelGeneral.add(lblWarnUserOSX);
+        
+        JCheckBox chbxWarnOSX = new JCheckBox("");
+        chbxWarnOSX.setSelected(Config.instance().to().getBoolean(Config.Entry.WARN_ON_OSX_TO_DETACH.key(), SystemUtils.IS_OS_MAC_OSX));
+        chbxWarnOSX.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseClicked(MouseEvent e) {
+                Config.instance().to().setProperty(Config.Entry.WARN_ON_OSX_TO_DETACH.key(), chbxWarnOSX.isSelected());
+            }
+        });
+        chbxWarnOSX.setBounds(393, 55, 76, 23);
+        panelGeneral.add(chbxWarnOSX);
+
         frame.getContentPane().setLayout(groupLayout);
         frame.toFront();
         frame.requestFocus();

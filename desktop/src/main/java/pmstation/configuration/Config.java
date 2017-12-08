@@ -25,6 +25,7 @@ public class Config {
         
         INTERVAL("interval"),
         AUTOSTART("autostart.measurements"),
+        WARN_ON_OSX_TO_DETACH("workaround.osx.detach.warn"),
         ALWAYS_ON_TOP("always.on.top"),
         SYSTEM_TRAY("system.tray"),
         HIDE_MAIN_WINDOW("hide.main.window"),
