@@ -124,15 +124,16 @@ public class Station {
         JLabel labelStatus = new JLabel("Status..."); // use this one instead...
         labelsToBeUpdated.put("deviceStatus", labelStatus);
         
-        JButton connectionBtn = new JButton("Connect");
-        connectionBtn.setFocusable(false);
-        connectionBtn.setEnabled(false);
-        connectionBtn.addActionListener(actionEvent -> {
-            connectionBtn.setEnabled(false);
-            switch (connectionBtn.getText()) {
+        JButton btnConnect = new JButton("Connect");
+        btnConnect.setFocusable(true);
+        btnConnect.grabFocus();
+        btnConnect.setEnabled(false);
+        btnConnect.addActionListener(actionEvent -> {
+            btnConnect.setEnabled(false);
+            switch (btnConnect.getText()) {
             case "Connect":
                 if (planTowerSensor.connectDevice()) {
-                    connectionBtn.setText("Disconnect");
+                    btnConnect.setText("Disconnect");
                     labelStatus.setText("Status: Connected");
                     planTowerSensor.startMeasurements(Config.instance().to().getInt(Config.Entry.INTERVAL.key(), Constants.DEFAULT_INTERVAL) * 1000L);
                 }
@@ -140,17 +141,17 @@ public class Station {
             case "Disconnect":
                 diaplayWarnForDetach(frame);
                 planTowerSensor.disconnectDevice();
-                connectionBtn.setText("Connect");
+                btnConnect.setText("Connect");
                 labelStatus.setText("Status: Disconnected");
                 break;
             }
-            connectionBtn.setEnabled(true);
+            btnConnect.setEnabled(true);
         });
         
         final JPanel panelMain = new JPanel();
         
         panelMain.setLayout(new MigLayout("", "[50px][100px:120px,grow][150px]", "[29px][16px][338px][16px]"));
-        panelMain.add(connectionBtn, "cell 0 0,alignx left,aligny center");
+        panelMain.add(btnConnect, "cell 0 0,alignx left,aligny center");
         
         panelMain.add(deviceStatus, "flowx,cell 1 0,alignx left,aligny center");
         
@@ -163,20 +164,22 @@ public class Station {
         });
         btnCfg.setToolTipText("Configuration");
         btnCfg.setIcon(new ImageIcon(Station.class.getResource("/pmstation/btn_config.png")));
+        btnCfg.setMaximumSize(new Dimension(btnCfg.getIcon().getIconWidth()+12, btnCfg.getIcon().getIconHeight()+12));
         panelMain.add(btnCfg, "flowx,cell 2 0,alignx right,aligny center");
         
-        JButton buttonAbout = new JButton("");
-        buttonAbout.addMouseListener(new MouseAdapter() {
+        JButton btnAbout = new JButton("");
+        btnAbout.addMouseListener(new MouseAdapter() {
             @Override
             public void mouseClicked(MouseEvent e) {
                 openAboutDlg();
             }
         });
 
-        buttonAbout.setIcon(new ImageIcon(Station.class.getResource("/pmstation/btn_about.png")));
-        buttonAbout.setToolTipText("About...");
+        btnAbout.setIcon(new ImageIcon(Station.class.getResource("/pmstation/btn_about.png")));
+        btnAbout.setMaximumSize(new Dimension(btnAbout.getIcon().getIconWidth()+12, btnAbout.getIcon().getIconHeight()+12));
+        btnAbout.setToolTipText("About...");
         
-        panelMain.add(buttonAbout, "cell 2 0,alignx right,aligny center");
+        panelMain.add(btnAbout, "cell 2 0,alignx right,aligny center");
         
         JPanel panelMeasurements = new JPanel();
         panelMeasurements.setBorder(new TitledBorder(null, "<html><b>Last measurements</b></html>", TitledBorder.LEADING, TitledBorder.TOP, null, null));
@@ -256,8 +259,8 @@ public class Station {
         aboutDlg = new AboutDlg(frame, "About");
         configDlg = new ConfigurationDlg(frame, "Configuration");
 
-        handleAutostart(labelStatus, connectionBtn);
-        connectionBtn.setEnabled(true);
+        handleAutostart(labelStatus, btnConnect);
+        btnConnect.setEnabled(true);
     }
 
     public void addObserver(IPlanTowerObserver observer) {
