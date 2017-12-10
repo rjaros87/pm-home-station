@@ -86,7 +86,9 @@ public class PlanTowerSensor {
     private Runnable getMeasurementsRunnable() {
         return () -> {
             byte[] readBuffer;
-            readBuffer = serialUART.readBytes(2 * PlanTowerDevice.DATA_LENGTH);
+            readBuffer = serialUART.readBytes(PlanTowerDevice.DATA_LENGTH); // 2 * PlanTowerDevice.DATA_LENGTH); *)
+            // *)  when we read out everything from the port to ignore all data and garbage,
+            // we can skip reading 2 times as much bytes just to find the beginning of data. 
             notifyAllObservers(PlanTowerDevice.parse(readBuffer));
         };
     }

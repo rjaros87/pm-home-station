@@ -6,6 +6,7 @@ import org.apache.commons.lang3.SystemUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import pmstation.core.plantower.PlanTowerDevice;
 import pmstation.core.serial.ISerialUART;
 import pmstation.core.serial.SerialUARTUtils;
 
@@ -71,8 +72,20 @@ public class SerialUART implements ISerialUART {
 
     public byte[] readBytes(int dataLength) {
         byte[] readBuffer = new byte[dataLength];
+        int availBytes = comPort.bytesAvailable();
+        if (availBytes < 0) {
+            logger.info("Port is not open!");
+        }
+        logger.trace("Available number of bytes (old data and garbage): {}", availBytes);
+        while ((availBytes = comPort.bytesAvailable()) > 0) {
+            byte[] ignoredBuffer = new byte[PlanTowerDevice.DATA_LENGTH]; 
+            comPort.readBytes(ignoredBuffer, Math.min(availBytes, ignoredBuffer.length));
+        }
+        logger.trace("Going to read bytes, bytes avail now: {}", comPort.bytesAvailable());
+
+        // now, when avail bytes is 0 we can start waiting for fresh data
         comPort.readBytes(readBuffer, readBuffer.length);
-        logger.trace("ReadBuffer:\n{}", SerialUARTUtils.bytesToHexString(readBuffer));
+        logger.trace("ReadBuffer:\n{}, bytes available after read: {}", SerialUARTUtils.bytesToHexString(readBuffer), comPort.bytesAvailable());
 
         return readBuffer;
     }
