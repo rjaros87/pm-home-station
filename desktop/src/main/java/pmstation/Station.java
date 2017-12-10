@@ -17,6 +17,7 @@ import java.awt.GraphicsEnvironment;
 import java.awt.Image;
 import java.awt.Point;
 import java.awt.Rectangle;
+import java.awt.Window.Type;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.WindowAdapter;
@@ -83,6 +84,9 @@ public class Station {
         frame.setModalExclusionType(ModalExclusionType.NO_EXCLUDE);
         SwingUtilities.updateComponentTreeUI(frame);
         setIcon(frame);
+        if (Config.instance().to().getBoolean(Config.Entry.SYSTEM_TRAY.key(), false)) {
+            frame.setType(Type.UTILITY);
+        }
 
         frame.setMinimumSize(new Dimension(484, 180));
         frame.setPreferredSize(new Dimension(740, 480));

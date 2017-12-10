@@ -37,6 +37,13 @@ public class NativeTrayIntegration {
             return;
         }
         PopupMenu menu = new PopupMenu();
+
+        MenuItem infoMenuItem = new MenuItem("No measurements");
+        infoMenuItem.setEnabled(false);
+        menu.add(infoMenuItem);
+        
+        menu.addSeparator();
+        
         MenuItem itemMainWindow = new MenuItem("Main window");
         itemMainWindow.addActionListener((e) -> { station.setVisible(true); } );
         menu.add(itemMainWindow);
@@ -54,19 +61,23 @@ public class NativeTrayIntegration {
         try {
             SystemTray tray = SystemTray.getSystemTray();
             
+            // A simpler version but the icon on Windows7 is more distorted
+            //TrayIcon menuBarIcon = new TrayIcon(new ImageIcon(Station.class.getResource("/pmstation/app-icon.png")).getImage(), "pm-station-usb", menu);
+            //menuBarIcon.setImageAutoSize(true);
+            
             BufferedImage trayIconImage = ImageIO.read(Station.class.getResource("/pmstation/app-icon.png"));
             int trayIconWidth = new TrayIcon(trayIconImage).getSize().width;
             TrayIcon menuBarIcon = new TrayIcon(trayIconImage.getScaledInstance(trayIconWidth, -1, Image.SCALE_SMOOTH), "pm-station-usb", menu);
-                    
-            //TrayIcon menuBarIcon = new TrayIcon(new ImageIcon(Station.class.getResource("/pmstation/app-icon.png")).getImage(), "pm-station-usb", menu);
-            //menuBarIcon.addActionListener(listener);
             
             station.addObserver(new IPlanTowerObserver() {
                 @Override
                 public void update(ParticulateMatterSample sample) {
+                    infoMenuItem.setLabel("PM1.0: " + sample.getPm1_0() + ", " +
+                            "PM2.5: " + sample.getPm2_5() + ", " +
+                            "PM10 : " + sample.getPm10() + " (" + UNIT + ")");
                     menuBarIcon.setToolTip("PM1.0 : " + sample.getPm1_0() + UNIT + "\n" +
-                                           "PM2.5 : " + sample.getPm2_5() + UNIT + "\n" +
-                                           "PM10  : " + sample.getPm10() + UNIT);
+                            "PM2.5 : " + sample.getPm2_5() + UNIT + "\n" +
+                            "PM10  : " + sample.getPm10() + UNIT);
                 }
                 
             });
@@ -74,8 +85,6 @@ public class NativeTrayIntegration {
         } catch (Exception e) {
             logger.error("Error adding menubar app to OSX menubar", e);
         }
-        
-        //menuBarIcon.displayMessage("aaa", "zzzz", MessageType.INFO);
     }
 
 }
