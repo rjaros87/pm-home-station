@@ -7,6 +7,8 @@ package pmstation.observers;
 
 import java.util.HashMap;
 
+import javax.swing.JButton;
+import javax.swing.JComponent;
 import javax.swing.JLabel;
 
 import org.slf4j.Logger;
@@ -21,16 +23,18 @@ public class LabelObserver implements IPlanTowerObserver {
     private static final Logger logger = LoggerFactory.getLogger(LabelObserver.class);
 
     private JLabel deviceStatus, measurementTime, pm1_0, pm2_5, pm10;
+    private JButton btnConnect;
     private static final String UNIT = " \u03BCg/m\u00B3";
     private static final String PRE_HTML = "<html><b>";
     private static final String POST_HTML = "</b></html>";
 
-    public void setLabelsToUpdate(HashMap<String, JLabel> components) {
-        deviceStatus = get(components, "deviceStatus");
-        measurementTime = get(components, "measurementTime");
-        pm1_0 = get(components, "pm1_0"); // TODO don't use hardcoded labels like that
-        pm2_5 = get(components, "pm2_5");
-        pm10 = get(components, "pm10");
+    public void setLabelsToUpdate(HashMap<String, JComponent> components) {
+        deviceStatus = (JLabel)get(components, "deviceStatus");
+        measurementTime = (JLabel)get(components, "measurementTime");
+        pm1_0 = (JLabel)get(components, "pm1_0"); // TODO don't use hardcoded labels like that
+        pm2_5 = (JLabel)get(components, "pm2_5");
+        pm10 = (JLabel)get(components, "pm10");
+        btnConnect = (JButton)get(components, "connect");
     }
 
     @Override
@@ -53,9 +57,15 @@ public class LabelObserver implements IPlanTowerObserver {
             pm10.setToolTipText(color10.getDescription());
         }
     }
+    
+    @Override
+    public void disconnected() {
+        btnConnect.setText("Connect");
+        deviceStatus.setText("Status: Device isconnected");
+    }
 
-    private JLabel get(HashMap<String, JLabel> components, String name) {
-        JLabel component = components.get(name);
+    private JComponent get(HashMap<String, JComponent> components, String name) {
+        JComponent component = components.get(name);
         if (component == null) {
             logger.error("Component of name: {} not found! Going down.", name);
             throw new IllegalArgumentException("Component of name: " + name + " not found! Going down.");

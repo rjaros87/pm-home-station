@@ -10,6 +10,7 @@ import java.awt.MenuItem;
 import java.awt.PopupMenu;
 import java.awt.SystemTray;
 import java.awt.TrayIcon;
+import java.awt.TrayIcon.MessageType;
 import java.awt.image.BufferedImage;
 
 import javax.imageio.ImageIO;
@@ -78,6 +79,11 @@ public class NativeTrayIntegration {
                     menuBarIcon.setToolTip("PM1.0 : " + sample.getPm1_0() + UNIT + "\n" +
                             "PM2.5 : " + sample.getPm2_5() + UNIT + "\n" +
                             "PM10  : " + sample.getPm10() + UNIT);
+                }
+                
+                @Override
+                public void disconnected() {
+                    menuBarIcon.displayMessage("Device disconnected", "Sensor has just been disconnected", MessageType.INFO);
                 }
                 
             });

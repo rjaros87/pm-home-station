@@ -86,18 +86,30 @@ public class PlanTowerSensor {
     private Runnable getMeasurementsRunnable() {
         return () -> {
             byte[] readBuffer;
-            readBuffer = serialUART.readBytes(PlanTowerDevice.DATA_LENGTH); // 2 * PlanTowerDevice.DATA_LENGTH); *)
-            // *)  when we read out everything from the port to ignore all data and garbage,
-            // we can skip reading 2 times as much bytes just to find the beginning of data. 
-            notifyAllObservers(PlanTowerDevice.parse(readBuffer));
+            if (serialUART.isConnected()) {
+                readBuffer = serialUART.readBytes(PlanTowerDevice.DATA_LENGTH); // 2 * PlanTowerDevice.DATA_LENGTH); *)
+                // *)  when we read out everything from the port to ignore all data and garbage,
+                // we can skip reading 2 times as much bytes just to find the beginning of data. 
+                notify(PlanTowerDevice.parse(readBuffer));
+                
+            } else {
+                scheduledMeasurements.cancel(false);
+                notifyAboutDisconnection();
+            }
         };
     }
 
-    private void notifyAllObservers(ParticulateMatterSample particulateMatterSample) {
+    private void notify(ParticulateMatterSample particulateMatterSample) {
         if (particulateMatterSample != null) {
             for (IPlanTowerObserver observer : planTowerObserver) {
                 observer.update(particulateMatterSample);
             }
+        }
+    }
+    
+    private void notifyAboutDisconnection() {
+        for (IPlanTowerObserver observer : planTowerObserver) {
+            observer.disconnected();
         }
     }
 }

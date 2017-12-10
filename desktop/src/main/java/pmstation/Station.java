@@ -31,6 +31,7 @@ import java.util.HashMap;
 
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
+import javax.swing.JComponent;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
@@ -88,8 +89,8 @@ public class Station {
             frame.setType(Type.UTILITY);
         }
 
-        frame.setMinimumSize(new Dimension(484, 180));
-        frame.setPreferredSize(new Dimension(740, 480));
+        frame.setMinimumSize(new Dimension(Constants.MIN_WINDOW_WIDTH, Constants.MIN_WINDOW_HEIGHT));
+        frame.setPreferredSize(new Dimension(Constants.WINDOW_WIDTH, Constants.WINDOW_HEIGHT));
 
         frame.setDefaultCloseOperation(
                 Config.instance().to().getBoolean(Config.Entry.SYSTEM_TRAY.key(), false) ? JFrame.HIDE_ON_CLOSE : JFrame.EXIT_ON_CLOSE);
@@ -110,16 +111,15 @@ public class Station {
             }
         });
 
-        HashMap<String, JLabel> labelsToBeUpdated = new HashMap<>();
+        HashMap<String, JComponent> labelsToBeUpdated = new HashMap<>();
         XYChart chart = new XYChartBuilder().xAxisTitle("sample").yAxisTitle("\u03BCg/m\u00B3").build();
         chart.getStyler().setLegendPosition(Styler.LegendPosition.OutsideE);
         chart.getStyler().setMarkerSize(2);
+        chart.getStyler().setAntiAlias(true);
 
         JPanel chartPanel = new XChartPanel<XYChart>(chart);
         chartPanel.setMinimumSize(new Dimension(50, 50));
-        ChartObserver chartObserve = new ChartObserver();
-        chartObserve.setChart(chart);
-        chartObserve.setChartPanel(chartPanel);
+        ChartObserver chartObserve = new ChartObserver(chart, chartPanel);
         addObserver(chartObserve);
         addObserver(new ConsoleObserver());
 
@@ -151,6 +151,7 @@ public class Station {
             }
             btnConnect.setEnabled(true);
         });
+        labelsToBeUpdated.put("connect", btnConnect);
         
         final JPanel panelMain = new JPanel();
         
