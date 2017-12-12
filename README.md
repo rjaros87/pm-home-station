@@ -6,7 +6,10 @@ _Language versions:_\
 
 # Home use particulate matter sensor on USB
 
-Since we live in huge polluted cities the air quality is on a very poor level. We have created this little project for monitoring our home environment. Let's live healthier life and start from filtering air and measuring its quality.
+Since we live in big polluted cities the air quality is on a very poor level. But, the problem is not only connected to the big cities - even smaller cities and villages may suffer from air pollution.
+That's why we've created this little project to let you build your own Particulate Matter monitoring station and use our open-source software so you could monitor the air quality in your place of living.
+
+Let's live healthier life and start measuring the air quality and filtering it if necessary.
 
 ## Requirements
 
@@ -32,7 +35,7 @@ RX            | TXD
 TXD           | RXD
 
 3. Connect the UART-USB adapter with a USB cable to your computer
-> Caution for Windows users! - open the Device Manager, expand `Ports (COM & LPT)` and find your adapter. Ensure that the Device status has the following text `This device is working properly.`. If not, then you probably need to install old drivers for this adapter (workaround).
+> Caution! Refer to [this](#tested-platforms) section for remarks regarding your platform
 
 4. Start the application and check the air quality of your environment :smile:
 
@@ -55,9 +58,17 @@ Suggested printing parameters:
 
 ## Tested platforms
 
-- Windows 7/10
-- Linux (The ownership of device `/dev/ttyUSB0` is `dialout` group so add yourself and re-login or run with `sudo`)
-- macOS / OSX (you may need to install correct driver for your version of uart2usb, for PL2303 [this](http://www.prolific.com.tw/US/ShowProduct.aspx?p_id=229&pcid=41) one works well)
+- Android APK
+  - Android 7 Nougat
+
+- Desktop (standalone) app
+  - Windows 7 & 10
+    - before running the app, open the Device Manager, expand `Ports (COM & LPT)` and find your adapter. Ensure that the Device status states `This device is working properly`. If not, then you probably need to install older drivers for this adapter (a workaround).
+  - Linux Ubuntu 16.04
+    - the ownership of device `/dev/ttyUSB0` is `dialout` group so must add yourself to the group and re-login or run with `sudo` (not recommended)
+  - macOS Sierra 10.12
+    - you may need to install correct driver for your version of uart-to-usb
+      - for PL2303 you can use [this](http://www.prolific.com.tw/US/ShowProduct.aspx?p_id=229&pcid=41) one, however you must always detach the device before closing the app otherwise the java process may hang blocked by the driver on I/O operation
 
 ## Build and run
 
@@ -68,7 +79,7 @@ Suggested printing parameters:
 
 #### Android:
 - Android Studio 3.0 (Android Plugin for Gradle 3.0.0+)
-- Build tools and SDK 26+
+- Build tools and SDK 27+
 
 ### Useful commands
 

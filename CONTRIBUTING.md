@@ -16,4 +16,4 @@ First off, thanks for taking the time to contribute :)
 3. Write your change
 4. Write tests for your change (if applicable)
 5. Execute tests.
-5. Send pull request from custom branch with clearly description.
+5. Send pull request from custom branch with clear description.
