@@ -44,14 +44,20 @@ public class Sensor {
             notifyAllObservers(sample);
         }
         try {
-            wakeUp();
             sampleCounter = ++sampleCounter % 10;
             String intervalPref = preferences.getString("sampling_interval", "1000");
             int interval = Integer.parseInt(intervalPref);
-            if (interval > 3000 && sampleCounter == 0) {
-                sleep();
+            if (interval > 3000) {
+                if (sampleCounter == 0) {
+                    sleep();
+                    Thread.sleep(interval);
+                    wakeUp();
+                } else {
+                    Thread.sleep(1000);
+                }
+            } else {
+                Thread.sleep(interval);
             }
-            Thread.sleep(sampleCounter == 0 ? interval : 1000);
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
@@ -213,9 +219,6 @@ public class Sensor {
                     serialPort.setParity(UsbSerialInterface.PARITY_NONE);
                     serialPort.setFlowControl(UsbSerialInterface.FLOW_CONTROL_OFF);
                     serialPort.read(readCallback);
-                    if (running) {
-                        wakeUp();
-                    }
                     return;
                 }
                 Log.e(TAG, "USB not working");

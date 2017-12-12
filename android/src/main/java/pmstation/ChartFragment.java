@@ -62,7 +62,15 @@ public class ChartFragment extends Fragment implements IPlanTowerObserver {
         activity.getSensor().addValueObserver(this);
         final List<ParticulateMatterSample> values = activity.getValues();
         IAxisValueFormatter formatter =
-                (value, axis) -> Settings.dateFormat.format(values.get((int) value).getDate());
+                (value, axis) -> {
+                    int intValue = (int) value;
+
+                    if (values.size() > intValue && intValue >= 0) {
+                        return Settings.dateFormatTimeOnly.format(values.get((int) value).getDate());
+                    }
+
+                    return "";
+                };
 
         XAxis xAxis = chart.getXAxis();
         xAxis.setPosition(XAxis.XAxisPosition.BOTTOM);

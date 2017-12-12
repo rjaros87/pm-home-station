@@ -1,8 +1,9 @@
 package pmstation.core.plantower;
 
+import java.io.Serializable;
 import java.util.Date;
 
-public class ParticulateMatterSample {
+public class ParticulateMatterSample implements Serializable{
     private int pm1_0;
     private int pm2_5;
     private int pm10;

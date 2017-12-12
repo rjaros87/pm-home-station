@@ -9,4 +9,5 @@ import java.util.Locale;
 
 public class Settings {
     public static final SimpleDateFormat dateFormat = new SimpleDateFormat("d MMM yyyy HH:mm:ss", Locale.getDefault());
+    public static final SimpleDateFormat dateFormatTimeOnly = new SimpleDateFormat("HH:mm:ss", Locale.getDefault());
 }

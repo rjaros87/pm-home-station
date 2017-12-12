@@ -2,6 +2,7 @@ package pmstation;
 
 
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
@@ -28,6 +29,7 @@ public class ValuesFragment extends Fragment implements IPlanTowerObserver {
     private TextView pm25;
     private TextView pm10;
     private TextView time;
+    private ParticulateMatterSample currentValue;
 
     public ValuesFragment() {
         // Required empty public constructor
@@ -54,11 +56,16 @@ public class ValuesFragment extends Fragment implements IPlanTowerObserver {
 
         time = view.findViewById(R.id.time);
 
-        List<ParticulateMatterSample> values = ((MainActivity) getActivity()).getValues();
-        if (!values.isEmpty()) {
-            ParticulateMatterSample sample = values.get(values.size() - 1);
-            update(sample);
+        if (savedInstanceState != null) {
+            currentValue = (ParticulateMatterSample) savedInstanceState.getSerializable("value");
+        } else {
+            List<ParticulateMatterSample> values = ((MainActivity) getActivity()).getValues();
+            if (!values.isEmpty()) {
+                currentValue = values.get(values.size() - 1);
+            }
         }
+
+        update(currentValue);
     }
 
     @Override
@@ -78,7 +85,8 @@ public class ValuesFragment extends Fragment implements IPlanTowerObserver {
     @Override
     public void update(final ParticulateMatterSample sample) {
         FragmentActivity activity = getActivity();
-        if (activity == null) {
+        currentValue = sample;
+        if (activity == null || sample == null) {
             return;
         }
         activity.runOnUiThread(() -> {
@@ -94,5 +102,11 @@ public class ValuesFragment extends Fragment implements IPlanTowerObserver {
                     ColorUtils.setAlphaComponent(AQIColor.fromPM10Level(sample.getPm10()).getColor(), 136));
             time.setText(Settings.dateFormat.format(sample.getDate()));
         });
+    }
+
+    @Override
+    public void onSaveInstanceState(@NonNull Bundle outState) {
+        outState.putSerializable("value", currentValue);
+        super.onSaveInstanceState(outState);
     }
 }

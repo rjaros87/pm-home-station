@@ -141,7 +141,9 @@ public class MainActivity extends AppCompatActivity implements IPlanTowerObserve
         if (isEmulator()) {
             sensor.stopFakeDataThread();
         }
-        sensor.sleep();
+        if (!isChangingConfigurations()) {
+            sensor.sleep();
+        }
         super.onStop();
     }
 
@@ -249,7 +251,13 @@ public class MainActivity extends AppCompatActivity implements IPlanTowerObserve
     public void update(ParticulateMatterSample sample) {
         values.add(sample);
         AQIColor pm25Color = AQIColor.fromPM25Level(sample.getPm2_5());
-        smog.animate().alpha(pm25Color.getAlpha());
+        runOnUiThread(() -> smog.animate().alpha(pm25Color.getAlpha()));
+    }
+
+    @Override
+    protected void onSaveInstanceState(Bundle outState) {
+        outState.putBoolean("running", running);
+        super.onSaveInstanceState(outState);
     }
 
     public Sensor getSensor() {
