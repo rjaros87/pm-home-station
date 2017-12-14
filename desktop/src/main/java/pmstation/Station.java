@@ -12,6 +12,7 @@ import java.awt.Cursor;
 import java.awt.Desktop;
 import java.awt.Dialog.ModalExclusionType;
 import java.awt.Dimension;
+import java.awt.Font;
 import java.awt.GraphicsDevice;
 import java.awt.GraphicsEnvironment;
 import java.awt.Image;
@@ -46,6 +47,7 @@ import org.knowm.xchart.XChartPanel;
 import org.knowm.xchart.XYChart;
 import org.knowm.xchart.XYChartBuilder;
 import org.knowm.xchart.style.Styler;
+import org.knowm.xchart.style.Styler.LegendLayout;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -112,13 +114,29 @@ public class Station {
         });
 
         HashMap<String, JComponent> labelsToBeUpdated = new HashMap<>();
-        XYChart chart = new XYChartBuilder().xAxisTitle("sample").yAxisTitle("\u03BCg/m\u00B3").build();
-        chart.getStyler().setLegendPosition(Styler.LegendPosition.OutsideE);
+        XYChart chart = new XYChartBuilder().xAxisTitle("samples").yAxisTitle(Constants.UNITS).build();
+        chart.getStyler().setXAxisMin((double) 0);
+        chart.getStyler().setXAxisMax((double) Constants.CHART_MAX_SAMPLES);
+        chart.getStyler().setLegendFont(new Font(Font.SERIF, Font.PLAIN, 10));
+        chart.getStyler().setLegendPosition(Styler.LegendPosition.InsideNW);
+        chart.getStyler().setLegendBackgroundColor(new Color(255, 255, 255, 20)); // white with alpha
         chart.getStyler().setMarkerSize(2);
         chart.getStyler().setAntiAlias(true);
-
+        chart.getStyler().setLegendLayout(LegendLayout.Horizontal);
+        
         JPanel chartPanel = new XChartPanel<XYChart>(chart);
+        chartPanel.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseEntered(MouseEvent e) {
+                chart.getStyler().setLegendVisible(false);
+            }
+            @Override
+            public void mouseExited(MouseEvent e) {
+                chart.getStyler().setLegendVisible(true);
+            }
+        });
         chartPanel.setMinimumSize(new Dimension(50, 50));
+        
         ChartObserver chartObserve = new ChartObserver(chart, chartPanel);
         addObserver(chartObserve);
         addObserver(new ConsoleObserver());

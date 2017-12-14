@@ -12,6 +12,9 @@ import java.awt.SystemTray;
 import java.awt.TrayIcon;
 import java.awt.TrayIcon.MessageType;
 import java.awt.image.BufferedImage;
+import java.io.IOException;
+import java.util.HashMap;
+import java.util.Map;
 
 import javax.imageio.ImageIO;
 
@@ -19,14 +22,20 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import pmstation.Station;
+import pmstation.configuration.Constants;
 import pmstation.core.plantower.IPlanTowerObserver;
 import pmstation.core.plantower.ParticulateMatterSample;
+import pmstation.observers.AQIColor;
 
 public class NativeTrayIntegration {
     
     private static final Logger logger = LoggerFactory.getLogger(NativeTrayIntegration.class);
-    private static final String UNIT = " \u03BCg/m\u00B3";
+    private static final String APP_ICON_FORMAT = "app-icon-%s.png";
     private final Station station;
+    
+    private final Map<AQIColor, Image> scaryIcons = new HashMap<>();
+    private Image defaultIcon = null;
+    private Image disconnectedIcon = null;
     
     public NativeTrayIntegration(Station station) {
         this.station = station;
@@ -35,6 +44,11 @@ public class NativeTrayIntegration {
     public void integrate() {
         if (!SystemTray.isSupported()) {
             logger.info("System tray is not supported on this OS");
+            return;
+        }
+        loadIcons();
+        if (defaultIcon == null) {
+            logger.warn("No default icon found in resources - no integration with system tray");
             return;
         }
         PopupMenu menu = new PopupMenu();
@@ -62,27 +76,24 @@ public class NativeTrayIntegration {
         try {
             SystemTray tray = SystemTray.getSystemTray();
             
-            // A simpler version but the icon on Windows7 is more distorted
-            //TrayIcon menuBarIcon = new TrayIcon(new ImageIcon(Station.class.getResource("/pmstation/app-icon.png")).getImage(), "pm-station-usb", menu);
-            //menuBarIcon.setImageAutoSize(true);
-            
-            BufferedImage trayIconImage = ImageIO.read(Station.class.getResource("/pmstation/app-icon.png"));
-            int trayIconWidth = new TrayIcon(trayIconImage).getSize().width;
-            TrayIcon menuBarIcon = new TrayIcon(trayIconImage.getScaledInstance(trayIconWidth, -1, Image.SCALE_SMOOTH), "pm-station-usb", menu);
+            TrayIcon menuBarIcon = new TrayIcon(defaultIcon, "pm-station-usb", menu);
             
             station.addObserver(new IPlanTowerObserver() {
                 @Override
                 public void update(ParticulateMatterSample sample) {
                     infoMenuItem.setLabel("PM1.0: " + sample.getPm1_0() + ", " +
                             "PM2.5: " + sample.getPm2_5() + ", " +
-                            "PM10 : " + sample.getPm10() + " (" + UNIT + ")");
-                    menuBarIcon.setToolTip("PM1.0 : " + sample.getPm1_0() + UNIT + "\n" +
-                            "PM2.5 : " + sample.getPm2_5() + UNIT + "\n" +
-                            "PM10  : " + sample.getPm10() + UNIT);
+                            "PM10 : " + sample.getPm10() + " (" + Constants.UNITS + ")");
+                    menuBarIcon.setToolTip("PM1.0 : " + sample.getPm1_0() + Constants.UNITS + "\n" +
+                            "PM2.5 : " + sample.getPm2_5() + Constants.UNITS + "\n" +
+                            "PM10  : " + sample.getPm10() + Constants.UNITS);
+                    
+                    setScaryIcon(menuBarIcon, AQIColor.fromPM25Level(sample.getPm2_5()), AQIColor.fromPM10Level(sample.getPm10()));
                 }
                 
                 @Override
                 public void disconnected() {
+                    menuBarIcon.setImage(disconnectedIcon != null ? disconnectedIcon : defaultIcon);
                     menuBarIcon.displayMessage("Device disconnected", "Sensor has just been disconnected", MessageType.INFO);
                 }
                 
@@ -92,5 +103,33 @@ public class NativeTrayIntegration {
             logger.error("Error adding menubar app to OSX menubar", e);
         }
     }
+    
+    private void setScaryIcon(TrayIcon menuBarIcon, AQIColor pm2, AQIColor pm10) {
+        AQIColor scarierIcon = pm2.worseThan(pm10) ? pm2 : pm10;
+        Image icon = scaryIcons.get(scarierIcon);
+        menuBarIcon.setImage(icon != null ? icon : defaultIcon);
+    }
+    
+    private Image getIcon(String name) throws IOException {
+        BufferedImage trayIconImage = ImageIO.read(Station.class.getResource("/pmstation/" + name));
+        int trayIconWidth = new TrayIcon(trayIconImage).getSize().width;
+        return trayIconImage.getScaledInstance(trayIconWidth, -1, Image.SCALE_SMOOTH); // scaling is better for Win7
+    }
 
+    private void loadIcons() {
+        for (AQIColor level : AQIColor.values()) {
+            try {
+                scaryIcons.put(level, getIcon(String.format(APP_ICON_FORMAT, level.name().toLowerCase())));
+            } catch (Exception e) {
+                logger.error("Error loading scary toolbar icon for level: {}", level, e);
+            }
+        }
+        try {
+            disconnectedIcon = getIcon(String.format(APP_ICON_FORMAT, "disconnected"));
+            defaultIcon = disconnectedIcon;
+        } catch (IOException e) {
+            logger.error("Error loading scary toolbar icon for disconnected", e);
+        }
+    }
+    
 }

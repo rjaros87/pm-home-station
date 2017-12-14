@@ -17,6 +17,8 @@ public class Constants {
     public static final String PROJECT_URL = "https://github.com/rjaros87/pm-station-usb";
     public static final Locale DEFAULT_LOCALE = Locale.getDefault(); 
     
+    public static final String UNITS = "\u03BCg/m\u00B3";
+    
     // preferred Window size
     public static final int WINDOW_WIDTH = 740;
     public static final int WINDOW_HEIGHT = 480;
