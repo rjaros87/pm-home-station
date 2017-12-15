@@ -30,7 +30,6 @@ import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.HashMap;
 
-import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JComponent;
 import javax.swing.JFrame;
@@ -59,6 +58,7 @@ import pmstation.dialogs.AboutDlg;
 import pmstation.dialogs.ConfigurationDlg;
 import pmstation.helpers.MacOSIntegration;
 import pmstation.helpers.NativeTrayIntegration;
+import pmstation.helpers.ResourceHelper;
 import pmstation.observers.ChartObserver;
 import pmstation.observers.ConsoleObserver;
 import pmstation.observers.LabelObserver;
@@ -137,8 +137,7 @@ public class Station {
         });
         chartPanel.setMinimumSize(new Dimension(50, 50));
         
-        ChartObserver chartObserve = new ChartObserver(chart, chartPanel);
-        addObserver(chartObserve);
+        addObserver(new ChartObserver(chart, chartPanel));
         addObserver(new ConsoleObserver());
 
         JLabel deviceStatus = new JLabel("Status: ");
@@ -186,7 +185,7 @@ public class Station {
             }
         });
         btnCfg.setToolTipText("Configuration");
-        btnCfg.setIcon(new ImageIcon(Station.class.getResource("/pmstation/btn_config.png")));
+        btnCfg.setIcon(ResourceHelper.getIcon("btn_config.png"));
         btnCfg.setMaximumSize(new Dimension(btnCfg.getIcon().getIconWidth()+12, btnCfg.getIcon().getIconHeight()+12));
         panelMain.add(btnCfg, "flowx,cell 2 0,alignx right,aligny center");
         
@@ -198,7 +197,7 @@ public class Station {
             }
         });
 
-        btnAbout.setIcon(new ImageIcon(Station.class.getResource("/pmstation/btn_about.png")));
+        btnAbout.setIcon(ResourceHelper.getIcon("btn_about.png"));
         btnAbout.setMaximumSize(new Dimension(btnAbout.getIcon().getIconWidth()+12, btnAbout.getIcon().getIconHeight()+12));
         btnAbout.setToolTipText("About...");
         
@@ -250,7 +249,7 @@ public class Station {
         panelStatus.add(labelStatus, BorderLayout.WEST);
         
         frame.getContentPane().setLayout(new BorderLayout(0, 0));
-        frame.getContentPane().add(panelMain); //, BorderLayout.NORTH);
+        frame.getContentPane().add(panelMain);
         frame.getContentPane().add(panelStatus, BorderLayout.SOUTH);
         
         JLabel appNameLink = new JLabel(" // " + Constants.PROJECT_NAME);
@@ -358,20 +357,24 @@ public class Station {
     }
 
     private void setIcon(JFrame frame) {
-        ImageIcon icon = new ImageIcon(Station.class.getResource("/pmstation/app-icon.png"));
-        frame.setIconImage(icon.getImage());
-        if (SystemUtils.IS_OS_MAC_OSX) {
-            try {
-                // equivalent of:
-                // com.apple.eawt.Application.getApplication().setDockIconImage( new ImageIcon(Station.class.getResource("/pmstation/btn_config.png")).getImage());
-                Class<?> clazz = Class.forName( "com.apple.eawt.Application", false, null);
-                Method methodGetApp = clazz.getMethod("getApplication");
-                Method methodSetDock = clazz.getMethod("setDockIconImage", Image.class);
-                methodSetDock.invoke(methodGetApp.invoke(null), icon.getImage());
-            } catch (ClassNotFoundException | NoSuchMethodException | SecurityException | IllegalAccessException | IllegalArgumentException | InvocationTargetException e) {
-                logger.error("Unable to set dock icon", e);
+        try {
+            Image icon = ResourceHelper.getAppIcon(Constants.DEFAULT_ICON); 
+            frame.setIconImage(icon);
+            if (SystemUtils.IS_OS_MAC_OSX) {
+                try {
+                    // equivalent of:
+                    // com.apple.eawt.Application.getApplication().setDockIconImage( new ImageIcon(Station.class.getResource("/pmstation/btn_config.png")).getImage());
+                    Class<?> clazz = Class.forName( "com.apple.eawt.Application", false, null);
+                    Method methodGetApp = clazz.getMethod("getApplication");
+                    Method methodSetDock = clazz.getMethod("setDockIconImage", Image.class);
+                    methodSetDock.invoke(methodGetApp.invoke(null), icon);
+                } catch (ClassNotFoundException | NoSuchMethodException | SecurityException | IllegalAccessException | IllegalArgumentException | InvocationTargetException e) {
+                    logger.error("Unable to set dock icon", e);
+                }
+                
             }
-            
+        } catch (IOException e) {
+            logger.error("Error loading icon", e);
         }
     }
 

@@ -13,9 +13,10 @@ import org.apache.commons.lang3.time.FastDateFormat;
 public class Constants {
     
     public static final String PROJECT_NAME = "pm-station-usb";
-    public static final String VERSION = "1.0.0 beta"; 
+    public static final String VERSION = "1.0.0"; 
     public static final String PROJECT_URL = "https://github.com/rjaros87/pm-station-usb";
     public static final Locale DEFAULT_LOCALE = Locale.getDefault(); 
+    public static final String DEFAULT_ICON = "app-icon.png";
     
     public static final String UNITS = "\u03BCg/m\u00B3";
     

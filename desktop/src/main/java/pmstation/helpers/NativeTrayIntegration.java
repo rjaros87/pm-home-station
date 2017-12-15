@@ -16,8 +16,6 @@ import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
-import javax.imageio.ImageIO;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -111,7 +109,7 @@ public class NativeTrayIntegration {
     }
     
     private Image getIcon(String name) throws IOException {
-        BufferedImage trayIconImage = ImageIO.read(Station.class.getResource("/pmstation/" + name));
+        BufferedImage trayIconImage = ResourceHelper.getAppIcon(name);
         int trayIconWidth = new TrayIcon(trayIconImage).getSize().width;
         return trayIconImage.getScaledInstance(trayIconWidth, -1, Image.SCALE_SMOOTH); // scaling is better for Win7
     }

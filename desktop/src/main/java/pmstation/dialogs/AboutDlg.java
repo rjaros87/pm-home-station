@@ -10,9 +10,8 @@ import java.awt.Desktop;
 import java.awt.Dialog.ModalityType;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.io.BufferedReader;
 import java.io.InputStream;
-import java.io.InputStreamReader;
+import java.io.StringReader;
 import java.net.URL;
 
 import javax.swing.GroupLayout;
@@ -31,11 +30,13 @@ import javax.swing.event.HyperlinkListener;
 import javax.swing.text.Document;
 import javax.swing.text.html.HTMLEditorKit;
 
+import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.io.IOUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import pmstation.Station;
+import pmstation.configuration.Constants;
 
 public class AboutDlg {
 
@@ -61,7 +62,7 @@ public class AboutDlg {
         }
         frame = new JDialog(mainFrame, title, ModalityType.APPLICATION_MODAL);
         frame.setResizable(false);
-        frame.setBounds(350, 350, 515, 386);
+        frame.setBounds(350, 350, 515, 489);
         frame.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
         frame.setLocationRelativeTo(mainFrame);
         
@@ -106,7 +107,7 @@ public class AboutDlg {
         });
         
         tabs.addTab("About", null, panelAbout, null);
-        tabs.addTab("License", null, panelLicence, null);
+        tabs.addTab("Licenses", null, panelLicence, null);
 
         frame.getContentPane().setLayout(groupLayout);
         frame.toFront();
@@ -121,14 +122,12 @@ public class AboutDlg {
         final JScrollPane scrollPane = new JScrollPane(jEditorPane);
         HTMLEditorKit kit = new HTMLEditorKit();
         jEditorPane.setEditorKit(kit);
+        
         if (stylesheet != null) {
-            BufferedReader in = null;
             try {
-                in = new BufferedReader(new InputStreamReader(stylesheet.openStream()));
-                kit.getStyleSheet().loadRules(in, null);
+                kit.getStyleSheet().loadRules(new StringReader(load(stylesheet)), null);
             } catch (Exception e) {
                 logger.error("Error reading stylesheets: {}", stylesheet, e);
-                IOUtils.closeQuietly(in);
             }
         }
         jEditorPane.addHyperlinkListener(new HyperlinkListener() {
@@ -147,16 +146,7 @@ public class AboutDlg {
         
         Document doc = kit.createDefaultDocument();
         jEditorPane.setDocument(doc);
-        
-        InputStream htmlStream = null;
-        try { 
-            htmlStream = html.openStream();
-            jEditorPane.setText(IOUtils.toString(htmlStream, "UTF-8"));
-            IOUtils.closeQuietly(htmlStream);
-        } catch (Exception e) {
-            logger.error("Error reading html content: {}", html, e);
-            IOUtils.closeQuietly(htmlStream);
-        }
+        jEditorPane.setText(load(html));
         panel.setLayout(new BorderLayout(0, 0));
         panel.add(scrollPane);
         
@@ -168,4 +158,18 @@ public class AboutDlg {
          });
     }
 
+    private String load(URL file) {
+        String result = "";
+        try (InputStream stream = file.openStream()){ 
+            // get the path to resources...
+            String resourcePath = FilenameUtils.getFullPathNoEndSeparator(Station.class.getResource("/pmstation/" + Constants.DEFAULT_ICON).getPath());
+            result = IOUtils.toString(stream, "UTF-8")
+                    .replaceAll("\\{resource\\}", "file://" + resourcePath)
+                    .replaceAll("\\{version\\}", Constants.VERSION)
+                    .replaceAll("\\{project-name\\}", Constants.PROJECT_NAME);
+        } catch (Exception e) {
+            logger.error("Error reading html content: {}", file, e);
+        }
+        return result;
+    }
 }
