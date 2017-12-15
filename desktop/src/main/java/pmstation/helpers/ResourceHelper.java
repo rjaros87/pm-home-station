@@ -8,6 +8,7 @@ package pmstation.helpers;
 import java.awt.Graphics2D;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
+import java.net.URL;
 import java.time.LocalDate;
 import java.time.Month;
 
@@ -16,6 +17,7 @@ import javax.swing.Icon;
 import javax.swing.ImageIcon;
 
 import pmstation.Station;
+import pmstation.configuration.Constants;
 
 public class ResourceHelper {
 
@@ -38,5 +40,13 @@ public class ResourceHelper {
         
         return iconImage;
         
+    }
+    
+    public static URL getResource(String name) {
+        return Station.class.getResource("/pmstation/" + name);
+    }
+    
+    public static URL getResourceBaseURL() {
+        return Station.class.getResource("/pmstation/" + Constants.DEFAULT_ICON);
     }
 }

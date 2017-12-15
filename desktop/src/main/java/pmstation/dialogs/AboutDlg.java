@@ -35,8 +35,8 @@ import org.apache.commons.io.IOUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import pmstation.Station;
 import pmstation.configuration.Constants;
+import pmstation.helpers.ResourceHelper;
 
 public class AboutDlg {
 
@@ -69,11 +69,11 @@ public class AboutDlg {
         JTabbedPane tabs = new JTabbedPane();
         
         JPanel panelAbout = new JPanel();
-        loadHtml(panelAbout, Station.class.getResource("/pmstation/html/about.html"),
-                             Station.class.getResource("/pmstation/html/about.css"));
+        loadHtml(panelAbout, ResourceHelper.getResource("html/about.html"),
+                             ResourceHelper.getResource("html/about.css"));
         JPanel panelLicence = new JPanel();
-        loadHtml(panelLicence, Station.class.getResource("/pmstation/html/licenses.html"),
-                               Station.class.getResource("/pmstation/html/licenses.css"));
+        loadHtml(panelLicence, ResourceHelper.getResource("html/licenses.html"),
+                               ResourceHelper.getResource("html/licenses.css"));
         
         JPanel panelBottom = new JPanel();
         panelBottom.setBorder(null);
@@ -162,7 +162,8 @@ public class AboutDlg {
         String result = "";
         try (InputStream stream = file.openStream()){ 
             // get the path to resources...
-            String resourcePath = FilenameUtils.getFullPathNoEndSeparator(Station.class.getResource("/pmstation/" + Constants.DEFAULT_ICON).getPath());
+            // this won't wrok when JAR'ed :/ - need to override resource handler in HTMLEditorKit. TBD.
+            String resourcePath = FilenameUtils.getFullPathNoEndSeparator(ResourceHelper.getResourceBaseURL().getPath());
             result = IOUtils.toString(stream, "UTF-8")
                     .replaceAll("\\{resource\\}", "file://" + resourcePath)
                     .replaceAll("\\{version\\}", Constants.VERSION)
