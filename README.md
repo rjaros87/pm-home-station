@@ -56,6 +56,8 @@ Suggested printing parameters:
 - Resolution: 0.2
 - Supports: No
 
+> Caution! Make sure the soldered ends of the USB-UART pins (at the bottom of the adapter) are properly insulated from the sensor's metal case! Some adapters have them that long enough to press on the sensor and short-circut the adapter. It's best to sand them off and use insulation tape.
+
 ## Tested platforms
 
 - Android APK
