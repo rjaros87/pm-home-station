@@ -43,8 +43,8 @@ TXD           | RXD
 
 - 4x M3 x 25 machine screws with nuts are required to assemble the enclosure
 
-- [Top v2 with hidden screws](/3d_models/top_v2_hidden_screws.stl)
-- [Bottom v2 with hidden screws](/3d_models/bottom_v2_hidden_screws.stl)
+- [Top v3 with hidden screws](/3d_models/top_v3_hidden_screws.stl)
+- [Bottom v3 with hidden screws](/3d_models/bottom_v3_hidden_screws.stl)
 
 or
 
