@@ -473,8 +473,9 @@ public class Station {
                         "<html>The sensor is still attached.<br><br>" +
                         "This instance or the next start of the application may <b>hang</b><br>" +
                         "when the device is still attached while app or port is being closed.<br>" +
-                        "<b>In such a case only reboot helps.</b><br>" +
-                        "This behavior is being observed when using some cheap PL2303 uart-to-usb and their drivers.<br><br>" +
+                        "<b>In such a case only reboot helps.</b><br><br>" +
+                        "This behavior is being observed when using some cheap PL2303<br>" +
+                        "uart-to-usb and their drivers.<br><br>" +
                         "You can now forcibly detach the device now.<br><br>" +
                         "Press OK to continue closing.</html>",
                         "Warning", JOptionPane.WARNING_MESSAGE);

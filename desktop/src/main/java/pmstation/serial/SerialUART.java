@@ -100,10 +100,14 @@ public class SerialUART implements ISerialUART {
     }
 
     private boolean isSerialPort(SerialPort sp) {
+        String portName = sp.getSystemPortName().toLowerCase();
+        String portDesc = sp.getDescriptivePortName().toLowerCase();
         // TODO auto-discovery for linux
-        return ((SystemUtils.IS_OS_MAC_OSX && sp.getSystemPortName().startsWith("cu") && sp.getSystemPortName().toLowerCase().contains("usbserial")) ||
-                (SystemUtils.IS_OS_WINDOWS && sp.getDescriptivePortName().toLowerCase().contains("serial")) // ||
-                //(isLinux)
+        return (SystemUtils.IS_OS_MAC_OSX && portName.startsWith("cu") && portName.contains("usbserial") ||
+                SystemUtils.IS_OS_MAC_OSX && portName.startsWith("cu.hc-0") ||  // Bluetooth uart on Mac
+                SystemUtils.IS_OS_WINDOWS && portDesc.contains("serial") ||
+                SystemUtils.IS_OS_WINDOWS && portDesc.contains("hc-0") // Bluetooth uart on Win
+                // || (isLinux) TODO
         );
     }
 }
