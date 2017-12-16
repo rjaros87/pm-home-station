@@ -5,19 +5,21 @@
  */
 package pmstation.helpers;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.awt.Image;
 import java.awt.MenuItem;
 import java.awt.PopupMenu;
 import java.awt.SystemTray;
 import java.awt.TrayIcon;
 import java.awt.TrayIcon.MessageType;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import pmstation.Station;
 import pmstation.configuration.Constants;
@@ -58,17 +60,17 @@ public class NativeTrayIntegration {
         menu.addSeparator();
         
         MenuItem itemMainWindow = new MenuItem("Main window");
-        itemMainWindow.addActionListener((e) -> { station.setVisible(true); } );
+        itemMainWindow.addActionListener((e) -> station.setVisible(true));
         menu.add(itemMainWindow);
         
         MenuItem itemPrefs = new MenuItem("Preferences");
-        itemPrefs.addActionListener((e) -> { station.openConfigDlg(); });
+        itemPrefs.addActionListener((e) -> station.openConfigDlg());
         menu.add(itemPrefs);
         
         menu.addSeparator();
         
         MenuItem itemQuit = new MenuItem("Quit");
-        itemQuit.addActionListener((e) -> { station.closeApp(); } );
+        itemQuit.addActionListener((e) -> station.closeApp());
         menu.add(itemQuit);
 
         try {
@@ -97,6 +99,14 @@ public class NativeTrayIntegration {
                 
             });
             tray.add(menuBarIcon);
+            menuBarIcon.addMouseListener(new MouseAdapter() {
+                @Override
+                public void mouseClicked(MouseEvent e) {
+                    if(e.getClickCount() >= 2){
+                        station.setVisible(true);
+                    }
+                }
+            });
         } catch (Exception e) {
             logger.error("Error adding menubar app to OSX menubar", e);
         }
