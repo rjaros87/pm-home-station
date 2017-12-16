@@ -30,6 +30,8 @@ import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.HashMap;
 
+import javax.swing.Icon;
+import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JComponent;
 import javax.swing.JFrame;
@@ -103,10 +105,8 @@ public class Station {
                 if (frame.getDefaultCloseOperation() == JFrame.EXIT_ON_CLOSE) {
                     diaplayWarnForDetach(frame);
                     logger.info("Closing the application...");
-                    if (!SystemUtils.IS_OS_MAC_OSX) {
-                        logger.info("Disconnecting device...");
-                        planTowerSensor.disconnectDevice();
-                    }
+                    logger.info("Disconnecting device...");
+                    planTowerSensor.disconnectDevice();
                 }
                 saveScreenAndDimensions(frame);
                 super.windowClosing(windowEvent);
@@ -177,6 +177,18 @@ public class Station {
         
         panelMain.add(deviceStatus, "flowx,cell 1 0,alignx left,aligny center");
         
+        try {
+            JButton btnState = new JButton("");
+            btnState.setToolTipText("State indicator");
+            Icon referenceIcon = ResourceHelper.getIcon("btn_config.png");
+            btnState.setMaximumSize(new Dimension(ResourceHelper.getIcon("btn_config.png").getIconWidth()+12, ResourceHelper.getIcon("btn_config.png").getIconHeight()+12));
+            btnState.setIcon(new ImageIcon(ResourceHelper.getAppIcon("app-icon-disconnected.png").getScaledInstance(referenceIcon.getIconWidth(), -1, Image.SCALE_SMOOTH)));
+            panelMain.add(btnState, "flowx,cell 2 0,alignx right,aligny center");
+            labelsToBeUpdated.put("icon", btnState);
+        } catch (IOException e) {
+            logger.warn("Ugh, there was an error loading an icon", e);
+        }
+        
         JButton btnCfg = new JButton("");
         btnCfg.addMouseListener(new MouseAdapter() {
             @Override
@@ -206,7 +218,7 @@ public class Station {
         JPanel panelMeasurements = new JPanel();
         panelMeasurements.setBorder(new TitledBorder(null, "<html><b>Last measurements</b></html>", TitledBorder.LEADING, TitledBorder.TOP, null, null));
         panelMain.add(panelMeasurements, "cell 0 1 3 1,grow");
-        panelMeasurements.setLayout(new MigLayout("", "[50px][6px][70px:100px][6px][50px][6px][70px:100px][6px][42px][12px][70px:137px]", "[16px][]"));
+        panelMeasurements.setLayout(new MigLayout("", "[50px][6px][70px:100px][6px][50px][6px][70px:100px][6px][42px][12px][70px:137px]", "[10px][]"));
         
                 JLabel pm1_0Label = new JLabel("PM 1.0:");
                 panelMeasurements.add(pm1_0Label, "cell 0 0,alignx left,aligny top");
@@ -460,8 +472,9 @@ public class Station {
                 JOptionPane.showMessageDialog(parent,
                         "<html>The sensor is still attached.<br><br>" +
                         "This instance or the next start of the application may <b>hang</b><br>" +
-                        "when the device is attached and app is closing. In such a case only reboot helps.<br>" +
-                        "This behavior is being observed when using PL2303 and its original driver.<br><br>" +
+                        "when the device is still attached while app or port is being closed.<br>" +
+                        "<b>In such a case only reboot helps.</b><br>" +
+                        "This behavior is being observed when using some cheap PL2303 uart-to-usb and their drivers.<br><br>" +
                         "You can now forcibly detach the device now.<br><br>" +
                         "Press OK to continue closing.</html>",
                         "Warning", JOptionPane.WARNING_MESSAGE);

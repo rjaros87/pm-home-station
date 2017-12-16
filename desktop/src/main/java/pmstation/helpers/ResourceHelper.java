@@ -42,7 +42,7 @@ public class ResourceHelper {
         
     }
     
-    public static URL getResource(String name) {
+    public static URL getResourceURL(String name) {
         return Station.class.getResource("/pmstation/" + name);
     }
     

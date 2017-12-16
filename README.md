@@ -70,7 +70,8 @@ Suggested printing parameters:
     - the ownership of device `/dev/ttyUSB0` is `dialout` group so must add yourself to the group and re-login or run with `sudo` (not recommended)
   - macOS Sierra 10.12
     - you may need to install correct driver for your version of uart-to-usb
-      - for PL2303 you can use [this](http://www.prolific.com.tw/US/ShowProduct.aspx?p_id=229&pcid=41) one, however you must always detach the device before closing the app otherwise the java process may hang blocked by the driver on I/O operation
+      - for PL2303 you can use [this](http://www.prolific.com.tw/US/ShowProduct.aspx?p_id=229&pcid=41) one, however for some uart-to-usb versions you must always detach the device before closing the app otherwise the java process may hang blocked by the driver on I/O operation.
+      - for FT232 the above driver works, what's more - FT232 based uart-to-usb implementations behave better on macOS - OS does not hang when closing the port while the device is attached to USB.
 
 ## Build and run
 

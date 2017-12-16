@@ -54,6 +54,7 @@ public class PlanTowerSensor {
             serialUART.writeBytes(PlanTowerDevice.MODE_SLEEP);
             serialUART.closePort();
         }
+        notifyAboutDisconnection();
     }
 
     public void startMeasurements() {

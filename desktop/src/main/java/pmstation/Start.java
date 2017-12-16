@@ -39,7 +39,7 @@ public class Start {
             } else if (line.hasOption("version")) {
                 System.out.println("version: " + Constants.VERSION);
             } else {
-                logger.info("Starting pm-station-usb ({})...", Constants.PROJECT_URL);
+                logger.info("Starting pm-station-usb ({} v.{})...", Constants.PROJECT_URL, Constants.VERSION);
                 setLookAndFeel();
                 PlanTowerSensor planTowerSensor = new PlanTowerSensor();
                 Station station = new Station(planTowerSensor);

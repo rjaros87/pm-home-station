@@ -69,11 +69,11 @@ public class AboutDlg {
         JTabbedPane tabs = new JTabbedPane();
         
         JPanel panelAbout = new JPanel();
-        loadHtml(panelAbout, ResourceHelper.getResource("html/about.html"),
-                             ResourceHelper.getResource("html/about.css"));
+        loadHtml(panelAbout, ResourceHelper.getResourceURL("html/about.html"),
+                             ResourceHelper.getResourceURL("html/about.css"));
         JPanel panelLicence = new JPanel();
-        loadHtml(panelLicence, ResourceHelper.getResource("html/licenses.html"),
-                               ResourceHelper.getResource("html/licenses.css"));
+        loadHtml(panelLicence, ResourceHelper.getResourceURL("html/licenses.html"),
+                               ResourceHelper.getResourceURL("html/licenses.css"));
         
         JPanel panelBottom = new JPanel();
         panelBottom.setBorder(null);
@@ -161,13 +161,13 @@ public class AboutDlg {
     private String load(URL file) {
         String result = "";
         try (InputStream stream = file.openStream()){ 
-            // get the path to resources...
-            // this won't wrok when JAR'ed :/ - need to override resource handler in HTMLEditorKit. TBD.
-            String resourcePath = FilenameUtils.getFullPathNoEndSeparator(ResourceHelper.getResourceBaseURL().getPath());
+            String resourcePath = FilenameUtils.getFullPathNoEndSeparator(ResourceHelper.getResourceBaseURL().toExternalForm());
+            logger.info("--------------- " +resourcePath);
             result = IOUtils.toString(stream, "UTF-8")
-                    .replaceAll("\\{resource\\}", "file://" + resourcePath)
+                    .replaceAll("\\{resource\\}", resourcePath)
                     .replaceAll("\\{version\\}", Constants.VERSION)
-                    .replaceAll("\\{project-name\\}", Constants.PROJECT_NAME);
+                    .replaceAll("\\{project-name\\}", Constants.PROJECT_NAME)
+                    .replaceAll("\\{project-url\\}", Constants.PROJECT_URL);
         } catch (Exception e) {
             logger.error("Error reading html content: {}", file, e);
         }
