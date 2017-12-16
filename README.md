@@ -13,11 +13,22 @@ Let's live healthier life and start measuring the air quality and filtering it i
 
 ## Requirements
 
-- PlanTower PMS7003 ~ 24 $
-- ICD10 adapter with 10 pins(1.27 mm) to 6 pins (2.54 mm) (also called `G7 switch`) ~ 2 $
-- Female-Female wires 5 items ~ 1 $
-- UART to USB (PL2303) adapter ~ 2 $
-- USB cable ~ 2 $
+- PlanTower PMS7003 ~ $24
+- ICD10 adapter with 10 pins(1.27 mm) to 6 pins (2.54 mm) (also called `G7 switch`) ~ $2
+- Female-Female wires 5 items ~ $1
+- UART to USB adapter:
+  - cheap PL2303 ~ $2, or
+  - better quality FT232 ~ $5 (suggested for macOS compatibility)
+- USB cable ~ $2
+
+Alternatively, instead of UART to USB adapter it is possible to use Bluetooth UART:
+> Caution! Cconnectivity to the sensor over Bluetooth is currently only supported by the desktop application ran on macOS.
+
+- PlanTower PMS7003 ~ $24
+- ICD10 adapter with 10 pins(1.27 mm) to 6 pins (2.54 mm) (also called `G7 switch`) ~ $2
+- Female-Female wires 5 items ~ $1
+- Bluetooth UART HC-06 - ~$5
+- USB cable to provide power to Sensor and Bluetooth tandem ~ $2
 
 ## Assemble the PM sensor
 
