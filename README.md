@@ -37,6 +37,8 @@ TXD           | RXD
 3. Connect the UART-USB adapter with a USB cable to your computer
 > Caution! Refer to [this](#tested-platforms) section for remarks regarding your platform
 
+- For Bluetooth version connect the power (5V) from USB cable or socket to Vcc and GND (2 most outside pins of USB plug). You may need to shorten data pin/wires (2 center pins) or connect them via ~200Ohm resitor in order to be recognized by charger.
+
 4. Start the application and check the air quality of your environment :smile:
 
 ## 3D enclosure for the PlanTower device & the UART-USB adapter
@@ -61,7 +63,7 @@ Suggested printing parameters:
 ## Tested platforms
 
 - Android APK
-  - Android 7 Nougat
+  - Android 7 Nougat (for USB version the OTG feature must be supported)
 
 - Desktop (standalone) app
   - Windows 7 & 10
