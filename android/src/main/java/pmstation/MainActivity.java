@@ -12,6 +12,7 @@ import android.os.Build;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
@@ -31,13 +32,15 @@ public class MainActivity extends AppCompatActivity implements IPlanTowerObserve
     public static final String ACTION_USB_ATTACHED = "android.hardware.usb.action.USB_DEVICE_ATTACHED";
     public static final String ACTION_USB_DETACHED = "android.hardware.usb.action.USB_DEVICE_DETACHED";
     public static final String ACTION_USB_PERMISSION = "pmstation.USB_PERMISSION";
+    public static final String VALUES_FRAGMENT = "VALUES_FRAGMENT";
+    public static final String CHART_FRAGMENT = "CHART_FRAGMENT";
     private static final String TAG = "MainActivity";
+    public static final String LAST_SINGLE_PANE_FRAGMENT = "lastSinglePaneFragment";
     private Menu menu;
     private ImageView smog;
-
     private List<ParticulateMatterSample> values = new ArrayList<>();
-
     private boolean running = false;
+    private String lastSinglePaneFragment;
     private Sensor sensor;
     /*
      * Different notifications from OS will be received here (USB attached, detached, permission responses...)
@@ -101,6 +104,43 @@ public class MainActivity extends AppCompatActivity implements IPlanTowerObserve
         icon.setColorFilter(Color.WHITE, PorterDuff.Mode.SRC_IN);
     }
 
+    private ValuesFragment getDetatchedValuesFragment(boolean popBackStack) {
+        FragmentManager fm = getSupportFragmentManager();
+        ValuesFragment valuesFragment = (ValuesFragment) getSupportFragmentManager().findFragmentByTag(VALUES_FRAGMENT);
+        if (valuesFragment == null) {
+            valuesFragment = new ValuesFragment();
+        } else {
+            if (popBackStack) {
+                fm.popBackStack(null, FragmentManager.POP_BACK_STACK_INCLUSIVE);
+            }
+            fm.beginTransaction().remove(valuesFragment).commit();
+            fm.executePendingTransactions();
+        }
+        return valuesFragment;
+    }
+
+    private ChartFragment getDetatchedChartFragment() {
+        FragmentManager fm = getSupportFragmentManager();
+        ChartFragment chartFragment = (ChartFragment) getSupportFragmentManager().findFragmentByTag(CHART_FRAGMENT);
+        if (chartFragment == null) {
+            chartFragment = new ChartFragment();
+        } else {
+            fm.beginTransaction().remove(chartFragment).commit();
+            fm.executePendingTransactions();
+        }
+        return chartFragment;
+    }
+
+    private void openSinglePaneChartFragment() {
+        FragmentManager fm = getSupportFragmentManager();
+        fm.popBackStack(null, FragmentManager.POP_BACK_STACK_INCLUSIVE);
+        ChartFragment detailFragment = getDetatchedChartFragment();
+        FragmentTransaction fragmentTransaction = fm.beginTransaction();
+        fragmentTransaction.replace(R.id.single_pane, detailFragment, CHART_FRAGMENT);
+        fragmentTransaction.addToBackStack(null);
+        fragmentTransaction.commit();
+    }
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -113,19 +153,29 @@ public class MainActivity extends AppCompatActivity implements IPlanTowerObserve
         sensor = new Sensor(this);
         sensor.addValueObserver(this);
 
+        boolean dualPane = findViewById(R.id.dual_pane) != null;
+
         if (savedInstanceState != null) {
-            return;
+            lastSinglePaneFragment = savedInstanceState.getString(LAST_SINGLE_PANE_FRAGMENT);
         }
 
-        // Create a new Fragment to be placed in the activity layout
-        Fragment valuesFragment = new ValuesFragment();
+        FragmentManager fm = getSupportFragmentManager();
 
-        // In case this activity was started with special instructions from an
-        // Intent, pass the Intent's extras to the fragment as arguments
-        valuesFragment.setArguments(getIntent().getExtras());
-
-        // Add the fragment to the 'fragment_container' FrameLayout
-        getSupportFragmentManager().beginTransaction().add(R.id.fragment_container, valuesFragment).commit();
+        if (!dualPane && fm.findFragmentById(R.id.single_pane) == null) {
+            ValuesFragment valuesFragment = getDetatchedValuesFragment(false);
+            fm.beginTransaction().add(R.id.single_pane, valuesFragment, VALUES_FRAGMENT).commit();
+            if (CHART_FRAGMENT.equals(lastSinglePaneFragment)) {
+                openSinglePaneChartFragment();
+            }
+        }
+        if (dualPane && fm.findFragmentById(R.id.values_dual) == null) {
+            ValuesFragment valuesFragment = getDetatchedValuesFragment(true);
+            fm.beginTransaction().add(R.id.values_dual, valuesFragment, VALUES_FRAGMENT).commit();
+        }
+        if (dualPane && fm.findFragmentById(R.id.chart_dual) == null) {
+            ChartFragment chartFragment = getDetatchedChartFragment();
+            fm.beginTransaction().add(R.id.chart_dual, chartFragment, CHART_FRAGMENT).commit();
+        }
     }
 
     @Override
@@ -220,14 +270,11 @@ public class MainActivity extends AppCompatActivity implements IPlanTowerObserve
     }
 
     private void showChart() {
-        Fragment fragment = getSupportFragmentManager().findFragmentByTag("chartFragment");
-        if (fragment != null && !fragment.isDetached()) {
+        Fragment fragment = getSupportFragmentManager().findFragmentByTag(CHART_FRAGMENT);
+        if (fragment != null && !fragment.isDetached() && fragment.getId() != R.id.chart_dual) {
             return;
         }
-        ChartFragment chartFragment = new ChartFragment();
-        FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
-        fragmentTransaction.replace(R.id.fragment_container, chartFragment, "chartFragment").addToBackStack(null)
-                           .commit();
+        openSinglePaneChartFragment();
     }
 
     void setStatus(boolean connected) {
@@ -257,6 +304,14 @@ public class MainActivity extends AppCompatActivity implements IPlanTowerObserve
     @Override
     protected void onSaveInstanceState(Bundle outState) {
         outState.putBoolean("running", running);
+        Fragment singleFragment = getSupportFragmentManager().findFragmentById(R.id.single_pane);
+        if (singleFragment == null) {
+            outState.putString(LAST_SINGLE_PANE_FRAGMENT, lastSinglePaneFragment);
+        } else {
+            outState.putString(LAST_SINGLE_PANE_FRAGMENT,
+                               singleFragment instanceof ValuesFragment ? VALUES_FRAGMENT : CHART_FRAGMENT);
+        }
+
         super.onSaveInstanceState(outState);
     }
 

@@ -15,7 +15,7 @@
         android:src="@drawable/bg_smog"
         android:scaleType="centerCrop"/>
     <FrameLayout
-        android:id="@+id/fragment_container"
+        android:id="@+id/single_pane"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         app:layout_constraintBottom_toBottomOf="parent"
