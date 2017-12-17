@@ -29,7 +29,7 @@ public class SerialUART implements ISerialUART {
         logger.debug("Got {} serial ports available", ports.length);
         int portToUse = SystemUtils.IS_OS_LINUX ? 0 : -1;
 
-        for (int i = 0; !SystemUtils.IS_OS_LINUX && i < ports.length; i++) {
+        for (int i = 0; i < ports.length; i++) {
             SerialPort sp = ports[i];
             logger.debug("\t- {}, {}", sp.getSystemPortName(), sp.getDescriptivePortName());
             if (isSerialPort(sp)) {

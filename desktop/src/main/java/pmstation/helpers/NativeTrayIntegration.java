@@ -84,8 +84,8 @@ public class NativeTrayIntegration {
                     infoMenuItem.setLabel("PM1.0: " + sample.getPm1_0() + ", " +
                             "PM2.5: " + sample.getPm2_5() + ", " +
                             "PM10 : " + sample.getPm10() + " (" + Constants.UNITS + ")");
-                    menuBarIcon.setToolTip("PM1.0 : " + sample.getPm1_0() + Constants.UNITS + "\n" +
-                            "PM2.5 : " + sample.getPm2_5() + Constants.UNITS + "\n" +
+                    menuBarIcon.setToolTip("PM1.0 : " + sample.getPm1_0() + Constants.UNITS + " \n" + // space before \n required for Linux/Gnome
+                            "PM2.5 : " + sample.getPm2_5() + Constants.UNITS + " \n" +
                             "PM10  : " + sample.getPm10() + Constants.UNITS);
                     
                     setScaryIcon(menuBarIcon, AQIColor.fromPM25Level(sample.getPm2_5()), AQIColor.fromPM10Level(sample.getPm10()));
