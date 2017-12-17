@@ -27,7 +27,7 @@ public class SerialUART implements ISerialUART {
             return false;
         }
         logger.debug("Got {} serial ports available", ports.length);
-        int portToUse = SystemUtils.IS_OS_LINUX ? 0 : -1;
+        int portToUse = -1;
 
         for (int i = 0; i < ports.length; i++) {
             SerialPort sp = ports[i];
@@ -102,12 +102,12 @@ public class SerialUART implements ISerialUART {
     private boolean isSerialPort(SerialPort sp) {
         String portName = sp.getSystemPortName().toLowerCase();
         String portDesc = sp.getDescriptivePortName().toLowerCase();
-        // TODO auto-discovery for linux
         return (SystemUtils.IS_OS_MAC_OSX && portName.startsWith("cu") && portName.contains("usbserial") ||
                 SystemUtils.IS_OS_MAC_OSX && portName.startsWith("cu.hc-0") ||  // Bluetooth uart on Mac
                 SystemUtils.IS_OS_WINDOWS && portDesc.contains("serial") ||
-                SystemUtils.IS_OS_WINDOWS && portDesc.contains("hc-0") // Bluetooth uart on Win
-                // || (isLinux) TODO
+                SystemUtils.IS_OS_WINDOWS && portDesc.contains("hc-0") || // Bluetooth uart on Win
+                SystemUtils.IS_OS_LINUX && portDesc.contains("usb") && portDesc.contains("serial") || 
+                SystemUtils.IS_OS_LINUX && portDesc.contains("hc-0") // Bluetooth uart on Linux?
         );
     }
 }
