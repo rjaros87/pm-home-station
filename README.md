@@ -74,7 +74,7 @@ Suggested printing parameters:
 ## Tested platforms
 
 - Android APK
-  - Android 7 Nougat (for USB version the OTG feature must be supported)
+  - Android 6 / 7 / 8 / 8.1 (for USB version the OTG feature must be supported), minSDK=21 (Android 5.0)
 
 - Desktop (standalone) app
   - Windows 7 & 10
