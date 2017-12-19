@@ -41,7 +41,11 @@ public class PlanTowerSensor {
     public boolean connectDevice() {
         boolean openPort = serialUART.openPort();
         if (openPort) {
+            logger.debug("Waking up the device...");
             serialUART.writeBytes(PlanTowerDevice.MODE_WAKEUP);
+            delay();
+            serialUART.writeBytes(PlanTowerDevice.MODE_ACTIVE);
+            delay();
         }
         return openPort;
     }
@@ -51,7 +55,11 @@ public class PlanTowerSensor {
             scheduledMeasurements.cancel(true);
         }
         if (serialUART.isConnected()) {
+            logger.debug("Sleeping the device...");
+            serialUART.writeBytes(PlanTowerDevice.MODE_PASSIVE);
+            delay();    // seems to be required... otherwise it won't go to sleep
             serialUART.writeBytes(PlanTowerDevice.MODE_SLEEP);
+            delay();
             serialUART.closePort();
         }
         notifyAboutDisconnection();
@@ -111,6 +119,14 @@ public class PlanTowerSensor {
     private void notifyAboutDisconnection() {
         for (IPlanTowerObserver observer : planTowerObserver) {
             observer.disconnected();
+        }
+    }
+    
+    private void delay() {
+        try {
+            Thread.sleep(100);
+        } catch (InterruptedException e) {
+            // ignore
         }
     }
 }

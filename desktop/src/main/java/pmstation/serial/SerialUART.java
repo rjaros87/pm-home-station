@@ -60,8 +60,6 @@ public class SerialUART implements ISerialUART {
 
     public void closePort() {
         if (comPort != null) {
-            // ???
-            // serialPort.closePort();
             comPort.setComPortTimeouts(SerialPort.TIMEOUT_NONBLOCKING, 0, 0);
             comPort.removeDataListener();
             logger.debug("Going to close the port...");
@@ -107,7 +105,8 @@ public class SerialUART implements ISerialUART {
                 SystemUtils.IS_OS_WINDOWS && portDesc.contains("serial") ||
                 SystemUtils.IS_OS_WINDOWS && portDesc.contains("hc-0") || // Bluetooth uart on Win
                 SystemUtils.IS_OS_LINUX && portDesc.contains("usb") && portDesc.contains("serial") || 
-                SystemUtils.IS_OS_LINUX && portDesc.contains("hc-0") // Bluetooth uart on Linux?
+                SystemUtils.IS_OS_LINUX && portDesc.contains("hc-0") || // Bluetooth uart on Linux?
+                portDesc.contains("pmsensor")   // TODO make the name configurable (custom name for BT HC-05/HC-06 or even normal serial)
         );
     }
 }
