@@ -20,12 +20,16 @@ configurations {
 jar {
     manifest {
         attributes(
+                'Implementation-Title': 'PM Home Station',
+                'Implementation-Version': version,
                 'Main-Class': mainClassName
         )
     }
     from {
         configurations.extraLibs.collect { it.isDirectory() ? it : zipTree(it) }
     }
+
+    exclude('META-INF/*.txt')
 }
 
 dependencies {
