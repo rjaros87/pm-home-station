@@ -126,16 +126,19 @@ The app screenshots gallery can be found [here](https://rjaros87.github.io/pm-ho
 
 - [License GPL-3.0](/LICENSE)
 
-
 ## Authors
 
 - [Radoslaw Gabiga](https://github.com/sanchin)
 - [Radoslaw Jaros](https://github.com/rjaros87)
 - [Piotr Skowronek](https://github.com/pskowronek)
 
+## Releases
+
+The latest release versions can be found [here](https://github.com/rjaros87/pm-home-station/releases).
+
 ## TODOs
 
-- [Release 1.0.0](https://github.com/rjaros87/pm-home-station/projects/1)
+- ~~[Release 1.0.0](https://github.com/rjaros87/pm-home-station/projects/1)~~
 
 ## Disclaimer
 
