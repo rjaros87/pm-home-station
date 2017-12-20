@@ -9,6 +9,6 @@ Free for commercial use (http://bogdanrosu.com/)
 
 app-icon.png (copy of ic_launcher-web.png):
 
-https://github.com/rjaros87/pm-station-usb
+https://github.com/rjaros87/pm-home-station
 
 

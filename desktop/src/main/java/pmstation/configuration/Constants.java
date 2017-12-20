@@ -1,6 +1,6 @@
 /*
- * pm-station-usb
- * 2017 (C) Copyright - https://github.com/rjaros87/pm-station-usb
+ * pm-home-station
+ * 2017 (C) Copyright - https://github.com/rjaros87/pm-home-station
  * License: GPL 3.0
  */
 
@@ -12,9 +12,9 @@ import org.apache.commons.lang3.time.FastDateFormat;
 
 public class Constants {
     
-    public static final String PROJECT_NAME = "pm-station-usb";
+    public static final String PROJECT_NAME = "pm-home-station";
     public static final String VERSION = "1.0.0"; 
-    public static final String PROJECT_URL = "https://github.com/rjaros87/pm-station-usb";
+    public static final String PROJECT_URL = "https://github.com/rjaros87/pm-home-station";
     public static final Locale DEFAULT_LOCALE = Locale.getDefault(); 
     public static final String DEFAULT_ICON = "app-icon.png";
     

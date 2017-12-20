@@ -1,7 +1,7 @@
 _Language versions:_\
-[![EN](https://github.com/rjaros87/pm-station-usb/raw/master/www/flags/lang-US.png)](https://github.com/rjaros87/pm-station-usb) 
-[![PL](https://github.com/rjaros87/pm-station-usb/raw/master/www/flags/lang-PL.png)](https://translate.googleusercontent.com/translate_c?sl=en&tl=pl&u=https://github.com/rjaros87/pm-station-usb)
-[![DE](https://github.com/rjaros87/pm-station-usb/raw/master/www/flags/lang-DE.png)](https://translate.googleusercontent.com/translate_c?sl=en&tl=de&u=https://github.com/rjaros87/pm-station-usb) 
+[![EN](https://github.com/rjaros87/pm-home-station/raw/master/www/flags/lang-US.png)](https://github.com/rjaros87/pm-home-station) 
+[![PL](https://github.com/rjaros87/pm-home-station/raw/master/www/flags/lang-PL.png)](https://translate.googleusercontent.com/translate_c?sl=en&tl=pl&u=https://github.com/rjaros87/pm-home-station)
+[![DE](https://github.com/rjaros87/pm-home-station/raw/master/www/flags/lang-DE.png)](https://translate.googleusercontent.com/translate_c?sl=en&tl=de&u=https://github.com/rjaros87/pm-home-station) 
 
 
 # Home use particulate matter sensor on USB
@@ -71,6 +71,18 @@ Suggested printing parameters:
 
 > Caution! Make sure the soldered ends of the USB-UART pins (at the bottom of the adapter) are properly insulated from the sensor's metal case! Some adapters have them so long that they become too close to the sensor and may short-circuit the adapter. It's best to sand them off and use insulation tape.
 
+## Assembly photos
+
+The photo gallery of assembly can be found [here](https://rjaros87.github.io/pm-home-station-project/assembly/index.html "Assembly of pm-station-usb") and [here](https://rjaros87.github.io/pm-home-station-project/assembly-bt/index.html "Assembly of pm-station-usb over Bluetooth") for Bluetooth version.
+
+## Enclosure photos
+
+The photo gallery of assembled device in 3d printed enclosure can be found [here](https://rjaros87.github.io/pm-home-station-project/enclosure/index.html "3d printed enclosure of pm-station-usb").
+
+## App Screenshots
+
+The app screenshots gallery can be found [here](https://rjaros87.github.io/pm-home-station-project/screenshots/index.html "App screenshots of pm-station-usb apps").
+
 ## Tested platforms
 
 - Android APK
@@ -123,7 +135,7 @@ Suggested printing parameters:
 
 ## TODOs
 
-- [Release 1.0.0](https://github.com/rjaros87/pm-station-usb/projects/1)
+- [Release 1.0.0](https://github.com/rjaros87/pm-home-station/projects/1)
 
 ## Disclaimer
 

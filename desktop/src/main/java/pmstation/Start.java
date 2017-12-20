@@ -1,6 +1,6 @@
 /*
- * pm-station-usb
- * 2017 (C) Copyright - https://github.com/rjaros87/pm-station-usb
+ * pm-home-station
+ * 2017 (C) Copyright - https://github.com/rjaros87/pm-home-station
  * License: GPL 3.0
  */
 
@@ -39,7 +39,7 @@ public class Start {
             } else if (line.hasOption("version")) {
                 System.out.println("version: " + Constants.VERSION);
             } else {
-                logger.info("Starting pm-station-usb ({} v.{})...", Constants.PROJECT_URL, Constants.VERSION);
+                logger.info("Starting pm-home-station ({} v.{})...", Constants.PROJECT_URL, Constants.VERSION);
                 setLookAndFeel();
                 PlanTowerSensor planTowerSensor = new PlanTowerSensor();
                 Station station = new Station(planTowerSensor);

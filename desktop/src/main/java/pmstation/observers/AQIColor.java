@@ -1,13 +1,13 @@
 /*
- * pm-station-usb
- * 2017 (C) Copyright - https://github.com/rjaros87/pm-station-usb
+ * pm-home-station
+ * 2017 (C) Copyright - https://github.com/rjaros87/pm-home-station
  * License: GPL 3.0
  */
 package pmstation.observers;
 
 import java.awt.Color;
 
-// taken from Android version of pm-station-usb and slightly modified - kept levels the same though
+// taken from Android version of pm-home-station and slightly modified - kept levels the same though
 public enum AQIColor {
     VERY_GOOD(Color.decode("#00ccff"), "Very good", 0),
     GOOD(Color.decode("#00e400"), "Good", 1),
