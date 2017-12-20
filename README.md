@@ -73,15 +73,15 @@ Suggested printing parameters:
 
 ## Assembly photos
 
-The photo gallery of assembly can be found [here](https://rjaros87.github.io/pm-home-station-project/assembly/index.html "Assembly of pm-station-usb") and [here](https://rjaros87.github.io/pm-home-station-project/assembly-bt/index.html "Assembly of pm-station-usb over Bluetooth") for Bluetooth version.
+The photo gallery of assembly can be found [here](https://rjaros87.github.io/pm-home-station-project/assembly/index.html "Assembly of pm-home-station") and [here](https://rjaros87.github.io/pm-home-station-project/assembly-bt/index.html "Assembly of pm-home-station over Bluetooth") for Bluetooth version.
 
 ## Enclosure photos
 
-The photo gallery of assembled device in 3d printed enclosure can be found [here](https://rjaros87.github.io/pm-home-station-project/enclosure/index.html "3d printed enclosure of pm-station-usb").
+The photo gallery of assembled device in 3d printed enclosure can be found [here](https://rjaros87.github.io/pm-home-station-project/enclosure/index.html "3d printed enclosure of pm-home-station").
 
 ## App Screenshots
 
-The app screenshots gallery can be found [here](https://rjaros87.github.io/pm-home-station-project/screenshots/index.html "App screenshots of pm-station-usb apps").
+The app screenshots gallery can be found [here](https://rjaros87.github.io/pm-home-station-project/screenshots/index.html "App screenshots of pm-home-station apps").
 
 ## Tested platforms
 
