@@ -162,7 +162,6 @@ public class AboutDlg {
         String result = "";
         try (InputStream stream = file.openStream()){ 
             String resourcePath = FilenameUtils.getFullPathNoEndSeparator(ResourceHelper.getResourceBaseURL().toExternalForm());
-            logger.info("--------------- " +resourcePath);
             result = IOUtils.toString(stream, "UTF-8")
                     .replaceAll("\\{resource\\}", resourcePath)
                     .replaceAll("\\{version\\}", Constants.VERSION)
