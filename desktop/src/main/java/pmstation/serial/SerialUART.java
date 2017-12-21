@@ -83,13 +83,13 @@ public class SerialUART implements ISerialUART {
 
         // now, when avail bytes is 0 we can start waiting for fresh data
         comPort.readBytes(readBuffer, readBuffer.length);
-        logger.trace("ReadBuffer:\n{}, bytes available after read: {}", SerialUARTUtils.bytesToHexString(readBuffer), comPort.bytesAvailable());
+        logger.trace("ReadBytes:\n{}, bytes available after read: {}", SerialUARTUtils.bytesToHexString(readBuffer), comPort.bytesAvailable());
 
         return readBuffer;
     }
 
     public void writeBytes(byte[] writeBuffer) {
-        logger.trace("ReadBuffer:\n{}", SerialUARTUtils.bytesToHexString(writeBuffer));
+        logger.trace("WriteBytes:\n{}", SerialUARTUtils.bytesToHexString(writeBuffer));
         comPort.writeBytes(writeBuffer, writeBuffer.length);
     }
 

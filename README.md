@@ -112,8 +112,8 @@ The app screenshots gallery can be found [here](https://rjaros87.github.io/pm-ho
 ### Useful commands
 
 #### Desktop:
-- `gradlew desktop:jar` - create a single Jar file with the desktop application
-- `gradlew desktop:run` - run the desktop application
+- `gradlew pm-home-station:jar` - create a single (fat) JAR file with the desktop application
+- `gradlew pm-home-station:run` - run the desktop application
 
 #### Android:
 - `gradlew android:build` - create APK-s for Android devices
