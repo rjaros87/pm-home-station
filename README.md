@@ -64,6 +64,12 @@ or
 - [Top v1](/3d_models/top_v1.stl)
 - [Bottom v1](/3d_models/bottom_v1.stl)
 
+or for FT232 usb-uart adapter
+
+- [Top v4 with hidden screws for FT232 usb-uart adapter](/3d_models/top_v4_hidden_screws_ft232_adapter.stl)
+- [Bottom v3 with hidden screws](/3d_models/bottom_v3_hidden_screws.stl)
+
+
 Suggested printing parameters:
 - Infill: 20%
 - Resolution: 0.2
