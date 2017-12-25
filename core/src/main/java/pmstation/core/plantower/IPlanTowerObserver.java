@@ -8,5 +8,12 @@ package pmstation.core.plantower;
 public interface IPlanTowerObserver {
     void update(ParticulateMatterSample sample);
 
+    default void connecting() {};
+    
+    default void connected() {};
+
+    default void disconnecting() { };
+
     default void disconnected() { };
+
 }

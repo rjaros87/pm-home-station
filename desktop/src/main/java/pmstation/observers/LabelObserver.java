@@ -84,10 +84,15 @@ public class LabelObserver implements IPlanTowerObserver {
     @Override
     public void disconnected() {
         btnConnect.setText("Connect");
-        deviceStatus.setText("Status: Device isconnected");
+        deviceStatus.setText("Status: Device sensor disconnected");
         if (icon != null) {
             icon.setIcon(new ImageIcon(disconnectedIcon.getScaledInstance(icon.getIcon().getIconWidth(), -1, Image.SCALE_SMOOTH)));
         }
+    }
+    
+    @Override
+    public void disconnecting() {
+        deviceStatus.setText("Status: Disconnecting from the sensor...");
     }
 
     private JComponent get(HashMap<String, JComponent> components, String name) {

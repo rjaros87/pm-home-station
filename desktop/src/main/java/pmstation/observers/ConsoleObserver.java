@@ -31,4 +31,9 @@ public class ConsoleObserver implements IPlanTowerObserver {
     public void disconnected() {
         logger.info("Sensor disconnected");
     }
+    
+    @Override
+    public void disconnecting() {
+        logger.info("Disconnecting from the sensor...");
+    }
 }

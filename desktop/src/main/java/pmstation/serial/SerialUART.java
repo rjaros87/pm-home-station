@@ -75,17 +75,20 @@ public class SerialUART implements ISerialUART {
             logger.info("Port is not open!");
         }
         logger.trace("Available number of bytes (old data and garbage): {}", availBytes);
-        while ((availBytes = comPort.bytesAvailable()) > 0) {
+        int guard = 0;
+        while ((availBytes = comPort.bytesAvailable()) > 0 && guard < 100) {
             byte[] ignoredBuffer = new byte[PlanTowerDevice.DATA_LENGTH]; 
             comPort.readBytes(ignoredBuffer, Math.min(availBytes, ignoredBuffer.length));
+            guard++;
         }
         logger.trace("Going to read bytes, bytes avail now: {}", comPort.bytesAvailable());
 
         // now, when avail bytes is 0 we can start waiting for fresh data
-        comPort.readBytes(readBuffer, readBuffer.length);
-        logger.trace("ReadBytes:\n{}, bytes available after read: {}", SerialUARTUtils.bytesToHexString(readBuffer), comPort.bytesAvailable());
+        int bytesRead = comPort.readBytes(readBuffer, readBuffer.length);
+        
+        logger.trace("ReadBytes, count: {}, data: {}\n{}, bytes available after read: {}", bytesRead, SerialUARTUtils.bytesToHexString(readBuffer), comPort.bytesAvailable());
 
-        return readBuffer;
+        return bytesRead > 0 ? readBuffer : null;
     }
 
     public void writeBytes(byte[] writeBuffer) {

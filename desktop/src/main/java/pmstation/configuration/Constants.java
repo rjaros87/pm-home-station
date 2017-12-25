@@ -21,7 +21,7 @@ public class Constants {
     public static final String UNITS = "\u03BCg/m\u00B3";
     
     // preferred Window size
-    public static final int WINDOW_WIDTH = 740;
+    public static final int WINDOW_WIDTH = 484;
     public static final int WINDOW_HEIGHT = 480;
     // min Window size
     public static final int MIN_WINDOW_WIDTH = 484;

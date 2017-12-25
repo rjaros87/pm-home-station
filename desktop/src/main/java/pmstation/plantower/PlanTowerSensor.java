@@ -26,19 +26,20 @@ public class PlanTowerSensor {
     
     private static final long DEFAULT_INTERVAL = 3000L;
 
-    private List<IPlanTowerObserver> planTowerObserver;
-    private SerialUART serialUART;
-    private ScheduledExecutorService executor;
+    private final List<IPlanTowerObserver> planTowerObserver;
+    private final SerialUART serialUART;
+    private final ScheduledExecutorService scheduledExecutor;
     private ScheduledFuture<?> scheduledMeasurements = null;
     private long interval = -1;
 
     public PlanTowerSensor() {
         serialUART = new SerialUART();
         planTowerObserver = new ArrayList<>();
-        executor = Executors.newScheduledThreadPool(1);
+        scheduledExecutor = Executors.newScheduledThreadPool(2);
     }
 
     public boolean connectDevice() {
+        notifyAboutConnecting();
         boolean openPort = serialUART.openPort();
         if (openPort) {
             logger.debug("Waking up the device...");
@@ -46,11 +47,13 @@ public class PlanTowerSensor {
             delay();
             serialUART.writeBytes(PlanTowerDevice.MODE_ACTIVE);
             delay();
+            notifyAboutConnection();
         }
         return openPort;
     }
 
     public void disconnectDevice() {
+        notifyAboutDisconnecting();
         if (scheduledMeasurements != null) {
             scheduledMeasurements.cancel(true);
         }
@@ -80,7 +83,7 @@ public class PlanTowerSensor {
             }
         }
         logger.info("Scheduling measurements at interval: {}ms...", interval);
-        scheduledMeasurements = executor.scheduleAtFixedRate(getMeasurementsRunnable(), 0, interval, TimeUnit.MILLISECONDS);
+        scheduledMeasurements = scheduledExecutor.scheduleAtFixedRate(getMeasurementsRunnable(), 2000, interval, TimeUnit.MILLISECONDS);
         this.interval = interval;
     }
 
@@ -94,16 +97,32 @@ public class PlanTowerSensor {
     
     private Runnable getMeasurementsRunnable() {
         return () -> {
-            byte[] readBuffer;
-            if (serialUART.isConnected()) {
-                readBuffer = serialUART.readBytes(PlanTowerDevice.DATA_LENGTH); // 2 * PlanTowerDevice.DATA_LENGTH); *)
-                // *)  when we read out everything from the port to ignore all data and garbage,
-                // we can skip reading 2 times as much bytes just to find the beginning of data. 
-                notify(PlanTowerDevice.parse(readBuffer));
-                
-            } else {
-                scheduledMeasurements.cancel(false);
+            try {
+                if (serialUART.isConnected()) {
+                    byte[] readBuffer = serialUART.readBytes(PlanTowerDevice.DATA_LENGTH); // 2 * PlanTowerDevice.DATA_LENGTH); *)
+                    // *)  when we read out everything from the port to ignore all data and garbage,
+                    // we can skip reading 2 times as much bytes just to find the beginning of data. 
+                    if (readBuffer != null) {
+                        notify(PlanTowerDevice.parse(readBuffer));
+                    } else {
+                        logger.info("Unable to read bytes from the sensor (a sudden device disconnection?)");
+                        scheduledMeasurements.cancel(false);
+                        notifyAboutDisconnection();
+                    }
+                } else {
+                    logger.info("Sensor is disconnected");
+                    scheduledMeasurements.cancel(false);
+                    notifyAboutDisconnection();
+                }
+            } catch (Exception e) {
+                logger.warn("Caught Exception in scheduled executor - assuming a sudden disconnection", e);
                 notifyAboutDisconnection();
+                scheduledMeasurements.cancel(true);
+            } catch (Throwable t) {
+                logger.warn("Caught Throwable in scheduled executor - no further measurements will take place unless manual reconnect", t);
+                notifyAboutDisconnection();
+                scheduledMeasurements.cancel(true);
+                throw t;
             }
         };
     }
@@ -115,7 +134,25 @@ public class PlanTowerSensor {
             }
         }
     }
+
+    private void notifyAboutConnecting() {
+        for (IPlanTowerObserver observer : planTowerObserver) {
+            observer.connecting();
+        }
+    }
+
+    private void notifyAboutConnection() {
+        for (IPlanTowerObserver observer : planTowerObserver) {
+            observer.connected();
+        }
+    }
     
+    private void notifyAboutDisconnecting() {
+        for (IPlanTowerObserver observer : planTowerObserver) {
+            observer.disconnecting();
+        }
+    }
+
     private void notifyAboutDisconnection() {
         for (IPlanTowerObserver observer : planTowerObserver) {
             observer.disconnected();

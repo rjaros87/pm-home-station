@@ -79,6 +79,9 @@ public class NativeTrayIntegration {
             TrayIcon menuBarIcon = new TrayIcon(defaultIcon, "pm-home-station", menu);
             
             station.addObserver(new IPlanTowerObserver() {
+                
+                private volatile boolean warnDisconnect = true;
+                
                 @Override
                 public void update(ParticulateMatterSample sample) {
                     infoMenuItem.setLabel("PM1.0: " + sample.getPm1_0() + ", " +
@@ -92,11 +95,32 @@ public class NativeTrayIntegration {
                 }
                 
                 @Override
-                public void disconnected() {
-                    menuBarIcon.setImage(disconnectedIcon != null ? disconnectedIcon : defaultIcon);
-                    menuBarIcon.displayMessage("Device disconnected", "Sensor has just been disconnected", MessageType.INFO);
+                public void connecting() {
+                    menuBarIcon.setToolTip("Connecting...");
+                    infoMenuItem.setLabel("Connecting...");
                 }
                 
+                @Override
+                public void connected() {
+                    warnDisconnect = true;
+                }
+                
+                @Override
+                public void disconnected() {
+                    menuBarIcon.setImage(disconnectedIcon != null ? disconnectedIcon : defaultIcon);
+                    if (warnDisconnect) {
+                        menuBarIcon.displayMessage("Device disconnected", "Sensor has just been disconnected", MessageType.INFO);
+                    }
+                    menuBarIcon.setToolTip("Disconnected");
+                    infoMenuItem.setLabel("Disconnected");
+                }
+                
+                @Override
+                public void disconnecting() {
+                    warnDisconnect = false;
+                    menuBarIcon.setToolTip("Disconnecting...");
+                    infoMenuItem.setLabel("Disconnecting...");
+                }
             });
             tray.add(menuBarIcon);
             menuBarIcon.addMouseListener(new MouseAdapter() {
