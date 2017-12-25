@@ -1,9 +1,17 @@
+/*
+ * pm-home-station
+ * 2017 (C) Copyright - https://github.com/rjaros87/pm-home-station
+ * License: GPL 3.0
+ */
 package pmstation.core.plantower;
 
 import java.io.Serializable;
 import java.util.Date;
 
 public class ParticulateMatterSample implements Serializable{
+
+    private static final long serialVersionUID = 3387284515078504042L;
+
     private int pm1_0;
     private int pm2_5;
     private int pm10;
