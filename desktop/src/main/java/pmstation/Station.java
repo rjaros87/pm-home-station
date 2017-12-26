@@ -40,6 +40,7 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.SwingConstants;
 import javax.swing.SwingUtilities;
+import javax.swing.ToolTipManager;
 import javax.swing.border.BevelBorder;
 import javax.swing.border.TitledBorder;
 
@@ -53,14 +54,15 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import net.miginfocom.swing.MigLayout;
+import pmstation.aqi.AQIAbout;
 import pmstation.configuration.Config;
 import pmstation.configuration.Constants;
 import pmstation.core.plantower.IPlanTowerObserver;
 import pmstation.dialogs.AboutDlg;
 import pmstation.dialogs.ConfigurationDlg;
-import pmstation.helpers.MacOSIntegration;
-import pmstation.helpers.NativeTrayIntegration;
 import pmstation.helpers.ResourceHelper;
+import pmstation.integration.MacOSIntegration;
+import pmstation.integration.NativeTrayIntegration;
 import pmstation.observers.ChartObserver;
 import pmstation.observers.ConsoleObserver;
 import pmstation.observers.LabelObserver;
@@ -88,6 +90,7 @@ public class Station {
         frame.setAlwaysOnTop(Config.instance().to().getBoolean(Config.Entry.ALWAYS_ON_TOP.key(), false));
         frame.setModalExclusionType(ModalExclusionType.NO_EXCLUDE);
         SwingUtilities.updateComponentTreeUI(frame);
+        ToolTipManager.sharedInstance().setDismissDelay(Integer.MAX_VALUE);
         setIcon(frame);
         if (Config.instance().to().getBoolean(Config.Entry.SYSTEM_TRAY.key(), false)) {
             frame.setType(Type.UTILITY);
@@ -243,12 +246,24 @@ public class Station {
                                                         panelMeasurements.add(pm10, "cell 10 0,alignx left,aligny top");
                                                         pm10.setText("----");
                                                         labelsToBeUpdated.put("pm10", pm10);
+                                                                
+                                                        JLabel pmMeasurementTime_label = new JLabel("<html><small>Time: </small></html>");
+                                                        panelMeasurements.add(pmMeasurementTime_label, "cell 0 1,alignx left");
                                                         
-                                                                JLabel pmMeasurementTime_label = new JLabel("<html><small>Time: </small></html>");
-                                                                panelMeasurements.add(pmMeasurementTime_label, "cell 0 1 2 1,alignx left");
-                                                                JLabel pmMeasurementTime = new JLabel();
-                                                                panelMeasurements.add(pmMeasurementTime, "cell 2 1 9 1");
-                                                                labelsToBeUpdated.put("measurementTime", pmMeasurementTime);
+                                                        JLabel pmMeasurementTime = new JLabel();
+                                                        panelMeasurements.add(pmMeasurementTime, "cell 2 1 9 1");
+                                                        labelsToBeUpdated.put("measurementTime", pmMeasurementTime);
+
+                                                        JLabel lblAqi = new JLabel("<html><small>*) AQI colors</small></html>");
+                                                        lblAqi.setCursor(new Cursor(Cursor.HAND_CURSOR));
+                                                        lblAqi.addMouseListener(new MouseAdapter() {
+                                                            @Override
+                                                            public void mouseClicked(MouseEvent e) {
+                                                                openUrl(AQIAbout.AQI_PL_INFO);
+                                                            }
+                                                        });
+                                                        lblAqi.setToolTipText("<html>" + AQIAbout.getHtmlTable() + "</html>");
+                                                        panelMeasurements.add(lblAqi, "cell 10 1,alignx right");
         panelMain.add(chartPanel, "cell 0 2 3 1,grow");
 
         JPanel panelStatus = new JPanel();
@@ -270,11 +285,7 @@ public class Station {
         appNameLink.addMouseListener(new MouseAdapter() {
             @Override
             public void mouseClicked(MouseEvent e) {
-                try {
-                    Desktop.getDesktop().browse(new URI(Constants.PROJECT_URL));
-                } catch (URISyntaxException | IOException ex) {
-                    logger.warn("Failed to parse URI", ex);
-                }
+                openUrl(Constants.PROJECT_URL);
             }
         });
         appNameLink.setToolTipText("Visit: " + Constants.PROJECT_URL);
@@ -484,4 +495,12 @@ public class Station {
         
     }
     
+    private void openUrl(String url) {
+        try {
+            Desktop.getDesktop().browse(new URI(url));
+        } catch (URISyntaxException | IOException ex) {
+            logger.warn("Failed to parse URI", ex);
+        }        
+    }
+
 }

@@ -3,10 +3,7 @@
  * 2017 (C) Copyright - https://github.com/rjaros87/pm-home-station
  * License: GPL 3.0
  */
-package pmstation.helpers;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+package pmstation.integration;
 
 import java.awt.Image;
 import java.awt.MenuItem;
@@ -21,11 +18,17 @@ import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import pmstation.Station;
+import pmstation.aqi.AQI10Level;
+import pmstation.aqi.AQI25Level;
+import pmstation.aqi.AQIRiskLevel;
 import pmstation.configuration.Constants;
 import pmstation.core.plantower.IPlanTowerObserver;
 import pmstation.core.plantower.ParticulateMatterSample;
-import pmstation.observers.AQIColor;
+import pmstation.helpers.ResourceHelper;
 
 public class NativeTrayIntegration {
     
@@ -33,7 +36,7 @@ public class NativeTrayIntegration {
     private static final String APP_ICON_FORMAT = "app-icon-%s.png";
     private final Station station;
     
-    private final Map<AQIColor, Image> scaryIcons = new HashMap<>();
+    private final Map<AQIRiskLevel, Image> scaryIcons = new HashMap<>();
     private Image defaultIcon = null;
     private Image disconnectedIcon = null;
     
@@ -91,7 +94,7 @@ public class NativeTrayIntegration {
                             "PM2.5 : " + sample.getPm2_5() + Constants.UNITS + " \n" +
                             "PM10  : " + sample.getPm10() + Constants.UNITS);
                     
-                    setScaryIcon(menuBarIcon, AQIColor.fromPM25Level(sample.getPm2_5()), AQIColor.fromPM10Level(sample.getPm10()));
+                    setScaryIcon(menuBarIcon, AQI25Level.fromValue(sample.getPm2_5()), AQI10Level.fromValue(sample.getPm10()));
                 }
                 
                 @Override
@@ -136,9 +139,8 @@ public class NativeTrayIntegration {
         }
     }
     
-    private void setScaryIcon(TrayIcon menuBarIcon, AQIColor pm2, AQIColor pm10) {
-        AQIColor scarierIcon = pm2.worseThan(pm10) ? pm2 : pm10;
-        Image icon = scaryIcons.get(scarierIcon);
+    private void setScaryIcon(TrayIcon menuBarIcon, AQI25Level pm2, AQI10Level pm10) {
+        Image icon = pm2.worseThan(pm10) ? scaryIcons.get(pm2.getRiskLevel()) : scaryIcons.get(pm10.getRiskLevel());
         menuBarIcon.setImage(icon != null ? icon : defaultIcon);
     }
     
@@ -149,7 +151,7 @@ public class NativeTrayIntegration {
     }
 
     private void loadIcons() {
-        for (AQIColor level : AQIColor.values()) {
+        for (AQIRiskLevel level : AQIRiskLevel.values()) {
             try {
                 scaryIcons.put(level, getIcon(String.format(APP_ICON_FORMAT, level.name().toLowerCase())));
             } catch (Exception e) {

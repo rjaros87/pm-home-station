@@ -3,7 +3,7 @@
  * 2017 (C) Copyright - https://github.com/rjaros87/pm-home-station
  * License: GPL 3.0
  */
-package pmstation.helpers;
+package pmstation.integration;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

@@ -18,6 +18,11 @@ import javax.swing.JLabel;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import pmstation.aqi.AQI10Level;
+import pmstation.aqi.AQI25Level;
+import pmstation.aqi.AQIColor;
+import pmstation.aqi.AQILevel;
+import pmstation.aqi.AQIRiskLevel;
 import pmstation.configuration.Constants;
 import pmstation.core.plantower.IPlanTowerObserver;
 import pmstation.core.plantower.ParticulateMatterSample;
@@ -34,7 +39,7 @@ public class LabelObserver implements IPlanTowerObserver {
     private static final String POST_HTML = "</b></html>";
     private static final String APP_ICON_FORMAT = "app-icon-%s.png";
     
-    private final Map<AQIColor, Image> scaryIcons = new HashMap<>();
+    private final Map<AQIRiskLevel, Image> scaryIcons = new HashMap<>();
     private Image disconnectedIcon = null;
     private Image defaultIcon = null;
 
@@ -67,12 +72,12 @@ public class LabelObserver implements IPlanTowerObserver {
             pm1_0.setText(PRE_HTML + String.valueOf(sample.getPm1_0()) + UNIT + POST_HTML);
             
             pm2_5.setText(PRE_HTML + String.valueOf(sample.getPm2_5()) + UNIT + POST_HTML);
-            AQIColor color2_5 = AQIColor.fromPM25Level(sample.getPm2_5());
-            pm2_5.setForeground(color2_5.getColor());
+            AQI25Level color2_5 = AQI25Level.fromValue(sample.getPm2_5());
+            pm2_5.setForeground(AQIColor.fromLevel(color2_5).getColor());
             pm2_5.setToolTipText(color2_5.getDescription());
-            AQIColor color10 = AQIColor.fromPM10Level(sample.getPm10());
+            AQI10Level color10 = AQI10Level.fromValue(sample.getPm10());
             pm10.setText(PRE_HTML + String.valueOf(sample.getPm10()) + UNIT + POST_HTML);
-            pm10.setForeground(color10.getColor());
+            pm10.setForeground(AQIColor.fromLevel(color10).getColor());
             pm10.setToolTipText(color10.getDescription());
             
             if (icon != null) {
@@ -104,15 +109,15 @@ public class LabelObserver implements IPlanTowerObserver {
         return component;
     }
     
-    private void setScaryIcon(JButton button, AQIColor pm2, AQIColor pm10) {
-        AQIColor scarierIcon = pm2.worseThan(pm10) ? pm2 : pm10;
-        Image icon = scaryIcons.get(scarierIcon);
+    private void setScaryIcon(JButton button, AQILevel pm2, AQILevel pm10) {
+        AQILevel scarierIcon = pm2.worseThan(pm10) ? pm2 : pm10;
+        Image icon = scaryIcons.get(scarierIcon.getRiskLevel());
         icon = icon != null ? icon : defaultIcon;
         button.setIcon(new ImageIcon(icon.getScaledInstance(button.getIcon().getIconWidth(), -1, Image.SCALE_SMOOTH)));
     }
     
     private void loadIcons() {
-        for (AQIColor level : AQIColor.values()) {
+        for (AQIRiskLevel level : AQIRiskLevel.values()) {
             try {
                 scaryIcons.put(level, ResourceHelper.getAppIcon(String.format(APP_ICON_FORMAT, level.name().toLowerCase())));
             } catch (Exception e) {
