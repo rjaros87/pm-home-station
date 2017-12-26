@@ -143,9 +143,7 @@ public class Station {
         addObserver(new ChartObserver(chart, chartPanel));
         addObserver(new ConsoleObserver());
 
-        JLabel deviceStatus = new JLabel("Status: ");
-        deviceStatus.setVisible(false); // TODO to be removed?
-        JLabel labelStatus = new JLabel("Status..."); // use this one instead...
+        JLabel labelStatus = new JLabel("Status...");
         labelsToBeUpdated.put("deviceStatus", labelStatus);
         
         JButton btnConnect = new JButton("Connect");
@@ -153,20 +151,23 @@ public class Station {
         btnConnect.grabFocus();
         btnConnect.setEnabled(false);
         btnConnect.addActionListener(actionEvent -> {
-            btnConnect.setEnabled(false);
-            switch (btnConnect.getText()) {
+            btnConnect.setEnabled(false);   // TODO move the connection long running tasks to a separate thread and don't use swing's execLater for this purpose
+            switch (btnConnect.getText()) { // TODO do this better thru label observer...
             case "Connect":
-                if (planTowerSensor.connectDevice()) {
-                    btnConnect.setText("Disconnect");
-                    labelStatus.setText("Status: Connected");
-                    planTowerSensor.startMeasurements(Config.instance().to().getInt(Config.Entry.INTERVAL.key(), Constants.DEFAULT_INTERVAL) * 1000L);
-                }
+                labelStatus.setText("Status: Connecting...");
+                btnConnect.setEnabled(false);
+                SwingUtilities.invokeLater(() -> {
+                    if (planTowerSensor.connectDevice()) {
+                        btnConnect.setText("Disconnect"); // TODO move this to label observer...
+                        scheduleMeasurements();
+                    }
+                    btnConnect.setEnabled(true);
+                });
                 break;
             case "Disconnect":
                 diaplayWarnForDetach(frame);
                 planTowerSensor.disconnectDevice();
                 btnConnect.setText("Connect");
-                labelStatus.setText("Status: Disconnected");
                 break;
             }
             btnConnect.setEnabled(true);
@@ -177,8 +178,6 @@ public class Station {
         
         panelMain.setLayout(new MigLayout("", "[50px][100px:120px,grow][150px]", "[29px][16px][338px][16px]"));
         panelMain.add(btnConnect, "cell 0 0,alignx left,aligny center");
-        
-        panelMain.add(deviceStatus, "flowx,cell 1 0,alignx left,aligny center");
         
         try {
             JButton btnState = new JButton("");
@@ -336,8 +335,13 @@ public class Station {
         SwingUtilities.invokeLater(() -> {
             frame.setVisible(visible);
             if (visible) {
-                frame.setExtendedState(JFrame.NORMAL);
+                boolean alwaysOnTop = frame.isAlwaysOnTop();
+                frame.setExtendedState(frame.getExtendedState() & ~JFrame.ICONIFIED & JFrame.NORMAL);
+                frame.setAlwaysOnTop(true);
                 frame.toFront();
+                frame.requestFocus();
+                frame.setAlwaysOnTop(alwaysOnTop);
+                frame.repaint();
                 frame.requestFocus();
             }
         });
@@ -348,11 +352,13 @@ public class Station {
         if (autostart) {
             startMeasurements(labelStatus, connectionBtn);
         } else {
-            labelStatus.setText("Status: not started");
+            labelStatus.setText("Status: not connected");
         }
     }
     
     private void startMeasurements(JLabel labelStatus, JButton connectionBtn) {
+        labelStatus.setText("Status: Autoconnecting...");
+        connectionBtn.setEnabled(false);
         SwingUtilities.invokeLater(() -> {
             if (planTowerSensor.connectDevice()) {
                 connectionBtn.setText("Disconnect");
@@ -360,7 +366,9 @@ public class Station {
                 scheduleMeasurements();
             } else {
                 labelStatus.setText("Status: Device not found");
+                planTowerSensor.disconnectDevice();
             }
+            connectionBtn.setEnabled(true);
         });
     }
     

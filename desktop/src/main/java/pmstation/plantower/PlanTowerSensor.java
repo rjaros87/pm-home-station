@@ -48,6 +48,8 @@ public class PlanTowerSensor {
             serialUART.writeBytes(PlanTowerDevice.MODE_ACTIVE);
             delay();
             notifyAboutConnection();
+        } else {
+            disconnectDevice();
         }
         return openPort;
     }

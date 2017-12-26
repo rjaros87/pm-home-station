@@ -66,8 +66,6 @@ public class LabelObserver implements IPlanTowerObserver {
                 icon.setIcon(new ImageIcon(disconnectedIcon.getScaledInstance(icon.getIcon().getIconWidth(), -1, Image.SCALE_SMOOTH)));
             }
         } else {
-            
-            deviceStatus.setText("Status: Measuring ...");
             measurementTime.setText("<html><small>" + Constants.DATE_FORMAT.format(sample.getDate()) + "</small></html>");
             pm1_0.setText(PRE_HTML + String.valueOf(sample.getPm1_0()) + UNIT + POST_HTML);
             
@@ -84,6 +82,16 @@ public class LabelObserver implements IPlanTowerObserver {
                 setScaryIcon(icon, color2_5, color10);
             }
         }
+    }
+    
+    @Override
+    public void connecting() {
+        deviceStatus.setText("Status: Disconnecting from the sensor...");
+    }
+    
+    @Override
+    public void connected() {
+        deviceStatus.setText("Status: Measuring ...");
     }
     
     @Override
