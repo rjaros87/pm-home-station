@@ -12,8 +12,8 @@
         android:id="@+id/smog"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:src="@drawable/bg_smog"
-        android:scaleType="centerCrop"/>
+        android:scaleType="centerCrop"
+        android:src="@drawable/bg_smog"/>
     <FrameLayout
         android:id="@+id/single_pane"
         android:layout_width="match_parent"
@@ -25,11 +25,4 @@
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintVertical_bias="0.0"
         />
-    <!--<fragment-->
-        <!--android:id="@+id/fragment_values"-->
-        <!--class="pmstation.ValuesFragment"-->
-        <!--android:layout_width="0dp"-->
-        <!--android:layout_height="0dp"-->
-        <!--tools:layout="@layout/fragment_values"-->
-        <!--/>-->
 </android.support.constraint.ConstraintLayout>

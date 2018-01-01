@@ -1,14 +1,16 @@
+/*
+ * pm-home-station
+ * 2017 (C) Copyright - https://github.com/rjaros87/pm-home-station
+ * License: GPL 3.0
+ */
+
 package pmstation;
 
 import android.os.Bundle;
-import android.app.DialogFragment;
+import android.support.v4.app.DialogFragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-
-/**
- * Created by Sanchin on 03.12.2017.
- */
 
 public class LicensesDialogFragment extends DialogFragment {
     @Override

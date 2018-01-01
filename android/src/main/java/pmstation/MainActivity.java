@@ -1,3 +1,9 @@
+/*
+ * pm-home-station
+ * 2017 (C) Copyright - https://github.com/rjaros87/pm-home-station
+ * License: GPL 3.0
+ */
+
 package pmstation;
 
 import android.content.BroadcastReceiver;
@@ -34,6 +40,8 @@ public class MainActivity extends AppCompatActivity implements IPlanTowerObserve
     public static final String ACTION_USB_PERMISSION = "pmstation.USB_PERMISSION";
     public static final String VALUES_FRAGMENT = "VALUES_FRAGMENT";
     public static final String CHART_FRAGMENT = "CHART_FRAGMENT";
+    public static final String SETTINGS_FRAGMENT = "SETTINGS_FRAGMENT";
+    public static final String ABOUT_FRAGMENT = "ABOUT_FRAGMENT";
     private static final String TAG = "MainActivity";
     public static final String LAST_SINGLE_PANE_FRAGMENT = "lastSinglePaneFragment";
     private Menu menu;
@@ -261,9 +269,10 @@ public class MainActivity extends AppCompatActivity implements IPlanTowerObserve
                 }
                 return true;
             case R.id.action_settings:
-                getFragmentManager().beginTransaction()
-                                    .replace(android.R.id.content, new SettingsFragment()).addToBackStack(null)
-                                    .commit();
+                showSingleFragment(SETTINGS_FRAGMENT);
+                return true;
+            case R.id.action_about:
+                showSingleFragment(ABOUT_FRAGMENT);
                 return true;
         }
         return super.onOptionsItemSelected(item);
@@ -275,6 +284,25 @@ public class MainActivity extends AppCompatActivity implements IPlanTowerObserve
             return;
         }
         openSinglePaneChartFragment();
+    }
+
+    private void showSingleFragment(String fragmentTag) {
+        Fragment fragment = getSupportFragmentManager().findFragmentByTag(fragmentTag);
+        if (fragment == null) {
+            switch (fragmentTag) {
+                case SETTINGS_FRAGMENT:
+                    fragment = new SettingsFragment();
+                    break;
+                case ABOUT_FRAGMENT:
+                    fragment = new AboutFragment();
+                    break;
+            }
+        } else {
+            return;
+        }
+        getSupportFragmentManager().beginTransaction()
+                            .replace(android.R.id.content, fragment, fragmentTag).addToBackStack(null)
+                            .commit();
     }
 
     void setStatus(boolean connected) {

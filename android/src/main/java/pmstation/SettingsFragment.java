@@ -1,21 +1,20 @@
+/*
+ * pm-home-station
+ * 2017 (C) Copyright - https://github.com/rjaros87/pm-home-station
+ * License: GPL 3.0
+ */
+
 package pmstation;
 
 import android.os.Bundle;
-import android.preference.Preference;
-import android.preference.PreferenceFragment;
+import android.support.v7.preference.PreferenceFragmentCompat;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-/**
- * Created by Sanchin on 03.12.2017.
- */
-
-public class SettingsFragment extends PreferenceFragment {
+public class SettingsFragment extends PreferenceFragmentCompat {
     @Override
-    public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-
+    public void onCreatePreferences(Bundle savedInstanceState, String rootKey) {
         // Load the preferences from an XML resource
         addPreferencesFromResource(R.xml.preferences);
     }
@@ -26,16 +25,6 @@ public class SettingsFragment extends PreferenceFragment {
         if (view != null) {
             view.setBackgroundColor(getResources().getColor(android.R.color.background_light));
         }
-        Preference attributionPref = findPreference("attribution");
-        attributionPref.setOnPreferenceClickListener(preference -> {
-            showAttribution();
-            return true;
-        });
         return view;
-    }
-
-    private void showAttribution() {
-        final LicensesDialogFragment fragment = new LicensesDialogFragment();
-        fragment.show(getFragmentManager(), null);
     }
 }

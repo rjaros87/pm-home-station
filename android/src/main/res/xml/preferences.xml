@@ -10,9 +10,5 @@
             android:defaultValue="@string/pref_sampling_interval_default"
             android:entries="@array/interval_labels"
             android:entryValues="@array/interval_values"/>
-
-        <Preference
-            android:title="Licenses"
-            android:key="attribution"/>
     </PreferenceCategory>
 </PreferenceScreen>

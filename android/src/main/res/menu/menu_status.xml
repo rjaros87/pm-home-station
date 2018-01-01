@@ -1,22 +1,30 @@
 <?xml version="1.0" encoding="utf-8"?>
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
       xmlns:app="http://schemas.android.com/apk/res-auto">
-    <item android:id="@+id/action_connected"
-          android:title="@string/status_connected"
-          android:icon="@drawable/ic_connected"
-          android:tint="@android:color/white"
-          app:showAsAction="always"/>
-    <item android:id="@+id/action_disconnected"
-          android:title="@string/status_connected"
-          android:icon="@drawable/ic_disconnected"
-          android:tint="@android:color/white"
-          app:showAsAction="always"/>
-    <item android:id="@+id/action_chart"
-          android:title="@string/status_connected"
-          android:icon="@drawable/ic_show_chart_black_24dp"
-          android:tint="@android:color/white"
-          app:showAsAction="always"/>
-    <item android:id="@+id/action_settings"
-          android:title="@string/settings"
-          app:showAsAction="never"/>
+    <item
+        android:id="@+id/action_connected"
+        android:icon="@drawable/ic_connected"
+        android:tint="@android:color/white"
+        android:title="@string/status_connected"
+        app:showAsAction="always"/>
+    <item
+        android:id="@+id/action_disconnected"
+        android:icon="@drawable/ic_disconnected"
+        android:tint="@android:color/white"
+        android:title="@string/status_connected"
+        app:showAsAction="always"/>
+    <item
+        android:id="@+id/action_chart"
+        android:icon="@drawable/ic_show_chart_black_24dp"
+        android:tint="@android:color/white"
+        android:title="@string/status_connected"
+        app:showAsAction="always"/>
+    <item
+        android:id="@+id/action_settings"
+        android:title="@string/settings"
+        app:showAsAction="never"/>
+    <item
+        android:id="@+id/action_about"
+        android:title="@string/about"
+        app:showAsAction="never"/>
 </menu>
