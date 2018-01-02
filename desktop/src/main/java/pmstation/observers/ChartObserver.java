@@ -37,7 +37,6 @@ public class ChartObserver implements IPlanTowerObserver {
             pm1_0.add(sample.getPm1_0());
             pm2_5.add(sample.getPm2_5());
             pm10.add(sample.getPm10());
-            
             if (chart.getSeriesMap().isEmpty()) {
                 chart.addSeries("PM 1.0", null, Arrays.asList(pm1_0.toArray(new Integer[0])));
                 chart.addSeries("PM 2.5", null, Arrays.asList(pm2_5.toArray(new Integer[0])));
