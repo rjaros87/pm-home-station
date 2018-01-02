@@ -18,7 +18,7 @@ Let's live healthier life and start measuring the air quality and filtering it i
 - Female-Female wires 5 items ~ $1
 - UART to USB adapter:
   - cheap PL2303 ~ $2, or
-  - better quality FT232 ~ $5 (suggested for macOS compatibility)
+  - better quality FT232 ~ $5 (suggested for macOS superb compatibility)
 - USB cable ~ $2
 
 Alternatively, instead of UART to USB adapter it is possible to use Bluetooth UART:
@@ -79,7 +79,10 @@ Suggested printing parameters:
 
 ## Assembly photos
 
-The photo gallery of assembly can be found [here](https://rjaros87.github.io/pm-home-station-project/assembly/index.html "Assembly of pm-home-station") and [here](https://rjaros87.github.io/pm-home-station-project/assembly-bt/index.html "Assembly of pm-home-station over Bluetooth") for Bluetooth version.
+The photo galleries of assembly:
+- [PL2303 USB-to-UART version](https://rjaros87.github.io/pm-home-station-project/assembly/index.html "Assembly of pm-home-station using PL2303")
+- [FT232 USB-to-UART version](https://rjaros87.github.io/pm-home-station-project/assembly-ft232/index.html "Assembly of pm-home-station using FT232")
+- [UART-over-Bluetooth version](https://rjaros87.github.io/pm-home-station-project/assembly-bt/index.html "Assembly of pm-home-station over Bluetooth")
 
 ## Enclosure photos
 
