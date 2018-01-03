@@ -3,6 +3,7 @@ _Language versions:_\
 [![PL](https://github.com/rjaros87/pm-home-station/raw/master/www/flags/lang-PL.png)](https://translate.googleusercontent.com/translate_c?sl=en&tl=pl&u=https://github.com/rjaros87/pm-home-station)
 [![DE](https://github.com/rjaros87/pm-home-station/raw/master/www/flags/lang-DE.png)](https://translate.googleusercontent.com/translate_c?sl=en&tl=de&u=https://github.com/rjaros87/pm-home-station) 
 
+<a href='https://play.google.com/store/apps/details?id=pmstation.android&pcampaignid=MKT-Other-global-all-co-prtnr-py-PartBadge-Mar2515-1'><img alt='Get it on Google Play' src='https://play.google.com/intl/en_us/badges/images/generic/en_badge_web_generic.png' width="240"/></a>
 
 # Home use particulate matter sensor on USB
 
@@ -155,3 +156,5 @@ The information provided on this project is true and complete to the best of our
 As with any DIY project, unfamiliarity with the tools and process can be dangerous. We are not liable for any damage or injury resulting from the assembly or use of this project including but not limited to hardware damage, body injuries etc.
 
 You have been warned.
+
+Google Play and the Google Play logo are trademarks of Google LLC.
