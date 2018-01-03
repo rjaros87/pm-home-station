@@ -12,38 +12,49 @@
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Android logo"
+            android:layout_marginBottom="8dp"
+            android:text="@string/android_logo"
             android:textAppearance="@style/TextAppearance.AppCompat.Medium"/>
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/android_logo_notice"/>
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginBottom="8dp"
-            android:layout_marginTop="8dp"
-            android:text="The Android robot is reproduced or modified from work created and shared by Google and used according to terms described in the Creative Commons 3.0 Attribution License."/>
-
-        <TextView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="8dp"
-            android:text="Plug icons"
+            android:layout_marginTop="16dp"
+            android:text="@string/plug_icons"
             android:textAppearance="@style/TextAppearance.AppCompat.Medium"/>
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="8dp"
-            android:text="Plug by Creative Stall from the Noun Project\nhttps://thenounproject.com/term/plug/380956/\nhttps://thenounproject.com/term/plug/380958/"/>
+            android:text="@string/plug_icons_notice"/>
+        <TextView
+            android:id="@+id/plug_icons_notice_url_1"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/plug_icons_notice_url_1"/>
+        <TextView
+            android:id="@+id/plug_icons_notice_url_2"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/plug_icons_notice_url_2"/>
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="8dp"
-            android:text="Background"
+            android:layout_marginBottom="8dp"
+            android:layout_marginTop="16dp"
+            android:text="@string/background"
             android:textAppearance="@style/TextAppearance.AppCompat.Medium"/>
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="8dp"
-            android:text="AIR POLLUTION by 2HAPPY from stockvault\nhttp://www.stockvault.net/photo/124893/air-pollution"/>
+            android:text="@string/background_notice"/>
+        <TextView
+            android:id="@+id/background_notice_url"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/background_notice_url"/>
     </LinearLayout>
-
-
 </ScrollView>

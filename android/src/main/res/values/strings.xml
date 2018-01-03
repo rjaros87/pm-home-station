@@ -12,4 +12,23 @@
     <string name="pref_sampling_interval_default">1000</string>
     <string name="about">About</string>
     <string name="version_name">1.0.1</string>
+    <string name="authors">Authors</string>
+    <string name="rg"><font color='#008295'><u>Radosław Gabiga</u></font></string>
+    <string name="rj"><font color='#008295'><u>Radosław Jaros</u></font></string>
+    <string name="ps"><font color='#008295'><u>Piotr Skowronek</u></font></string>
+    <string name="copyright">Copyright © 2017 – 2018</string>
+    <string name="project">Project</string>
+    <string name="project_desc">The project details and the required equipement can be found&#160;<font color='#008295'><u>here</u></font></string>
+    <string name="license">License</string>
+    <string name="lgpl3">This application is licensed under the terms of&#160;<font color='#008295'><u>License GPL-3.0</u></font></string>
+    <string name="third_party"><font color='#008295'><u>Third party notices</u></font></string>
+    <string name="android_logo">Android logo</string>
+    <string name="android_logo_notice">The Android robot is reproduced or modified from work created and shared by Google and used according to terms described in the Creative Commons 3.0 Attribution License.</string>
+    <string name="plug_icons">Plug icons</string>
+    <string name="plug_icons_notice">Plug by Creative Stall from the Noun Project</string>
+    <string name="plug_icons_notice_url_1"><font color='#008295'><u>https://thenounproject.com/term/plug/380956/</u></font></string>
+    <string name="plug_icons_notice_url_2"><font color='#008295'><u>https://thenounproject.com/term/plug/380958/</u></font></string>
+    <string name="background">Background</string>
+    <string name="background_notice">AIR POLLUTION by 2HAPPY from stockvault</string>
+    <string name="background_notice_url"><font color='#008295'><u>http://www.stockvault.net/photo/124893/air-pollution</u></font></string>
 </resources>
