@@ -3,10 +3,11 @@ version '1.0.1'
 
 apply plugin: 'java'
 apply plugin: 'application'
+apply plugin: 'edu.sc.seis.macAppBundle'
 
 sourceCompatibility = 1.8
 
-mainClassName = "pmstation.Start"
+mainClassName = 'pmstation.Start'
 
 repositories {
     mavenCentral()
@@ -17,6 +18,7 @@ configurations {
     extraLibs
 }
 
+// TODO ensure fat (uber) jar is created separately (by using shadow plugin?) to avoid having redundant uberjar + libs for .zip and DMG distribution versions
 jar {
     manifest {
         attributes(
@@ -30,6 +32,16 @@ jar {
     }
 
     exclude('META-INF/*.txt')
+}
+
+macAppBundle {
+    appName = 'PM Home Station'
+    mainClassName = 'pmstation.Start'
+    icon = 'dmg-myIcon.icns'
+    bundleJRE = true
+    javaProperties.put('apple.laf.useScreenMenuBar', 'true')
+    // Error in macAppBundle while executing osascript - pending investigation
+    // backgroundImage = 'dmg-bg.png'
 }
 
 dependencies {

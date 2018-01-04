@@ -26,6 +26,9 @@ public class Constants {
     // min Window size
     public static final int MIN_WINDOW_WIDTH = 484;
     public static final int MIN_WINDOW_HEIGHT = 180;
+
+    public static final boolean HIDE_MAIN_WINDOW = false;
+    public static final boolean SYSTEM_TRAY = true;
     
     public static final int CHART_MAX_SAMPLES = 30;
     
@@ -33,5 +36,5 @@ public class Constants {
     public static final int DEFAULT_INTERVAL = 3; // in sec
     public static final int MIN_INTERVAL = 2; // in sec
     public static final int MAX_INTERVAL = 3600; // in sec
-    
+
 }

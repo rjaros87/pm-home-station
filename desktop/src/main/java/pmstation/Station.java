@@ -296,7 +296,7 @@ public class Station {
         
         frame.pack();
         setScreenAndDimensions(frame);  // must be after frame.pack()
-        frame.setVisible(!Config.instance().to().getBoolean(Config.Entry.HIDE_MAIN_WINDOW.key(), false));
+        frame.setVisible(!Config.instance().to().getBoolean(Config.Entry.HIDE_MAIN_WINDOW.key(), Constants.HIDE_MAIN_WINDOW));
         integrateNativeOS(frame);
 
         // register dialogs (they can be opened from SystemTray and OSX menubar)
@@ -382,7 +382,7 @@ public class Station {
         if (SystemUtils.IS_OS_MAC_OSX) {
             new MacOSIntegration(this).integrate();
         }
-        if (Config.instance().to().getBoolean(Config.Entry.SYSTEM_TRAY.key(), false)) {
+        if (Config.instance().to().getBoolean(Config.Entry.SYSTEM_TRAY.key(), Constants.SYSTEM_TRAY)) {
             new NativeTrayIntegration(this).integrate();
         }
     }

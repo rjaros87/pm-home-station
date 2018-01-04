@@ -20,6 +20,7 @@ import org.apache.commons.lang3.SystemUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import pmstation.configuration.Config;
 import pmstation.configuration.Constants;
 import pmstation.plantower.PlanTowerSensor;
 
@@ -56,6 +57,10 @@ public class Start {
             // must be before any AWT interaction
             System.setProperty("apple.laf.useScreenMenuBar", "true"); // place menubar (if any) in native menu bar
             System.setProperty("apple.awt.application.name", Constants.PROJECT_NAME);
+            if (Config.instance().to().getBoolean(Config.Entry.SYSTEM_TRAY.key(), Constants.SYSTEM_TRAY)) {
+                logger.debug("Hiding dock icon since system-tray integration is enabled");
+                System.setProperty("apple.awt.UIElement", "true");
+            }
         }
         try {
             UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
