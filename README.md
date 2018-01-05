@@ -2,8 +2,9 @@ _Language versions:_\
 [![EN](https://github.com/rjaros87/pm-home-station/raw/master/www/flags/lang-US.png)](https://github.com/rjaros87/pm-home-station) 
 [![PL](https://github.com/rjaros87/pm-home-station/raw/master/www/flags/lang-PL.png)](https://translate.googleusercontent.com/translate_c?sl=en&tl=pl&u=https://github.com/rjaros87/pm-home-station)
 [![DE](https://github.com/rjaros87/pm-home-station/raw/master/www/flags/lang-DE.png)](https://translate.googleusercontent.com/translate_c?sl=en&tl=de&u=https://github.com/rjaros87/pm-home-station) 
+<a href="https://zrzutka.pl/en/ra6pw7/wplac"><img src="https://img.shields.io/badge/Donate-zrzutka.pl-green.svg" height="24" align="right" /></a>
 
-<a href='https://play.google.com/store/apps/details?id=pmstation.android&pcampaignid=MKT-Other-global-all-co-prtnr-py-PartBadge-Mar2515-1'><img alt='Get it on Google Play' src='https://play.google.com/intl/en_us/badges/images/generic/en_badge_web_generic.png' width="240"/></a>
+<a href="https://play.google.com/store/apps/details?id=pmstation.android&pcampaignid=MKT-Other-global-all-co-prtnr-py-PartBadge-Mar2515-1"><img alt="Get it on Google Play" src="https://play.google.com/intl/en_us/badges/images/generic/en_badge_web_generic.png" height="62" align="right" /></a> <br />
 
 # Home use particulate matter sensor on USB
 
