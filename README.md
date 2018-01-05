@@ -146,10 +146,6 @@ The app screenshots gallery can be found [here](https://rjaros87.github.io/pm-ho
 
 The latest release versions can be found [here](https://github.com/rjaros87/pm-home-station/releases).
 
-## TODOs
-
-- ~~[Release 1.0.0](https://github.com/rjaros87/pm-home-station/projects/1)~~
-
 ## Disclaimer
 
 The information provided on this project is true and complete to the best of our knowledge. However, like various Do-It-Yourself (DIY) projects this DIY Project is at your own risk only.
