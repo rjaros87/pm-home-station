@@ -4,9 +4,7 @@ _Language versions:_\
 [![DE](https://github.com/rjaros87/pm-home-station/raw/master/www/flags/lang-DE.png)](https://translate.googleusercontent.com/translate_c?sl=en&tl=de&u=https://github.com/rjaros87/pm-home-station) 
 <a href="https://zrzutka.pl/en/ra6pw7/wplac"><img src="https://img.shields.io/badge/Donate-zrzutka.pl-green.svg" height="24" align="right" /></a>
 
-<a href="https://play.google.com/store/apps/details?id=pmstation.android&pcampaignid=MKT-Other-global-all-co-prtnr-py-PartBadge-Mar2515-1"><img alt="Get it on Google Play" src="https://play.google.com/intl/en_us/badges/images/generic/en_badge_web_generic.png" height="62" align="right" /></a> <br />
-
-# Home use particulate matter sensor on USB
+# Home use particulate matter sensor
 
 Since we live in big polluted cities the air quality is on a very poor level. But, the problem is not only connected to the big cities - even smaller cities and villages may suffer from air pollution.
 That's why we've created this little project to let you build your own Particulate Matter monitoring station and use our open-source software so you could monitor the air quality in your place of living.
@@ -98,6 +96,7 @@ The app screenshots gallery can be found [here](https://rjaros87.github.io/pm-ho
 
 - Android APK
   - Android 6 / 7 / 8 / 8.1 (for USB version the OTG feature must be supported), minSDK=21 (Android 5.0)
+<a href="https://play.google.com/store/apps/details?id=pmstation.android&pcampaignid=MKT-Other-global-all-co-prtnr-py-PartBadge-Mar2515-1"><img alt="Get it on Google Play" src="https://play.google.com/intl/en_us/badges/images/generic/en_badge_web_generic.png" height="62" /></a>
 
 - Desktop (standalone) app
   - Windows 7 & 10
