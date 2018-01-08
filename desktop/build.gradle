@@ -40,8 +40,11 @@ macAppBundle {
     icon = 'dmg-myIcon.icns'
     bundleJRE = true
     javaProperties.put('apple.laf.useScreenMenuBar', 'true')
-    // Error in macAppBundle while executing osascript - pending investigation
-    // backgroundImage = 'dmg-bg.png'
+    backgroundImage = 'dmg-bg.png'
+    appIconX = 50
+    appIconY = 120
+    appFolderX = 330
+    appFolderY = 120
 }
 
 dependencies {
