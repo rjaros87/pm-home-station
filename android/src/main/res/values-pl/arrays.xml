@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string-array name="interval_labels">
+        <item>1 s</item>
+        <item>3 s</item>
+        <item>1 min</item>
+        <item>5 min</item>
+    </string-array>
+    <string-array name="interval_values">
+        <item>1000</item>
+        <item>3000</item>
+        <item>60000</item>
+        <item>300000</item>
+    </string-array>
+</resources>
