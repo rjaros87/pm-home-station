@@ -13,22 +13,24 @@ Let's live healthier life and start measuring the air quality and filtering it i
 
 ## Requirements
 
-- PlanTower PMS7003 ~ $24
-- ICD10 adapter with 10 pins(1.27 mm) to 6 pins (2.54 mm) (also called `G7 switch`) ~ $2
-- Female-Female wires 5 items ~ $1
+- [PlanTower PMS7003](https://kamami.pl/czujniki-gazow/564008-plantower-pms7003-laserowy-czujnik-pylu-pm25.html) ~$26
+- [ICD10 adapter with 10 pins(1.27 mm) to 6 pins (2.54 mm) (also called `G7 switch`)](https://kamami.pl/zlacza-inne/564553-adapter-idc10-127mm-na-zlacze-254mm-dla-czujnika-pms7003.html) ~$2
 - UART to USB adapter:
-  - cheap PL2303 ~ $2, or
-  - better quality FT232 ~ $5 (suggested for macOS superb compatibility)
-- USB cable ~ $2
+  - [cheap PL2303](https://kamami.pl/konwertery-usb-uart-rs232/561382-modul-konwertera-usb-uart-rs232-ttl-z-ukladem-pl2303hx.html?search_query=PL2303&results=11) ~$2, or
+  - [better quality FT232 (suggested for macOS superb compatibility)](https://kamami.pl/konwertery-usb-uart-rs232/561568-konwerter-usb-uart-ft232rl-waveshare.html?search_query=FT232&results=58) ~$5
+- [Female-Female wires 5 items (required for PL2303 otherwise optional since FT232 can be bought with wires already included)](https://kamami.pl/przewody-f-f/199418--przewody-polaczeniowe-f-f-roznokolorowe-17-cm-10-szt.html) ~$1-2
+- [USB OTG cable](https://kamami.pl/przewody-usb/560191-przewod-adapter-microusb-otg.html) ~$1
 
 Alternatively, instead of UART to USB adapter it is possible to use Bluetooth UART:
 > Caution! Cconnectivity to the sensor over Bluetooth is currently only supported by the desktop application ran on macOS.
 
-- PlanTower PMS7003 ~ $24
-- ICD10 adapter with 10 pins(1.27 mm) to 6 pins (2.54 mm) (also called `G7 switch`) ~ $2
-- Female-Female wires 5 items ~ $1
-- Bluetooth UART HC-06 - ~$5
-- USB cable to provide power to Sensor and Bluetooth tandem ~ $2
+- [PlanTower PMS7003](https://kamami.pl/czujniki-gazow/564008-plantower-pms7003-laserowy-czujnik-pylu-pm25.html) ~$26
+- [ICD10 adapter with 10 pins(1.27 mm) to 6 pins (2.54 mm) (also called `G7 switch`)](https://kamami.pl/zlacza-inne/564553-adapter-idc10-127mm-na-zlacze-254mm-dla-czujnika-pms7003.html) ~$2
+- [Female-Female wires 5 items](https://kamami.pl/przewody-f-f/199418--przewody-polaczeniowe-f-f-roznokolorowe-17-cm-10-szt.html) ~$1-2
+- [Bluetooth UART HC-06](https://kamami.pl/moduly-bluetooth/198260-zestaw-bluetooth-z-modulem-hc-06-20edr-zasilany-3-6-6-v.html?search_query=hc-06&results=2) ~$7
+- recycled old USB cable to provide power to Sensor and Bluetooth tandem
+
+You may want to use the following rebate coupon: __A9XS1FPF__ on purchases made on [KAMAMI.COM](https://kamami.com) or [KAMAMI.PL](https://kamami.pl) to get 5% OFF on orders which include PMS7003 (to be used only once for each buyer).
 
 ## Assemble the PM sensor
 
