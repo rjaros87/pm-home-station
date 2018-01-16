@@ -151,8 +151,8 @@ The latest release versions can be found [here](https://github.com/rjaros87/pm-h
 ## Disclaimer
 
 The information provided on this project is true and complete to the best of our knowledge. However, like various Do-It-Yourself (DIY) projects this DIY Project is at your own risk only.
-As with any DIY project, unfamiliarity with the tools and process can be dangerous. We are not liable for any damage or injury resulting from the assembly or use of this project including but not limited to hardware damage, body injuries etc.
+As with any DIY project, lack of familiarity with the tools and process can be dangerous. We are not liable for any damage or injury resulting from the assembly or use of this project including but not limited to hardware damage, body injuries etc.
 
 You have been warned.
 
-Google Play and the Google Play logo are trademarks of Google LLC.
+<sub><sup>Google Play and the Google Play logo are trademarks of Google LLC.</sup></sub>
