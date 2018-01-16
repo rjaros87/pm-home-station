@@ -17,7 +17,7 @@ Let's live healthier life and start measuring the air quality and filtering it i
 - [ICD10 adapter with 10 pins(1.27 mm) to 6 pins (2.54 mm) (also called `G7 switch`)](https://kamami.pl/zlacza-inne/564553-adapter-idc10-127mm-na-zlacze-254mm-dla-czujnika-pms7003.html) ~$2
 - UART to USB adapter:
   - [cheap PL2303](https://kamami.pl/konwertery-usb-uart-rs232/561382-modul-konwertera-usb-uart-rs232-ttl-z-ukladem-pl2303hx.html?search_query=PL2303&results=11) ~$2, or
-  - [better quality FT232 (suggested for macOS superb compatibility)](https://kamami.pl/konwertery-usb-uart-rs232/561568-konwerter-usb-uart-ft232rl-waveshare.html?search_query=FT232&results=58) ~$5
+  - [better quality FT232 (suggested for macOS for its superb compatibility)](https://kamami.pl/konwertery-usb-uart-rs232/561568-konwerter-usb-uart-ft232rl-waveshare.html?search_query=FT232&results=58) ~$5
 - [Female-Female wires 5 items (required for PL2303 otherwise optional since FT232 can be bought with wires already included)](https://kamami.pl/przewody-f-f/199418--przewody-polaczeniowe-f-f-roznokolorowe-17-cm-10-szt.html) ~$1-2
 - [USB OTG cable](https://kamami.pl/przewody-usb/560191-przewod-adapter-microusb-otg.html) ~$1
 
