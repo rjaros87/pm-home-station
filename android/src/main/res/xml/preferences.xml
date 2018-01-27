@@ -10,5 +10,11 @@
             android:defaultValue="@string/pref_sampling_interval_default"
             android:entries="@array/interval_labels"
             android:entryValues="@array/interval_values"/>
+        <ListPreference
+            android:key="main_value"
+            android:title="@string/pref_main_value"
+            android:defaultValue="@string/pref_main_value_default"
+            android:entries="@array/main_value_labels"
+            android:entryValues="@array/main_value_values"/>
     </PreferenceCategory>
 </PreferenceScreen>

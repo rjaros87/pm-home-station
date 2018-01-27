@@ -5,9 +5,9 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:showIn="@layout/activity_main">
+    tools:showIn="@layout/fragment_values">
     <TextView
-        android:id="@+id/pm_value"
+        android:id="@+id/pm_main_value"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginBottom="8dp"
@@ -20,12 +20,12 @@
         android:textAppearance="@style/TextAppearance.AppCompat.Display1"
         android:textColor="@android:color/black"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toStartOf="@+id/textView"
+        app:layout_constraintEnd_toStartOf="@+id/pm_main_unit"
         app:layout_constraintStart_toEndOf="@+id/pm_label"
         app:layout_constraintTop_toTopOf="parent"
         tools:text="112"/>
     <TextView
-        android:id="@+id/textView"
+        android:id="@+id/pm_main_unit"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginBottom="8dp"
@@ -54,4 +54,37 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"/>
+    <TextView
+        android:id="@+id/pm_secondary_value"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="8dp"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="8dp"
+        android:shadowColor="#ffffff"
+        android:shadowRadius="5"
+        android:textAppearance="@style/TextAppearance.AppCompat.Display1"
+        android:textColor="@android:color/black"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/pm_label"
+        app:layout_constraintTop_toTopOf="parent"
+        android:visibility="gone"
+        tools:text="1340"/>
+    <TextView
+        android:id="@+id/pm_secondary_unit"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="8dp"
+        android:layout_marginStart="4dp"
+        android:layout_marginTop="8dp"
+        android:shadowColor="#ffffff"
+        android:shadowRadius="5"
+        android:text="@string/percent"
+        android:textAppearance="@style/TextAppearance.AppCompat.Medium"
+        android:textColor="@android:color/black"
+        app:layout_constraintBottom_toBottomOf="@+id/pm_secondary_value"
+        app:layout_constraintStart_toEndOf="@+id/pm_secondary_value"
+        app:layout_constraintTop_toTopOf="@+id/pm_secondary_value"
+        android:visibility="gone"
+        app:layout_constraintVertical_bias="0.85"/>
 </android.support.constraint.ConstraintLayout>

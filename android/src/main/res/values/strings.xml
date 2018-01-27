@@ -1,24 +1,27 @@
 <resources>
-    <string name="app_name">PM Station</string>
-    <string name="pm1">PM1.0</string>
-    <string name="pm25">PM2.5</string>
-    <string name="pm10">PM10</string>
+    <string name="app_name" translatable="false">PM Station</string>
+    <string name="pm1" translatable="false">PM1.0</string>
+    <string name="pm25" translatable="false">PM2.5</string>
+    <string name="pm10" translatable="false">PM10</string>
     <string name="time">Time</string>
-    <string name="unit">µg/m³</string>
+    <string name="unit" translatable="false">µg/m³</string>
+    <string name="percent" translatable="false">%</string>
     <string name="status_connected">connected</string>
     <string name="status_disconnected">disconnected</string>
     <string name="status_permission_denied">permission denied</string>
     <string name="settings">Settings</string>
     <string name="pref_general">General</string>
-    <string name="pref_sampling_interval_default">1000</string>
+    <string name="pref_sampling_interval_default" translatable="false">1000</string>
+    <string name="pref_main_value_default" translatable="false">1</string>
     <string name="pref_sampling_interval">Sampling interval</string>
+    <string name="pref_main_value">Main value</string>
     <string name="about">About</string>
-    <string name="version_name">1.0.1</string>
+    <string name="version_name" translatable="false">1.0.1</string>
     <string name="authors">Authors</string>
-    <string name="rg"><font color='#008295'><u>Radosław Gabiga</u></font></string>
-    <string name="rj"><font color='#008295'><u>Radosław Jaros</u></font></string>
-    <string name="ps"><font color='#008295'><u>Piotr Skowronek</u></font></string>
-    <string name="copyright">Copyright © 2017 – 2018</string>
+    <string name="rg" translatable="false"><font color='#008295'><u>Radosław Gabiga</u></font></string>
+    <string name="rj" translatable="false"><font color='#008295'><u>Radosław Jaros</u></font></string>
+    <string name="ps" translatable="false"><font color='#008295'><u>Piotr Skowronek</u></font></string>
+    <string name="copyright" translatable="false">Copyright © 2017 – 2018</string>
     <string name="project">Project</string>
     <string name="project_desc">The project details and the required equipement can be found&#160;<font color='#008295'><u>here</u></font></string>
     <string name="license">License</string>
@@ -27,10 +30,10 @@
     <string name="android_logo">Android logo</string>
     <string name="android_logo_notice">The Android robot is reproduced or modified from work created and shared by Google and used according to terms described in the Creative Commons 3.0 Attribution License.</string>
     <string name="plug_icons">Plug icons</string>
-    <string name="plug_icons_notice">Plug by Creative Stall from the Noun Project</string>
-    <string name="plug_icons_notice_url_1"><font color='#008295'><u>https://thenounproject.com/term/plug/380956/</u></font></string>
-    <string name="plug_icons_notice_url_2"><font color='#008295'><u>https://thenounproject.com/term/plug/380958/</u></font></string>
+    <string name="plug_icons_notice" translatable="false">Plug by Creative Stall from the Noun Project</string>
+    <string name="plug_icons_notice_url_1" translatable="false"><font color='#008295'><u>https://thenounproject.com/term/plug/380956/</u></font></string>
+    <string name="plug_icons_notice_url_2" translatable="false"><font color='#008295'><u>https://thenounproject.com/term/plug/380958/</u></font></string>
     <string name="background">Background</string>
-    <string name="background_notice">AIR POLLUTION by 2HAPPY from stockvault</string>
-    <string name="background_notice_url"><font color='#008295'><u>http://www.stockvault.net/photo/124893/air-pollution</u></font></string>
+    <string name="background_notice" translatable="false">AIR POLLUTION by 2HAPPY from stockvault</string>
+    <string name="background_notice_url" translatable="false"><font color='#008295'><u>http://www.stockvault.net/photo/124893/air-pollution</u></font></string>
 </resources>
