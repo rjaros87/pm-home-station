@@ -30,6 +30,7 @@ import android.widget.ImageView;
 import com.google.firebase.crash.FirebaseCrash;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import pmstation.core.plantower.IPlanTowerObserver;
@@ -48,7 +49,7 @@ public class MainActivity extends AppCompatActivity implements IPlanTowerObserve
     public static final String LAST_SINGLE_PANE_FRAGMENT = "lastSinglePaneFragment";
     private Menu menu;
     private ImageView smog;
-    private List<ParticulateMatterSample> values = new ArrayList<>();
+    private List<ParticulateMatterSample> values = Collections.synchronizedList(new ArrayList<>());
     private boolean running = false;
     private String lastSinglePaneFragment;
     private Sensor sensor;

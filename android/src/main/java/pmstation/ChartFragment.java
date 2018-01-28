@@ -71,11 +71,9 @@ public class ChartFragment extends Fragment implements IPlanTowerObserver {
         IAxisValueFormatter formatter =
                 (value, axis) -> {
                     int intValue = (int) value;
-
                     if (values.size() > intValue && intValue >= 0) {
                         return Settings.dateFormatTimeOnly.format(values.get((int) value).getDate());
                     }
-
                     return "";
                 };
 
@@ -96,11 +94,14 @@ public class ChartFragment extends Fragment implements IPlanTowerObserver {
         // add empty data
         chart.setData(data);
 
-        for (ParticulateMatterSample value : values) {
-            addEntry(pm1Label, value.getPm1_0());
-            addEntry(pm25Label, value.getPm2_5());
-            addEntry(pm10Label, value.getPm10());
+        synchronized (values) {
+            for (ParticulateMatterSample value : values) {
+                addEntry(pm1Label, value.getPm1_0());
+                addEntry(pm25Label, value.getPm2_5());
+                addEntry(pm10Label, value.getPm10());
+            }
         }
+
         chart.invalidate();
         ready = true;
     }

@@ -20,6 +20,7 @@ import com.felhr.usbserial.UsbSerialDevice;
 import com.felhr.usbserial.UsbSerialInterface;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -41,7 +42,7 @@ public class Sensor {
     private boolean requested = false;
     private Context context;
     private SharedPreferences preferences;
-    private List<IPlanTowerObserver> valueObservers = new ArrayList<>();
+    private final List<IPlanTowerObserver> valueObservers = Collections.synchronizedList(new ArrayList<>());
     private int sampleCounter = 0;
 
     private UsbSerialInterface.UsbReadCallback readCallback = bytes -> {
@@ -104,8 +105,10 @@ public class Sensor {
     }
 
     private void notifyAllObservers(final ParticulateMatterSample sample) {
-        for (IPlanTowerObserver valueObserver : valueObservers) {
-            valueObserver.update(sample);
+        synchronized(valueObservers) {
+            for (IPlanTowerObserver valueObserver : valueObservers) {
+                valueObserver.update(sample);
+            }
         }
     }
 
