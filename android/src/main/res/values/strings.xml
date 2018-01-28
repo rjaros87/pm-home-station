@@ -16,7 +16,7 @@
     <string name="pref_sampling_interval">Sampling interval</string>
     <string name="pref_main_value">Main value</string>
     <string name="about">About</string>
-    <string name="version_name" translatable="false">1.0.1</string>
+    <string name="version_name" translatable="false">1.0.2</string>
     <string name="authors">Authors</string>
     <string name="rg" translatable="false"><font color='#008295'><u>Radosław Gabiga</u></font></string>
     <string name="rj" translatable="false"><font color='#008295'><u>Radosław Jaros</u></font></string>
@@ -36,4 +36,10 @@
     <string name="background">Background</string>
     <string name="background_notice" translatable="false">AIR POLLUTION by 2HAPPY from stockvault</string>
     <string name="background_notice_url" translatable="false"><font color='#008295'><u>http://www.stockvault.net/photo/124893/air-pollution</u></font></string>
+    <string name="pm_25_norm">PM2.5 norm</string>
+    <string name="pm_10_norm">PM10 norm</string>
+    <string name="norm_summary">Maximum allowed concentration level</string>
+    <string name="norm_message">Set the value which will be a base for percentage calculation</string>
+    <string name="invalid_number">Not a valid integer, try again</string>
+    <string name="main_value_summary">Value displayed as the bigger number on main screen</string>
 </resources>

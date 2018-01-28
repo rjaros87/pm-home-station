@@ -13,8 +13,23 @@
         <ListPreference
             android:key="main_value"
             android:title="@string/pref_main_value"
+            android:summary="@string/main_value_summary"
             android:defaultValue="@string/pref_main_value_default"
             android:entries="@array/main_value_labels"
             android:entryValues="@array/main_value_values"/>
+        <EditTextPreference
+            android:key="pm_25_norm"
+            android:numeric="integer"
+            android:title="@string/pm_25_norm"
+            android:summary="@string/norm_summary"
+            android:dialogMessage="@string/norm_message"
+            android:defaultValue="25"/>
+        <EditTextPreference
+            android:key="pm_10_norm"
+            android:numeric="integer"
+            android:title="@string/pm_10_norm"
+            android:summary="@string/norm_summary"
+            android:dialogMessage="@string/norm_message"
+            android:defaultValue="50"/>
     </PreferenceCategory>
 </PreferenceScreen>

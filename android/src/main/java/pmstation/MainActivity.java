@@ -27,6 +27,8 @@ import android.view.MenuItem;
 import android.view.WindowManager;
 import android.widget.ImageView;
 
+import com.google.firebase.crash.FirebaseCrash;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -152,6 +154,8 @@ public class MainActivity extends AppCompatActivity implements IPlanTowerObserve
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        FirebaseCrash.setCrashCollectionEnabled(!BuildConfig.DEBUG);
+
         PreferenceManager.setDefaultValues(this, R.xml.preferences, false);
         setContentView(R.layout.activity_main);
 

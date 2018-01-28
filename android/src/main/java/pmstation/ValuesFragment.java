@@ -51,6 +51,9 @@ public class ValuesFragment extends Fragment implements IPlanTowerObserver {
     private ParticulateMatterSample currentValue;
     private SharedPreferences preferences;
 
+    private int pm25Norm;
+    private int pm10Norm;
+
     public ValuesFragment() {
         // Required empty public constructor
     }
@@ -105,6 +108,8 @@ public class ValuesFragment extends Fragment implements IPlanTowerObserver {
         activity.getSensor().addValueObserver(this);
         preferences = PreferenceManager.getDefaultSharedPreferences(activity);
         changeMainValue();
+        changePM25Norm();
+        changePM10Norm();
     }
 
     @Override
@@ -124,14 +129,17 @@ public class ValuesFragment extends Fragment implements IPlanTowerObserver {
         activity.runOnUiThread(() -> {
             pm1.setText(String.format(Locale.getDefault(), "%d", sample.getPm1_0()));
             pm25.setText(String.format(Locale.getDefault(), "%d", sample.getPm2_5()));
-            pm25Secondary.setText(String.format(Locale.getDefault(), "%d", Math.round(sample.getPm2_5() / 25f * 100)));
+            pm25Secondary.setText(
+                    String.format(Locale.getDefault(), "%d", Math.round(sample.getPm2_5() * 1f / pm25Norm * 100)));
             AQIColor pm25Color = AQIColor.fromPM25Level(sample.getPm2_5());
             pm1Card.setCardBackgroundColor(
                     ColorUtils.setAlphaComponent(pm25Color.getColor(), 136));
             pm25Card.setCardBackgroundColor(
                     ColorUtils.setAlphaComponent(pm25Color.getColor(), 136));
             pm10.setText(String.format(Locale.getDefault(), "%d", sample.getPm10()));
-            pm10Secondary.setText(String.format(Locale.getDefault(), "%d", Math.round(sample.getPm10() / 25f * 100)));
+            pm10Secondary
+                    .setText(String.format(Locale.getDefault(), "%d",
+                                           Math.round(sample.getPm10() * 1f / pm10Norm * 100)));
             pm10Card.setCardBackgroundColor(
                     ColorUtils.setAlphaComponent(AQIColor.fromPM10Level(sample.getPm10()).getColor(), 136));
             time.setText(Settings.dateFormat.format(sample.getDate()));
@@ -147,25 +155,36 @@ public class ValuesFragment extends Fragment implements IPlanTowerObserver {
     public void changeMainValue() {
         int main_value = Integer.parseInt(preferences.getString("main_value", "1"));
         TextView tmpView = pm25;
+        if (main_value == 1 && pm25Unit.getText().equals(getString(R.string.unit))
+                || main_value == 2 && pm25Unit.getText().equals(getString(R.string.percent))) {
+            return;
+        }
         pm25 = pm25Secondary;
         pm25Secondary = tmpView;
         tmpView = pm10;
         pm10 = pm10Secondary;
         pm10Secondary = tmpView;
         switch (main_value) {
+            case 1:
+                pm25Unit.setText(R.string.unit);
+                pm25SecondaryUnit.setText(R.string.percent);
+                pm10Unit.setText(R.string.unit);
+                pm10SecondaryUnit.setText(R.string.percent);
+                break;
             case 2:
                 pm25Unit.setText(R.string.percent);
                 pm25SecondaryUnit.setText(R.string.unit);
                 pm10Unit.setText(R.string.percent);
                 pm10SecondaryUnit.setText(R.string.unit);
                 break;
-            case 1:
-                pm25Unit.setText(R.string.unit);
-                pm25SecondaryUnit.setText(R.string.percent);
-                pm10Unit.setText(R.string.unit);
-                pm10SecondaryUnit.setText(R.string.percent);
-            default:
-                break;
         }
+    }
+
+    public void changePM25Norm() {
+        pm25Norm = Integer.parseInt(preferences.getString("pm_25_norm", "25"));
+    }
+
+    public void changePM10Norm() {
+        pm10Norm = Integer.parseInt(preferences.getString("pm_10_norm", "50"));
     }
 }

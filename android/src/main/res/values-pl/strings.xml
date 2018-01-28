@@ -19,4 +19,10 @@
     <string name="android_logo_notice">Robot Android jest powielany lub modyfikowany na podstawie prac stworzonych i udostępnionych przez Google i używanych zgodnie z warunkami opisanymi w licencji Creative Commons 3.0 Attribution.</string>
     <string name="plug_icons">Ikona wtyczki</string>
     <string name="background">Tło</string>
+    <string name="pm_25_norm">Norma PM2.5</string>
+    <string name="pm_10_norm">Norma PM10</string>
+    <string name="norm_summary">Maksymalna dopuszczalna wartość stężenia</string>
+    <string name="norm_message">Wprowadź wartość, według której będzie liczony procent stężenia</string>
+    <string name="invalid_number">Niepoprawna liczba całkowita</string>
+    <string name="main_value_summary">Wartość wyświetlana jako większa liczba na głównym ekranie</string>
 </resources>
