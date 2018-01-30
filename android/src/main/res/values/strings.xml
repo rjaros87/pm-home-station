@@ -16,7 +16,7 @@
     <string name="pref_sampling_interval">Sampling interval</string>
     <string name="pref_main_value">Main value</string>
     <string name="about">About</string>
-    <string name="version_name" translatable="false">1.0.2</string>
+    <string name="version_name" translatable="false">1.1.0</string>
     <string name="authors">Authors</string>
     <string name="rg" translatable="false"><font color='#008295'><u>Radosław Gabiga</u></font></string>
     <string name="rj" translatable="false"><font color='#008295'><u>Radosław Jaros</u></font></string>
