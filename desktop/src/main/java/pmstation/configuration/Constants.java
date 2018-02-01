@@ -36,5 +36,8 @@ public class Constants {
     public static final int DEFAULT_INTERVAL = 3; // in sec
     public static final int MIN_INTERVAL = 2; // in sec
     public static final int MAX_INTERVAL = 3600; // in sec
+    
+    public static final int DEFAULT_PM25_MAX_SAFE = 25;
+    public static final int DEFAULT_PM10_MAX_SAFE = 50;
 
 }

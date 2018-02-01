@@ -24,6 +24,8 @@ public class Config {
     public enum Entry {
         
         INTERVAL("interval"),
+        PM25_MAX_SAFE_LIMIT("pm25.max.safe.limit"),
+        PM10_MAX_SAFE_LIMIT("pm10.max.safe.limit"),
         AUTOSTART("autostart.measurements"),
         WARN_ON_OSX_TO_DETACH("workaround.osx.detach.warn"),
         ALWAYS_ON_TOP("always.on.top"),

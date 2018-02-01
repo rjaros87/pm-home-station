@@ -23,6 +23,7 @@ import pmstation.aqi.AQI25Level;
 import pmstation.aqi.AQIColor;
 import pmstation.aqi.AQILevel;
 import pmstation.aqi.AQIRiskLevel;
+import pmstation.configuration.Config;
 import pmstation.configuration.Constants;
 import pmstation.core.plantower.IPlanTowerObserver;
 import pmstation.core.plantower.ParticulateMatterSample;
@@ -34,7 +35,7 @@ public class LabelObserver implements IPlanTowerObserver {
 
     private JLabel deviceStatus, measurementTime, pm1_0, pm2_5, pm10;
     private JButton btnConnect, icon;
-    private static final String UNIT = " \u03BCg/m\u00B3";
+    private static final String UNIT = " <small>\u03BCg/m\u00B3</small>";
     private static final String PRE_HTML = "<html><b>";
     private static final String POST_HTML = "</b></html>";
     private static final String APP_ICON_FORMAT = "app-icon-%s.png";
@@ -66,15 +67,21 @@ public class LabelObserver implements IPlanTowerObserver {
                 icon.setIcon(new ImageIcon(disconnectedIcon.getScaledInstance(icon.getIcon().getIconWidth(), -1, Image.SCALE_SMOOTH)));
             }
         } else {
+            int pm25maxSafe = Config.instance().to().getInt(Config.Entry.PM25_MAX_SAFE_LIMIT.key(), Constants.DEFAULT_PM25_MAX_SAFE);
+            int pm10maxSafe = Config.instance().to().getInt(Config.Entry.PM10_MAX_SAFE_LIMIT.key(), Constants.DEFAULT_PM10_MAX_SAFE);
+            int pm25percent = Math.round(sample.getPm2_5() * 1f / pm25maxSafe * 100);
+            int pm10percent = Math.round(sample.getPm10() * 1f / pm10maxSafe * 100);
+
             measurementTime.setText("<html><small>" + Constants.DATE_FORMAT.format(sample.getDate()) + "</small></html>");
-            pm1_0.setText(PRE_HTML + String.valueOf(sample.getPm1_0()) + UNIT + POST_HTML);
+            pm1_0.setText(PRE_HTML + String.valueOf(sample.getPm1_0()) + UNIT  + POST_HTML);
             
-            pm2_5.setText(PRE_HTML + String.valueOf(sample.getPm2_5()) + UNIT + POST_HTML);
+            pm2_5.setText(PRE_HTML + String.valueOf(sample.getPm2_5()) + UNIT + " (" + pm25percent + "%)" + POST_HTML);
             AQI25Level color2_5 = AQI25Level.fromValue(sample.getPm2_5());
-            pm2_5.setForeground(AQIColor.fromLevel(color2_5).getColor());
+            pm2_5.setForeground(AQIColor.fromLevel(color2_5).getColor());            
             pm2_5.setToolTipText(color2_5.getDescription());
+            
             AQI10Level color10 = AQI10Level.fromValue(sample.getPm10());
-            pm10.setText(PRE_HTML + String.valueOf(sample.getPm10()) + UNIT + POST_HTML);
+            pm10.setText(PRE_HTML + String.valueOf(sample.getPm10()) + UNIT + " (" + pm10percent + "%)" + POST_HTML);
             pm10.setForeground(AQIColor.fromLevel(color10).getColor());
             pm10.setToolTipText(color10.getDescription());
             

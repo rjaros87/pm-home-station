@@ -220,13 +220,13 @@ public class Station {
         JPanel panelMeasurements = new JPanel();
         panelMeasurements.setBorder(new TitledBorder(null, "<html><b>Last measurements</b></html>", TitledBorder.LEADING, TitledBorder.TOP, null, null));
         panelMain.add(panelMeasurements, "cell 0 1 3 1,grow");
-        panelMeasurements.setLayout(new MigLayout("", "[50px][6px][70px:100px][6px][50px][6px][70px:100px][6px][42px][12px][70px:137px]", "[10px][]"));
+        panelMeasurements.setLayout(new MigLayout("", "[:20px:40px][1px:1px:1px][50px:60px,grow 60][1px:1px:3px][:20px:40px][1px:1px:1px][80px:100px,grow][1px:1px:3px][:20px:40px][1px:1px:1px][80px:100px,grow]", "[::20px][::20px][]"));
         
                 JLabel pm1_0Label = new JLabel("PM 1.0:");
                 panelMeasurements.add(pm1_0Label, "cell 0 0,alignx left,aligny top");
                 
                         JLabel pm1_0 = new JLabel();
-                        panelMeasurements.add(pm1_0, "cell 2 0,growx,aligny top");
+                        panelMeasurements.add(pm1_0, "flowy,cell 2 0,alignx leading,aligny top");
                         pm1_0.setText("----");
                         labelsToBeUpdated.put("pm1_0", pm1_0);
                         
@@ -234,7 +234,7 @@ public class Station {
                                 panelMeasurements.add(pm2_5Label, "cell 4 0,alignx left,aligny top");
                                 
                                         JLabel pm2_5 = new JLabel();
-                                        panelMeasurements.add(pm2_5, "cell 6 0,growx,aligny top");
+                                        panelMeasurements.add(pm2_5, "flowx,cell 6 0,alignx leading,aligny top");
                                         pm2_5.setText("----");
                                         labelsToBeUpdated.put("pm2_5", pm2_5);
                                         
@@ -242,15 +242,12 @@ public class Station {
                                                 panelMeasurements.add(pm10Label, "cell 8 0,alignx left,aligny top");
                                                 
                                                         JLabel pm10 = new JLabel();
-                                                        panelMeasurements.add(pm10, "cell 10 0,alignx left,aligny top");
+                                                        panelMeasurements.add(pm10, "flowx,cell 10 0,alignx leading,aligny top");
                                                         pm10.setText("----");
                                                         labelsToBeUpdated.put("pm10", pm10);
-                                                                
-                                                        JLabel pmMeasurementTime_label = new JLabel("<html><small>Time: </small></html>");
-                                                        panelMeasurements.add(pmMeasurementTime_label, "cell 0 1,alignx left");
                                                         
                                                         JLabel pmMeasurementTime = new JLabel();
-                                                        panelMeasurements.add(pmMeasurementTime, "cell 2 1 9 1");
+                                                        panelMeasurements.add(pmMeasurementTime, "cell 2 2 9 1");
                                                         labelsToBeUpdated.put("measurementTime", pmMeasurementTime);
 
                                                         JLabel lblAqi = new JLabel("<html><small>*) AQI colors</small></html>");
@@ -262,7 +259,10 @@ public class Station {
                                                             }
                                                         });
                                                         lblAqi.setToolTipText("<html>" + AQIAbout.getHtmlTable() + "</html>");
-                                                        panelMeasurements.add(lblAqi, "cell 10 1,alignx right");
+                                                        panelMeasurements.add(lblAqi, "cell 10 2,alignx right");
+                                                        
+                                                        JLabel pmMeasurementTime_label = new JLabel("<html><small>Time: </small></html>");
+                                                        panelMeasurements.add(pmMeasurementTime_label, "cell 0 2,alignx left");
         panelMain.add(chartPanel, "cell 0 2 3 1,grow");
 
         JPanel panelStatus = new JPanel();
