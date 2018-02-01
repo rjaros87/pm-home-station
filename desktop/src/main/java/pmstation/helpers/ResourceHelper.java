@@ -29,13 +29,9 @@ public class ResourceHelper {
         BufferedImage iconImage = ImageIO.read(Station.class.getResource("/pmstation/" + name));
         LocalDate localDate = LocalDate.now();
         if (localDate.getMonth().equals(Month.DECEMBER) && localDate.getDayOfMonth() > 21 && localDate.getDayOfMonth() < 28) {
-            BufferedImage hat = ImageIO.read(Station.class.getResource("/pmstation/app-icon-santa-hat.png"));
-            BufferedImage combinedImage = new BufferedImage(iconImage.getWidth(), iconImage.getHeight(), BufferedImage.TYPE_INT_ARGB);
-            Graphics2D g = combinedImage.createGraphics();
-            g.drawImage(iconImage, 0, 0, null);
-            g.drawImage(hat, 0, 0, null);
-            g.dispose();
-            iconImage = combinedImage;
+            iconImage = combine(iconImage, Station.class.getResource("/pmstation/app-icon-santa-hat.png"));
+        } else if (localDate.getMonth().equals(Month.APRIL) && localDate.getDayOfMonth() == 1) {
+            iconImage = combine(iconImage, Station.class.getResource("/pmstation/app-icon-thug-life.png"));
         }
         
         return iconImage;
@@ -48,5 +44,15 @@ public class ResourceHelper {
     
     public static URL getResourceBaseURL() {
         return Station.class.getResource("/pmstation/" + Constants.DEFAULT_ICON);
+    }
+    
+    private static BufferedImage combine(BufferedImage iconImage, URL combinator) throws IOException {
+        BufferedImage hat = ImageIO.read(combinator);
+        BufferedImage combinedImage = new BufferedImage(iconImage.getWidth(), iconImage.getHeight(), BufferedImage.TYPE_INT_ARGB);
+        Graphics2D g = combinedImage.createGraphics();
+        g.drawImage(iconImage, 0, 0, null);
+        g.drawImage(hat, 0, 0, null);
+        g.dispose();
+        return combinedImage;
     }
 }
