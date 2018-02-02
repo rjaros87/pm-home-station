@@ -36,6 +36,6 @@ public class AQIAbout {
     }
     
     private static String intToStr(int i) {
-        return i != Integer.MAX_VALUE ? Integer.toString(i) : "∞";  
+        return i != Integer.MAX_VALUE ? Integer.toString(i) : "\u221e";
     }
 }
