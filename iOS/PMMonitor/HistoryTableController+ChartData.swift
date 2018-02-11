@@ -63,13 +63,19 @@ extension HistoryTableController {
         guard data.count > 2 else {
             return []
         }
+/*
+!!!! X-Labels temporary removed, as they're ugly when there are
+         many points on graph.
+ */
 
+/*
         let shortDateFormatter = DateFormatter()
         shortDateFormatter.dateFormat = "mm:ss"
         shortDateFormatter.locale = Locale.current
-
-        for i in stride(from: data.count-1, to: 0, by: -2) {
-            arr.append(shortDateFormatter.string(from: data[i].date))
+*/
+        for _ in stride(from: data.count-1, to: 0, by: -2) {
+//            arr.append(shortDateFormatter.string(from: data[i].date))
+            arr.append("")
         }
 
         return arr

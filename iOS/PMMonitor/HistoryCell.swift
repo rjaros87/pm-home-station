@@ -28,17 +28,28 @@ class HistoryCell: UITableViewCell {
     }
 
     func set(from data : PTData) {
-        pm10Label.text = String(format:"%i", data.pm10)
-        pm2_5Label.text = String(format:"%i", data.pm2_5)
-        pm1_0Label.text = String(format:"%i", data.pm1_0)
+        pm10Label.text = String(format:"%i%@", data.pm10, emojiForLevel(data.pm10level))
+        pm2_5Label.text = String(format:"%i%@", data.pm2_5, emojiForLevel(data.pm2_5level))
+        pm1_0Label.text = String(format:"%i❓", data.pm1_0)
         dateLabel.text = dateFormatter.string(from: data.date)
         
     }
 
-    override func setSelected(_ selected: Bool, animated: Bool) {
-        super.setSelected(selected, animated: animated)
-
-        // Configure the view for the selected state
+    private func emojiForLevel(_ level : PTData.PollutionLevel) -> String {
+        switch level {
+        case .VeryGood:
+            return "😀"
+        case .Good:
+            return "🙂"
+        case .Moderate:
+            return "🤨"
+        case .Satisfactory:
+            return "😕"
+        case .Bad:
+            return "😷"
+        case .Hazardous:
+            return "🤢"
+        }
     }
 
 }

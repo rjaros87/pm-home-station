@@ -10,7 +10,7 @@ import UIKit
 
 class HistoryTableController: NSObject, UITableViewDelegate, UITableViewDataSource {
 
-    var dataLimit : Int = 10
+    var dataLimit : Int = 30
 
     private(set) internal var data = [PTData]()
     private let tableView : UITableView

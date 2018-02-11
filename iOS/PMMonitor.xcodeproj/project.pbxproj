@@ -12,6 +12,7 @@
 		A304E888202E32AD00B43B5A /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = A304E886202E32AD00B43B5A /* Main.storyboard */; };
 		A304E88A202E32AD00B43B5A /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = A304E889202E32AD00B43B5A /* Assets.xcassets */; };
 		A304E88D202E32AD00B43B5A /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = A304E88B202E32AD00B43B5A /* LaunchScreen.storyboard */; };
+		A34293132030E4D200A3ED82 /* PTData+Levels.swift in Sources */ = {isa = PBXBuildFile; fileRef = A34293122030E4D200A3ED82 /* PTData+Levels.swift */; };
 		A36C11B9202E70280024E841 /* PTData.swift in Sources */ = {isa = PBXBuildFile; fileRef = A36C11B8202E70280024E841 /* PTData.swift */; };
 		A36C11BB202E93B40024E841 /* PTDevice.swift in Sources */ = {isa = PBXBuildFile; fileRef = A36C11BA202E93B40024E841 /* PTDevice.swift */; };
 		A36C11BF202F21BC0024E841 /* PTDeviceCallbacks.swift in Sources */ = {isa = PBXBuildFile; fileRef = A36C11BE202F21BC0024E841 /* PTDeviceCallbacks.swift */; };
@@ -92,6 +93,7 @@
 		A304E889202E32AD00B43B5A /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		A304E88C202E32AD00B43B5A /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		A304E88E202E32AD00B43B5A /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		A34293122030E4D200A3ED82 /* PTData+Levels.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "PTData+Levels.swift"; sourceTree = "<group>"; };
 		A36C11B8202E70280024E841 /* PTData.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PTData.swift; sourceTree = "<group>"; };
 		A36C11BA202E93B40024E841 /* PTDevice.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PTDevice.swift; sourceTree = "<group>"; };
 		A36C11BE202F21BC0024E841 /* PTDeviceCallbacks.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PTDeviceCallbacks.swift; sourceTree = "<group>"; };
@@ -183,6 +185,7 @@
 				A36C11B8202E70280024E841 /* PTData.swift */,
 				A36C11BA202E93B40024E841 /* PTDevice.swift */,
 				A36C11BE202F21BC0024E841 /* PTDeviceCallbacks.swift */,
+				A34293122030E4D200A3ED82 /* PTData+Levels.swift */,
 			);
 			path = Plantower;
 			sourceTree = "<group>";
@@ -372,6 +375,7 @@
 			files = (
 				A3F8561E202F502200640BD3 /* PNLineChart.swift in Sources */,
 				A304E885202E32AD00B43B5A /* ViewController.swift in Sources */,
+				A34293132030E4D200A3ED82 /* PTData+Levels.swift in Sources */,
 				A3F85619202F502200640BD3 /* PNPieChart.swift in Sources */,
 				A3F85623202F502200640BD3 /* PNPieChartDataItem.swift in Sources */,
 				A3F8561D202F502200640BD3 /* PNValue.swift in Sources */,
