@@ -220,7 +220,7 @@ public class Station {
         JPanel panelMeasurements = new JPanel();
         panelMeasurements.setBorder(new TitledBorder(null, "<html><b>Last measurements</b></html>", TitledBorder.LEADING, TitledBorder.TOP, null, null));
         panelMain.add(panelMeasurements, "cell 0 1 3 1,grow");
-        panelMeasurements.setLayout(new MigLayout("", "[:20px:40px][1px:1px:1px][50px:60px,grow 60][1px:1px:3px][:20px:40px][1px:1px:1px][80px:100px,grow][1px:1px:3px][:20px:40px][1px:1px:1px][80px:100px,grow]", "[::20px][::20px][]"));
+        panelMeasurements.setLayout(new MigLayout("", "[:20px:40px][1px:1px:1px][60px:80px:80px,grow 60][1px:1px:3px][:20px:40px][1px:1px:1px][80px:80px:100px,grow][1px:1px:3px][:20px:40px][1px:1px:1px][80px:80px:100px,grow]", "[::20px][::20px][]"));
         
                 JLabel pm1_0Label = new JLabel("PM 1.0:");
                 panelMeasurements.add(pm1_0Label, "cell 0 0,alignx left,aligny top");

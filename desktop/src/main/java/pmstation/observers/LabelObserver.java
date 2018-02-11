@@ -75,13 +75,13 @@ public class LabelObserver implements IPlanTowerObserver {
             measurementTime.setText("<html><small>" + Constants.DATE_FORMAT.format(sample.getDate()) + "</small></html>");
             pm1_0.setText(PRE_HTML + String.valueOf(sample.getPm1_0()) + UNIT  + POST_HTML);
             
-            pm2_5.setText(PRE_HTML + String.valueOf(sample.getPm2_5()) + UNIT + " (" + pm25percent + "%)" + POST_HTML);
+            pm2_5.setText(PRE_HTML + String.valueOf(sample.getPm2_5()) + UNIT + "<br/>(" + pm25percent + "%)" + POST_HTML);
             AQI25Level color2_5 = AQI25Level.fromValue(sample.getPm2_5());
             pm2_5.setForeground(AQIColor.fromLevel(color2_5).getColor());            
             pm2_5.setToolTipText(color2_5.getDescription());
             
             AQI10Level color10 = AQI10Level.fromValue(sample.getPm10());
-            pm10.setText(PRE_HTML + String.valueOf(sample.getPm10()) + UNIT + " (" + pm10percent + "%)" + POST_HTML);
+            pm10.setText(PRE_HTML + String.valueOf(sample.getPm10()) + UNIT + "<br/>(" + pm10percent + "%)" + POST_HTML);
             pm10.setForeground(AQIColor.fromLevel(color10).getColor());
             pm10.setToolTipText(color10.getDescription());
             

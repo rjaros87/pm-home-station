@@ -42,8 +42,9 @@ public enum AQI10Level implements AQILevel {
     public static AQI10Level fromValue(int pmLevel) {
         AQI10Level result = HAZARDOUS;
         for (AQI10Level level : values()) {
-            if (pmLevel > level.min && pmLevel <= level.max) {
+            if (pmLevel >= level.min && pmLevel <= level.max) {
                 result = level;
+                break;
             }
         }
         return result;
