@@ -169,7 +169,7 @@ The app screenshots gallery can be found [here](https://rjaros87.github.io/pm-ho
 - [Radoslaw Gabiga](https://github.com/sanchin)
 - [Radoslaw Jaros](https://github.com/rjaros87)
 - [Piotr Skowronek](https://github.com/pskowronek)
-- [Jerzy Łukjaniec](https://github.com/idf3d) (iOS version)
+- [Jerzy Łukjaniec](https://github.com/idf3d)
 
 ## Releases
 

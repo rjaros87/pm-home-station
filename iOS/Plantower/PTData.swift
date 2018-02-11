@@ -1,15 +1,15 @@
 //
-//  File.swift
+//  PTData.swift
 //  PMMonitor
 //
 //  Created by Jerzy Łukjaniec on 10.02.2018.
-//  Copyright © 2018 dflab. All rights reserved.
+//  License: GPL 3.0
 //
 
 import Foundation
 
 class PTData {
-    var frames = [Data]()
+    private var frames = [Data]()
 
     private(set) var pm1_0 : UInt16 = 0
     private(set) var pm2_5 : UInt16 = 0
