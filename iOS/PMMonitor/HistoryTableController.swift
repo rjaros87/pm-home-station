@@ -30,12 +30,6 @@ class HistoryTableController: NSObject, UITableViewDelegate, UITableViewDataSour
         tableView.reloadData()
     }
 
-    private func string(forData i : Int) -> String {
-        let d = data[i]
-        let str = String(format: "PM1.0=%i, PM2.5=%i, PM10=%i",d.pm1_0, d.pm2_5, d.pm10)
-        return str
-    }
-
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         return data.count
     }

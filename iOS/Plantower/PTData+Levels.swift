@@ -21,7 +21,7 @@ extension PTData {
 
     var pm2_5level : PollutionLevel {
         get {
-            return PTData.levelFor(pm2_5: pm1_0)
+            return PTData.levelFor(pm2_5: pm2_5)
         }
     }
 

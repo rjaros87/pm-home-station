@@ -42,9 +42,9 @@ class HistoryCell: UITableViewCell {
         case .Good:
             return "🙂"
         case .Moderate:
-            return "🤨"
-        case .Satisfactory:
             return "😕"
+        case .Satisfactory:
+            return "😟"
         case .Bad:
             return "😷"
         case .Hazardous:

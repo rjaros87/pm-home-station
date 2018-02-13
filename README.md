@@ -38,8 +38,7 @@ Let's live healthier life and start measuring the air quality and filtering it i
 
 - [PlanTower PMS7003](https://kamami.pl/czujniki-gazow/564008-plantower-pms7003-laserowy-czujnik-pylu-pm25.html) ~$26
 - [ICD10 adapter with 10 pins(1.27 mm) to 6 pins (2.54 mm) (also called `G7 switch`)](https://kamami.pl/zlacza-inne/564553-adapter-idc10-127mm-na-zlacze-254mm-dla-czujnika-pms7003.html) ~$2
-- [Female-Female wires 5 items](https://kamami.pl/przewody-f-f/199418--przewody-polaczeniowe-f-f-roznokolorowe-17-cm-10-szt.html) ~$1-2
-- [Bluetooth Low Energy UART HC-08](https://kamami.pl/moduly-bluetooth/562364-hc-08-modul-bluetooth-ble-40-z-ukladem-cc2540.html) ~$7
+- [Bluetooth Low Energy UART HC-08](https://kamami.pl/moduly-bluetooth/562367-modhc-08-modul-bluetooth-hc-08.html) (includes wires) ~$7
 - recycled old USB cable to provide power to Sensor and Bluetooth tandem
 
 ## Discount

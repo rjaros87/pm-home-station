@@ -42,11 +42,9 @@ class PTData {
 
         let ints = d.withUnsafeBytes { (int16Ptr: UnsafePointer<UInt16>) -> [UInt16] in
             var x = [UInt16]()
-            var i = 0
 
-            while (i<=15) {
+            for i in 0...15 {
                 let n = UInt16(bigEndian: int16Ptr[i])
-                i += 1
                 x.append(n)
             }
 
