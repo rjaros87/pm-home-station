@@ -10,13 +10,36 @@ import Foundation
 
 // Levels taken from AQIColor Android implementation
 extension PTData {
-    enum PollutionLevel {
-        case VeryGood
-        case Good
-        case Moderate
-        case Satisfactory
-        case Bad
-        case Hazardous
+    enum PollutionLevel : Int {
+        case VeryGood     = 0
+        case Good         = 1
+        case Moderate     = 2
+        case Satisfactory = 3
+        case Bad          = 4
+        case Hazardous    = 5
+
+        var name : String {
+            switch self {
+            case .VeryGood:
+                return "Very Good"
+            case .Good:
+                return "Good"
+            case .Moderate:
+                return "Moderate"
+            case .Satisfactory:
+                return "Satisfactory"
+            case .Bad:
+                return "Bad"
+            case .Hazardous:
+                return "Hazardous"
+            }
+        }
+    }
+
+    var pm1_0level : PollutionLevel {
+        get {
+            return PTData.levelFor(pm2_5: pm1_0)
+        }
     }
 
     var pm2_5level : PollutionLevel {
@@ -28,6 +51,21 @@ extension PTData {
     var pm10level : PollutionLevel {
         get {
             return PTData.levelFor(pm10: pm10)
+        }
+    }
+
+    var overallLevel : PollutionLevel {
+        get {
+            var arr = [pm1_0level, pm2_5level, pm10level]
+            arr.sort { (a, b) -> Bool in
+                return a.rawValue<b.rawValue
+            }
+
+            if let result = arr.last {
+                return result
+            } else {
+                return .VeryGood
+            }
         }
     }
 

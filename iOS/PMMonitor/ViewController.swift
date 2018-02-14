@@ -8,21 +8,20 @@
 
 import UIKit
 import CoreBluetooth
+import Charts
 
 class ViewController: UIViewController {
 
-    @IBOutlet var statusLabel : UILabel!
+    @IBOutlet var mainLabel   : UILabel!
+    @IBOutlet var mainSubLabel: UILabel!
 
-    @IBOutlet var pm10title : UILabel!
-    @IBOutlet var pm1_0title : UILabel!
-    @IBOutlet var pm2_5title : UILabel!
+    @IBOutlet var mainColorView : UIView!
 
-    @IBOutlet var tView: UITableView!
+    @IBOutlet var pm1_0scale : AQScaleView!
+    @IBOutlet var pm2_5scale : AQScaleView!
+    @IBOutlet var pm10scale  : AQScaleView!
 
-    @IBOutlet var chartView : UIView!
-    var lineChart : PNLineChart?
-
-    var history : HistoryTableController?
+    @IBOutlet var lineChart  : LineChartView!
 
     let device = PTDevice()
 
@@ -41,64 +40,48 @@ class ViewController: UIViewController {
             self.start()
         }
 
+        self.mainLabel.text = "Disconnected"
+        self.mainSubLabel.text = "Searching ..."
+        self.mainColorView.backgroundColor = UIColor.gray
+
+        pm1_0scale.setUnit(unit: "PM 1.0")
+        pm1_0scale.prepare()
+
+        pm2_5scale.setUnit(unit: "PM 2.5")
+        pm2_5scale.prepare()
+
+        pm10scale.setUnit(unit: "PM 10")
+        pm10scale.prepare()
+
         setupChart()
-    }
-
-    override func viewDidAppear(_ animated: Bool) {
-
-        if history == nil {
-            let h = HistoryTableController(tableView: tView)
-            tView.delegate = h
-            tView.dataSource = h
-            history = h
-        }
-    }
-
-    func setupChart() {
-        pm10title.textColor = PNBlue
-        pm1_0title.textColor = PNGrey
-        pm2_5title.textColor = PNRed
-
-        let chart = PNLineChart(frame: chartView.bounds)
-        chart.yLabelFormat = "%1.1f"
-        chart.showLabel = true
-        chart.backgroundColor = UIColor.clear
-        chart.showCoordinateAxis = true
-        chart.center = chartView.center
-        chartView.addSubview(chart)
-        lineChart = chart
     }
 
     func start() {
         supressDialogs = false
         let dataCallback : PTDeviceDataCallback =  { (data, error) in
             if let data = data {
+                self.addToChart(data)
+                let cData = self.chartData()
                 DispatchQueue.main.async {
-                    guard let history = self.history else {
-                        return
-                    }
-                    history.add(data)
-                    self.lineChart?.xLabels = history.chartXLabels() as NSArray
-                    self.lineChart?.chartData = history.chartData() as NSArray
-                    self.lineChart?.strokeChart()
+                    self.mainLabel.text = data.overallLevel.name
+                    self.mainColorView.backgroundColor = self.pm1_0scale.color(forLevel: data.overallLevel)
+                    self.mainSubLabel.text = "air quality"
+
+                    self.pm1_0scale.setAirQuality(level: data.pm1_0level, pmAmount: data.pm1_0)
+                    self.pm2_5scale.setAirQuality(level: data.pm2_5level, pmAmount: data.pm2_5)
+                    self.pm10scale.setAirQuality(level: data.pm10level, pmAmount: data.pm10)
+
+                    self.lineChart.data = cData
                 }
             }
 
         }
 
         device.connect { (isConnected, err) in
-
-            let statusString : String
-            let statusColour : UIColor
-
             if (isConnected) {
-                statusString = "Connected"
-                statusColour = UIColor.green
                 self.device.start(dataCallback)
             } else {
-
-                statusColour = UIColor.red
-
+                let statusString : String
                 if let err = err as? PTDeviceError {
                     self.supressDialogs = true
                     switch (err) {
@@ -110,17 +93,19 @@ class ViewController: UIViewController {
                         statusString = str
                     }
                 } else {
-                    statusString = "Disconnected"
+                    statusString = " "
+                }
+                DispatchQueue.main.async {
+                    self.mainLabel.text = "Disconnected"
+                    self.mainSubLabel.text = statusString
+                    self.mainColorView.backgroundColor = UIColor.gray
+                    if (!self.supressDialogs) {
+                        self.showDisconnectedDialog()
+                        self.supressDialogs = false
+                    }
                 }
             }
-            DispatchQueue.main.async {
-                self.statusLabel.text = statusString
-                self.statusLabel.textColor = statusColour
-                if (!isConnected && !self.supressDialogs) {
-                    self.showDisconnectedDialog()
-                    self.supressDialogs = false
-                }
-            }
+
         }
     }
 
@@ -128,8 +113,9 @@ class ViewController: UIViewController {
         let ctrl = UIAlertController(title: "Disconnected", message: "Start to search for devices?", preferredStyle: UIAlertControllerStyle.alert)
 
         let scanAction = UIAlertAction(title: "Search", style: .default) { (_) in
-            self.statusLabel.text = "Searching..."
-            self.statusLabel.textColor = UIColor.gray
+            self.mainLabel.text = "Disconnected"
+            self.mainSubLabel.text = "Searching ..."
+            self.mainColorView.backgroundColor = UIColor.gray
             self.start()
         }
 
