@@ -51,12 +51,18 @@ class PTDevice : NSObject, CBCentralManagerDelegate, CBPeripheralDelegate {
     public func disconnect() {
 
         if let cm = cm {
-            if let hc08 = hc08 {
-                cm.cancelPeripheralConnection(hc08)
+            if #available(watchOS 4.0 , iOS 10.0 ,OSX 10.13, *) {
+                if (cm.isScanning) {
+                    cm.stopScan()
+                }
+            } else {
+                if hc08 == nil {
+                    cm.stopScan()
+                }
             }
 
-            if (cm.isScanning) {
-                cm.stopScan()
+            if let hc08 = hc08 {
+                cm.cancelPeripheralConnection(hc08)
             }
         }
 
@@ -94,8 +100,8 @@ class PTDevice : NSObject, CBCentralManagerDelegate, CBPeripheralDelegate {
         }
 
         cm?.stopScan()
-        cm?.connect(peripheral, options: nil)
         hc08=peripheral
+        cm?.connect(peripheral, options: nil)
     }
 
     internal func centralManager(_ central: CBCentralManager, didConnect peripheral: CBPeripheral) {

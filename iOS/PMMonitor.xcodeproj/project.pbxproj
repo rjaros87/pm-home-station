@@ -12,11 +12,18 @@
 		A304E888202E32AD00B43B5A /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = A304E886202E32AD00B43B5A /* Main.storyboard */; };
 		A304E88A202E32AD00B43B5A /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = A304E889202E32AD00B43B5A /* Assets.xcassets */; };
 		A304E88D202E32AD00B43B5A /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = A304E88B202E32AD00B43B5A /* LaunchScreen.storyboard */; };
+		A335251A203798DB009458B3 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = A3352519203798DB009458B3 /* AppDelegate.swift */; };
+		A335251C203798DB009458B3 /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = A335251B203798DB009458B3 /* ViewController.swift */; };
+		A335251E203798DB009458B3 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = A335251D203798DB009458B3 /* Assets.xcassets */; };
+		A3352521203798DB009458B3 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = A335251F203798DB009458B3 /* Main.storyboard */; };
 		A34293132030E4D200A3ED82 /* PTData+Levels.swift in Sources */ = {isa = PBXBuildFile; fileRef = A34293122030E4D200A3ED82 /* PTData+Levels.swift */; };
 		A34293172033A72800A3ED82 /* AQScaleView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A34293162033A72800A3ED82 /* AQScaleView.swift */; };
 		A342933B2034F5F000A3ED82 /* Charts.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A34293392034F5E500A3ED82 /* Charts.framework */; };
 		A342933C2034F5F000A3ED82 /* Charts.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = A34293392034F5E500A3ED82 /* Charts.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		A342933E2034FDC000A3ED82 /* InfoViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = A342933D2034FDC000A3ED82 /* InfoViewController.swift */; };
+		A34E37C120379F7C00EB3B8C /* PTData.swift in Sources */ = {isa = PBXBuildFile; fileRef = A36C11B8202E70280024E841 /* PTData.swift */; };
+		A34E37C220379F7C00EB3B8C /* PTDevice.swift in Sources */ = {isa = PBXBuildFile; fileRef = A36C11BA202E93B40024E841 /* PTDevice.swift */; };
+		A34E37C320379F7C00EB3B8C /* PTDeviceCallbacks.swift in Sources */ = {isa = PBXBuildFile; fileRef = A36C11BE202F21BC0024E841 /* PTDeviceCallbacks.swift */; };
 		A36C11B9202E70280024E841 /* PTData.swift in Sources */ = {isa = PBXBuildFile; fileRef = A36C11B8202E70280024E841 /* PTData.swift */; };
 		A36C11BB202E93B40024E841 /* PTDevice.swift in Sources */ = {isa = PBXBuildFile; fileRef = A36C11BA202E93B40024E841 /* PTDevice.swift */; };
 		A36C11BF202F21BC0024E841 /* PTDeviceCallbacks.swift in Sources */ = {isa = PBXBuildFile; fileRef = A36C11BE202F21BC0024E841 /* PTDeviceCallbacks.swift */; };
@@ -95,6 +102,13 @@
 		A304E889202E32AD00B43B5A /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		A304E88C202E32AD00B43B5A /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		A304E88E202E32AD00B43B5A /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		A308C65B2037A4520077D57B /* PMMonitor.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = PMMonitor.entitlements; sourceTree = "<group>"; };
+		A3352517203798DA009458B3 /* PMMonitor.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = PMMonitor.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		A3352519203798DB009458B3 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
+		A335251B203798DB009458B3 /* ViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewController.swift; sourceTree = "<group>"; };
+		A335251D203798DB009458B3 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
+		A3352520203798DB009458B3 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
+		A3352522203798DB009458B3 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		A34293122030E4D200A3ED82 /* PTData+Levels.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "PTData+Levels.swift"; sourceTree = "<group>"; };
 		A34293162033A72800A3ED82 /* AQScaleView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AQScaleView.swift; sourceTree = "<group>"; };
 		A34293182034D98900A3ED82 /* NOTE.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = NOTE.md; sourceTree = "<group>"; };
@@ -125,6 +139,13 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		A3352514203798DA009458B3 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		A3F855ED202F3AFD00640BD3 /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
@@ -142,6 +163,7 @@
 				A304E881202E32AD00B43B5A /* PMMonitor */,
 				A3F855E5202F3AFB00640BD3 /* PMWatch */,
 				A3F855F4202F3AFD00640BD3 /* PMWatch Extension */,
+				A3352518203798DB009458B3 /* PMMonitor Mac */,
 				A304E880202E32AD00B43B5A /* Products */,
 				A342932B2034DAFF00A3ED82 /* Frameworks */,
 			);
@@ -153,6 +175,7 @@
 				A304E87F202E32AD00B43B5A /* PMMonitor.app */,
 				A3F855E4202F3AFB00640BD3 /* PMWatch.app */,
 				A3F855F0202F3AFD00640BD3 /* PMWatch Extension.appex */,
+				A3352517203798DA009458B3 /* PMMonitor.app */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -171,6 +194,19 @@
 				A304E88E202E32AD00B43B5A /* Info.plist */,
 			);
 			path = PMMonitor;
+			sourceTree = "<group>";
+		};
+		A3352518203798DB009458B3 /* PMMonitor Mac */ = {
+			isa = PBXGroup;
+			children = (
+				A308C65B2037A4520077D57B /* PMMonitor.entitlements */,
+				A3352519203798DB009458B3 /* AppDelegate.swift */,
+				A335251B203798DB009458B3 /* ViewController.swift */,
+				A335251D203798DB009458B3 /* Assets.xcassets */,
+				A335251F203798DB009458B3 /* Main.storyboard */,
+				A3352522203798DB009458B3 /* Info.plist */,
+			);
+			path = "PMMonitor Mac";
 			sourceTree = "<group>";
 		};
 		A342932B2034DAFF00A3ED82 /* Frameworks */ = {
@@ -246,6 +282,23 @@
 			productReference = A304E87F202E32AD00B43B5A /* PMMonitor.app */;
 			productType = "com.apple.product-type.application";
 		};
+		A3352516203798DA009458B3 /* PMMonitor Mac */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = A3352526203798DB009458B3 /* Build configuration list for PBXNativeTarget "PMMonitor Mac" */;
+			buildPhases = (
+				A3352513203798DA009458B3 /* Sources */,
+				A3352514203798DA009458B3 /* Frameworks */,
+				A3352515203798DA009458B3 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = "PMMonitor Mac";
+			productName = "PMMonitor Mac";
+			productReference = A3352517203798DA009458B3 /* PMMonitor.app */;
+			productType = "com.apple.product-type.application";
+		};
 		A3F855E3202F3AFB00640BD3 /* PMWatch */ = {
 			isa = PBXNativeTarget;
 			buildConfigurationList = A3F85605202F3AFD00640BD3 /* Build configuration list for PBXNativeTarget "PMWatch" */;
@@ -294,6 +347,10 @@
 						CreatedOnToolsVersion = 9.2;
 						ProvisioningStyle = Automatic;
 					};
+					A3352516203798DA009458B3 = {
+						CreatedOnToolsVersion = 9.2;
+						ProvisioningStyle = Manual;
+					};
 					A3F855E3202F3AFB00640BD3 = {
 						CreatedOnToolsVersion = 9.2;
 						ProvisioningStyle = Automatic;
@@ -320,6 +377,7 @@
 				A304E87E202E32AD00B43B5A /* PMMonitor */,
 				A3F855E3202F3AFB00640BD3 /* PMWatch */,
 				A3F855EF202F3AFD00640BD3 /* PMWatch Extension */,
+				A3352516203798DA009458B3 /* PMMonitor Mac */,
 			);
 		};
 /* End PBXProject section */
@@ -332,6 +390,15 @@
 				A304E88D202E32AD00B43B5A /* LaunchScreen.storyboard in Resources */,
 				A304E88A202E32AD00B43B5A /* Assets.xcassets in Resources */,
 				A304E888202E32AD00B43B5A /* Main.storyboard in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		A3352515203798DA009458B3 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				A335251E203798DB009458B3 /* Assets.xcassets in Resources */,
+				A3352521203798DB009458B3 /* Main.storyboard in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -368,6 +435,18 @@
 				A36C11BF202F21BC0024E841 /* PTDeviceCallbacks.swift in Sources */,
 				A36C11B9202E70280024E841 /* PTData.swift in Sources */,
 				A304E883202E32AD00B43B5A /* AppDelegate.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		A3352513203798DA009458B3 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				A335251C203798DB009458B3 /* ViewController.swift in Sources */,
+				A34E37C220379F7C00EB3B8C /* PTDevice.swift in Sources */,
+				A34E37C320379F7C00EB3B8C /* PTDeviceCallbacks.swift in Sources */,
+				A34E37C120379F7C00EB3B8C /* PTData.swift in Sources */,
+				A335251A203798DB009458B3 /* AppDelegate.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -414,6 +493,14 @@
 				A304E88C202E32AD00B43B5A /* Base */,
 			);
 			name = LaunchScreen.storyboard;
+			sourceTree = "<group>";
+		};
+		A335251F203798DB009458B3 /* Main.storyboard */ = {
+			isa = PBXVariantGroup;
+			children = (
+				A3352520203798DB009458B3 /* Base */,
+			);
+			name = Main.storyboard;
 			sourceTree = "<group>";
 		};
 		A3F855E6202F3AFC00640BD3 /* Interface.storyboard */ = {
@@ -576,6 +663,46 @@
 			};
 			name = Release;
 		};
+		A3352524203798DB009458B3 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_ENTITLEMENTS = "PMMonitor Mac/PMMonitor.entitlements";
+				CODE_SIGN_IDENTITY = "-";
+				CODE_SIGN_STYLE = Manual;
+				COMBINE_HIDPI_IMAGES = YES;
+				DEVELOPMENT_TEAM = "";
+				INFOPLIST_FILE = "PMMonitor Mac/Info.plist";
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks";
+				MACOSX_DEPLOYMENT_TARGET = 10.10;
+				PRODUCT_BUNDLE_IDENTIFIER = net.dflab.mac.pmmonitor;
+				PRODUCT_NAME = PMMonitor;
+				PROVISIONING_PROFILE_SPECIFIER = "";
+				SDKROOT = macosx;
+				SWIFT_VERSION = 4.0;
+			};
+			name = Debug;
+		};
+		A3352525203798DB009458B3 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_ENTITLEMENTS = "PMMonitor Mac/PMMonitor.entitlements";
+				CODE_SIGN_IDENTITY = "-";
+				CODE_SIGN_STYLE = Manual;
+				COMBINE_HIDPI_IMAGES = YES;
+				DEVELOPMENT_TEAM = "";
+				INFOPLIST_FILE = "PMMonitor Mac/Info.plist";
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks";
+				MACOSX_DEPLOYMENT_TARGET = 10.10;
+				PRODUCT_BUNDLE_IDENTIFIER = net.dflab.mac.pmmonitor;
+				PRODUCT_NAME = PMMonitor;
+				PROVISIONING_PROFILE_SPECIFIER = "";
+				SDKROOT = macosx;
+				SWIFT_VERSION = 4.0;
+			};
+			name = Release;
+		};
 		A3F855FF202F3AFD00640BD3 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
@@ -667,6 +794,15 @@
 			buildConfigurations = (
 				A304E892202E32AD00B43B5A /* Debug */,
 				A304E893202E32AD00B43B5A /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		A3352526203798DB009458B3 /* Build configuration list for PBXNativeTarget "PMMonitor Mac" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				A3352524203798DB009458B3 /* Debug */,
+				A3352525203798DB009458B3 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;

@@ -2,8 +2,8 @@
 //  InfoViewController.swift
 //  PMMonitor
 //
-//  Created by Yuriy Lukyanets on 15.02.2018.
-//  Copyright © 2018 dflab. All rights reserved.
+//  Created by Jerzy Łukjaniec on 15.02.2018.
+//  License: GPL 3.0
 //
 
 import UIKit
