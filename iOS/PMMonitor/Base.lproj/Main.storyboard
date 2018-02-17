@@ -4,7 +4,6 @@
         <adaptation id="fullscreen"/>
     </device>
     <dependencies>
-        <deployment identifier="iOS"/>
         <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="13772"/>
         <capability name="Safe area layout guides" minToolsVersion="9.0"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
@@ -396,32 +395,46 @@
                         <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
-                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Uh-Oh. Some info will be here!" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="ebR-gT-Shw">
-                                <rect key="frame" x="70.5" y="323" width="234" height="21"/>
-                                <fontDescription key="fontDescription" type="system" pointSize="17"/>
-                                <nil key="textColor"/>
-                                <nil key="highlightedColor"/>
-                            </label>
-                            <button opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="MyK-Ps-vAA">
-                                <rect key="frame" x="163" y="370" width="48" height="30"/>
-                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
-                                <state key="normal" title="Okay :/"/>
+                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="qaN-Yt-z3u">
+                                <rect key="frame" x="0.0" y="622" width="375" height="45"/>
+                                <constraints>
+                                    <constraint firstAttribute="height" constant="45" id="vAk-HM-wVW"/>
+                                </constraints>
+                                <fontDescription key="fontDescription" type="boldSystem" pointSize="18"/>
+                                <state key="normal" title="Close"/>
                                 <connections>
-                                    <action selector="dismiss" destination="P9f-B4-Kh7" eventType="touchUpInside" id="JhV-nS-wJj"/>
+                                    <action selector="dismiss" destination="P9f-B4-Kh7" eventType="touchUpInside" id="a66-Zd-ulo"/>
                                 </connections>
                             </button>
+                            <wkWebView contentMode="scaleToFill" allowsLinkPreview="NO" translatesAutoresizingMaskIntoConstraints="NO" id="OeW-FD-eM5">
+                                <rect key="frame" x="0.0" y="45" width="375" height="577"/>
+                                <color key="backgroundColor" red="0.36078431370000003" green="0.38823529410000002" blue="0.4039215686" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                                <wkWebViewConfiguration key="configuration" allowsAirPlayForMediaPlayback="NO" allowsPictureInPictureMediaPlayback="NO">
+                                    <dataDetectorTypes key="dataDetectorTypes" none="YES"/>
+                                    <audiovisualMediaTypes key="mediaTypesRequiringUserActionForPlayback" none="YES"/>
+                                    <wkPreferences key="preferences" javaScriptEnabled="NO"/>
+                                </wkWebViewConfiguration>
+                            </wkWebView>
                         </subviews>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                         <constraints>
-                            <constraint firstItem="ebR-gT-Shw" firstAttribute="centerX" secondItem="Pyi-Bg-MWz" secondAttribute="centerX" id="gdH-ny-qLu"/>
-                            <constraint firstItem="ebR-gT-Shw" firstAttribute="centerY" secondItem="Pyi-Bg-MWz" secondAttribute="centerY" id="mJp-7f-jcS"/>
+                            <constraint firstItem="qaN-Yt-z3u" firstAttribute="top" secondItem="OeW-FD-eM5" secondAttribute="bottom" id="8Lo-6y-DX4"/>
+                            <constraint firstItem="QJF-wR-JFr" firstAttribute="trailing" secondItem="qaN-Yt-z3u" secondAttribute="trailing" id="H3k-VE-OX2"/>
+                            <constraint firstItem="qaN-Yt-z3u" firstAttribute="leading" secondItem="QJF-wR-JFr" secondAttribute="leading" id="Yhm-fJ-iNx"/>
+                            <constraint firstItem="QJF-wR-JFr" firstAttribute="trailing" secondItem="OeW-FD-eM5" secondAttribute="trailing" id="YjE-gN-7i2"/>
+                            <constraint firstItem="OeW-FD-eM5" firstAttribute="top" secondItem="QJF-wR-JFr" secondAttribute="top" constant="25" id="cJs-li-Xmt"/>
+                            <constraint firstItem="OeW-FD-eM5" firstAttribute="leading" secondItem="QJF-wR-JFr" secondAttribute="leading" id="dtR-VL-i3v"/>
+                            <constraint firstItem="QJF-wR-JFr" firstAttribute="bottom" secondItem="qaN-Yt-z3u" secondAttribute="bottom" id="shD-0u-jfQ"/>
                         </constraints>
                         <viewLayoutGuide key="safeArea" id="QJF-wR-JFr"/>
                     </view>
+                    <connections>
+                        <outlet property="htmlView" destination="OeW-FD-eM5" id="zzm-Qz-VGb"/>
+                    </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="Yab-KE-riK" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="1740" y="76"/>
+            <point key="canvasLocation" x="1740" y="74.662668665667169"/>
         </scene>
     </scenes>
 </document>
