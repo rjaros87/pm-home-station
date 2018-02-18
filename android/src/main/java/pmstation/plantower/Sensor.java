@@ -136,7 +136,9 @@ public class Sensor {
     }
 
     public void disconnectDevice() {
-        serialPort.close();
+        if (serialPort != null) {
+            serialPort.close();
+        }
         serialPortConnected = false;
     }
 

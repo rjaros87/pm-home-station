@@ -97,8 +97,6 @@ public class ValuesFragment extends Fragment implements IPlanTowerObserver {
                 currentValue = values.get(values.size() - 1);
             }
         }
-
-        update(currentValue);
     }
 
     @Override
@@ -110,6 +108,7 @@ public class ValuesFragment extends Fragment implements IPlanTowerObserver {
         changeMainValue();
         changePM25Norm();
         changePM10Norm();
+        update(currentValue);
     }
 
     @Override
