@@ -138,7 +138,7 @@ public class ConfigurationDlg {
         
         JCheckBox chbxSystemTray = new JCheckBox("");
 
-        chbxSystemTray.setSelected(Config.instance().to().getBoolean(Config.Entry.SYSTEM_TRAY.key(), false));
+        chbxSystemTray.setSelected(!SystemTray.isSupported() || Config.instance().to().getBoolean(Config.Entry.SYSTEM_TRAY.key(), false));
         chbxSystemTray.setBounds(393, 74, 76, 23);
         chbxSystemTray.setEnabled(SystemTray.isSupported());
         panelUI.add(chbxSystemTray);
@@ -205,11 +205,13 @@ public class ConfigurationDlg {
         panelGeneral.add(textInterval);
 
         JLabel lblWarnUserOSX = new JLabel("<html>Warn before close / disconnect if device is not detached:<br><small><i>- a workaround for macOS and faulty PL2303 drivers</i></small></html>");
+        lblWarnUserOSX.setEnabled(SystemUtils.IS_OS_MAC_OSX);
         lblWarnUserOSX.setBounds(6, 50, 363, 45);
         panelGeneral.add(lblWarnUserOSX);
         
         JCheckBox chbxWarnOSX = new JCheckBox("");
-        chbxWarnOSX.setSelected(Config.instance().to().getBoolean(Config.Entry.WARN_ON_OSX_TO_DETACH.key(), SystemUtils.IS_OS_MAC_OSX));
+        chbxWarnOSX.setEnabled(SystemUtils.IS_OS_MAC_OSX);
+        chbxWarnOSX.setSelected(!SystemUtils.IS_OS_MAC_OSX || Config.instance().to().getBoolean(Config.Entry.WARN_ON_OSX_TO_DETACH.key(), SystemUtils.IS_OS_MAC_OSX));
         chbxWarnOSX.addMouseListener(new MouseAdapter() {
             @Override
             public void mouseClicked(MouseEvent e) {

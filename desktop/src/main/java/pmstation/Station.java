@@ -23,6 +23,7 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
+import java.awt.SystemTray;
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
@@ -92,15 +93,19 @@ public class Station {
         SwingUtilities.updateComponentTreeUI(frame);
         ToolTipManager.sharedInstance().setDismissDelay(Integer.MAX_VALUE);
         setIcon(frame);
-        if (Config.instance().to().getBoolean(Config.Entry.SYSTEM_TRAY.key(), false)) {
+
+        // Windows 10 strange behaviour on multiscreen and multidisplay
+        if (SystemUtils.IS_OS_MAC_OSX && Config.instance().to().getBoolean(Config.Entry.SYSTEM_TRAY.key(), false)) {
             frame.setType(Type.UTILITY);
         }
 
         frame.setMinimumSize(new Dimension(Constants.MIN_WINDOW_WIDTH, Constants.MIN_WINDOW_HEIGHT));
         frame.setPreferredSize(new Dimension(Constants.WINDOW_WIDTH, Constants.WINDOW_HEIGHT));
 
-        frame.setDefaultCloseOperation(
-                Config.instance().to().getBoolean(Config.Entry.SYSTEM_TRAY.key(), false) ? JFrame.HIDE_ON_CLOSE : JFrame.EXIT_ON_CLOSE);
+        if (SystemTray.isSupported()) {
+            frame.setDefaultCloseOperation(
+                    Config.instance().to().getBoolean(Config.Entry.SYSTEM_TRAY.key(), false) ? JFrame.HIDE_ON_CLOSE : JFrame.EXIT_ON_CLOSE);
+        }
         frame.addWindowListener(new WindowAdapter() {
             @Override
             public void windowClosing(WindowEvent windowEvent) {
@@ -382,8 +387,10 @@ public class Station {
         if (SystemUtils.IS_OS_MAC_OSX) {
             new MacOSIntegration(this).integrate();
         }
-        if (Config.instance().to().getBoolean(Config.Entry.SYSTEM_TRAY.key(), Constants.SYSTEM_TRAY)) {
+        if (SystemTray.isSupported() && Config.instance().to().getBoolean(Config.Entry.SYSTEM_TRAY.key(), Constants.SYSTEM_TRAY)) {
             new NativeTrayIntegration(this).integrate();
+        } else {
+            logger.info("System tray integration is either not supported or disabled in configuration.");
         }
     }
 
@@ -442,7 +449,7 @@ public class Station {
     }
     
     private void setDimensions(JFrame frame, int x, int y, int width, int height) {
-        if (x >= 0 && y >= 0 && width > 0 && height > 0) {
+        if (width > 0 && height > 0) {
             frame.setLocation(x, y);
             frame.setSize(width, height);
         }
@@ -455,6 +462,7 @@ public class Station {
         String display = Config.instance().to().getString(Config.Entry.SCREEN.key(), "-");
         GraphicsDevice[] screens = ge.getScreenDevices();
         if (screens.length == 1) {
+            logger.info("Only one screen found - going to set the previous dimensions and position");
             setDimensions(frame, 
                     Config.instance().to().getInt(Config.Entry.POS_X.key(), -1),
                     Config.instance().to().getInt(Config.Entry.POS_Y.key(), -1),
@@ -462,18 +470,27 @@ public class Station {
                     Config.instance().to().getInt(Config.Entry.POS_HEIGHT.key(), -1));
         } else {
             for (GraphicsDevice screen : screens) { // if multiple screens available then try to open on saved display
+                logger.info("Checking screen: {} in hunt for the last remembered one: {}", screen.getIDstring(), display);
                 if (screen.getIDstring().contentEquals(display)) {
+                    logger.info("\tFound remembered dimensions and position for this screen: {}. Going to use it and set it.", display);
                     JFrame dummy = new JFrame(screen.getDefaultConfiguration());
                     frame.setLocationRelativeTo(dummy);
                     dummy.dispose();
                     Rectangle screenBounds = screen.getDefaultConfiguration().getBounds();
                     Point pos = new Point(Config.instance().to().getInt(Config.Entry.SCREEN_POS_X.key(), -1),
                                           Config.instance().to().getInt(Config.Entry.SCREEN_POS_Y.key(), -1));
+
+                    logger.info("\tGoing to set position to: {}, {} relatively to the screen...", pos.x, pos.y);
+                    logger.info("\tScreen bounds are: {}, {} and {}x{}...", screenBounds.x, screenBounds.y, screenBounds.width, screenBounds.height);
+
                     if (pos.x >= 0 && pos.y >= 0) {
                         pos.x += screenBounds.x;
                         pos.y += screenBounds.y;
-                        logger.info(" new pos {} {} ", pos.x, pos.y);
+                        logger.info("\tNew position to target the screen: {} {} ", pos.x, pos.y);
                     }
+                    logger.info("\tGoing to set position to: {}, {} and dimensions to: {}x{}", pos.x, pos.y,
+                            Config.instance().to().getInt(Config.Entry.SCREEN_POS_WIDTH.key(), -1),
+                            Config.instance().to().getInt(Config.Entry.SCREEN_POS_HEIGHT.key(), -1));
                     setDimensions(frame,
                             pos.x,
                             pos.y,
