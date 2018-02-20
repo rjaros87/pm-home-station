@@ -101,9 +101,7 @@ public class PlanTowerSensor {
         return () -> {
             try {
                 if (serialUART.isConnected()) {
-                    byte[] readBuffer = serialUART.readBytes(PlanTowerDevice.DATA_LENGTH); // 2 * PlanTowerDevice.DATA_LENGTH); *)
-                    // *)  when we read out everything from the port to ignore all data and garbage,
-                    // we can skip reading 2 times as much bytes just to find the beginning of data. 
+                    byte[] readBuffer = serialUART.readBytes(PlanTowerDevice.DATA_LENGTH);
                     if (readBuffer != null) {
                         notify(PlanTowerDevice.parse(readBuffer));
                     } else {
