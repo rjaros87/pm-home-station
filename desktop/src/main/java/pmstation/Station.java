@@ -102,10 +102,10 @@ public class Station {
         frame.setMinimumSize(new Dimension(Constants.MIN_WINDOW_WIDTH, Constants.MIN_WINDOW_HEIGHT));
         frame.setPreferredSize(new Dimension(Constants.WINDOW_WIDTH, Constants.WINDOW_HEIGHT));
 
-        if (SystemTray.isSupported()) {
-            frame.setDefaultCloseOperation(
-                    Config.instance().to().getBoolean(Config.Entry.SYSTEM_TRAY.key(), false) ? JFrame.HIDE_ON_CLOSE : JFrame.EXIT_ON_CLOSE);
-        }
+        frame.setDefaultCloseOperation(
+                SystemTray.isSupported() && Config.instance().to().getBoolean(Config.Entry.SYSTEM_TRAY.key(), false) ?
+                        JFrame.HIDE_ON_CLOSE : JFrame.EXIT_ON_CLOSE);
+
         frame.addWindowListener(new WindowAdapter() {
             @Override
             public void windowClosing(WindowEvent windowEvent) {

@@ -138,7 +138,7 @@ public class ConfigurationDlg {
         
         JCheckBox chbxSystemTray = new JCheckBox("");
 
-        chbxSystemTray.setSelected(!SystemTray.isSupported() || Config.instance().to().getBoolean(Config.Entry.SYSTEM_TRAY.key(), false));
+        chbxSystemTray.setSelected(SystemTray.isSupported() && Config.instance().to().getBoolean(Config.Entry.SYSTEM_TRAY.key(), false));
         chbxSystemTray.setBounds(393, 74, 76, 23);
         chbxSystemTray.setEnabled(SystemTray.isSupported());
         panelUI.add(chbxSystemTray);

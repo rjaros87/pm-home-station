@@ -59,7 +59,8 @@ public class Config {
     }
     
     private static final Logger logger = LoggerFactory.getLogger(Config.class);
-    private static final String CONFIG_NAME = SystemUtils.IS_OS_WINDOWS ? "pmstationusb.properties" : ".pmstationusbconfig";
+    private static final String LEGACY_CONFIG_NAME = SystemUtils.IS_OS_WINDOWS ? "pmstationusb.properties" : ".pmstationusbconfig";
+    private static final String CONFIG_NAME = SystemUtils.IS_OS_WINDOWS ? "pmhomestation.properties" : ".pmhomestationconfig";
     
     private static Config instance = null;
     private static final Object LOCK = new Object();
@@ -77,7 +78,14 @@ public class Config {
         
         // workaround:
         HomeDirectoryLocationStrategy location = new HomeDirectoryLocationStrategy();
+        File legacyConfigFile = new File(location.getHomeDirectory(), LEGACY_CONFIG_NAME);
         File configFile = new File(location.getHomeDirectory(), CONFIG_NAME);
+        // migration from deprecated config filename
+        if (legacyConfigFile.exists() && !configFile.exists()) {
+            logger.info("Going to rename legacy config file: {} to: {}", legacyConfigFile, configFile);
+            legacyConfigFile.renameTo(configFile);
+        }
+        
         BuilderParameters params = new Parameters().properties()
                 .setFile(configFile)
                 .setEncoding("UTF-8");
