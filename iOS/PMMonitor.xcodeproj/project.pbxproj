@@ -29,6 +29,7 @@
 		A36C11BB202E93B40024E841 /* PTDevice.swift in Sources */ = {isa = PBXBuildFile; fileRef = A36C11BA202E93B40024E841 /* PTDevice.swift */; };
 		A36C11BF202F21BC0024E841 /* PTDeviceCallbacks.swift in Sources */ = {isa = PBXBuildFile; fileRef = A36C11BE202F21BC0024E841 /* PTDeviceCallbacks.swift */; };
 		A36C11C1202F2BDD0024E841 /* ViewController+Chart.swift in Sources */ = {isa = PBXBuildFile; fileRef = A36C11C0202F2BDD0024E841 /* ViewController+Chart.swift */; };
+		A3AEA08B203F3BBB00C4420F /* Settings.bundle in Resources */ = {isa = PBXBuildFile; fileRef = A3AEA08A203F3BBB00C4420F /* Settings.bundle */; };
 		A3CCDC80203897F7003ADDE9 /* About.html in Resources */ = {isa = PBXBuildFile; fileRef = A3CCDC7F203897F7003ADDE9 /* About.html */; };
 		A3F855E8202F3AFC00640BD3 /* Interface.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = A3F855E6202F3AFC00640BD3 /* Interface.storyboard */; };
 		A3F855EA202F3AFC00640BD3 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = A3F855E9202F3AFC00640BD3 /* Assets.xcassets */; };
@@ -121,6 +122,7 @@
 		A36C11BA202E93B40024E841 /* PTDevice.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PTDevice.swift; sourceTree = "<group>"; };
 		A36C11BE202F21BC0024E841 /* PTDeviceCallbacks.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PTDeviceCallbacks.swift; sourceTree = "<group>"; };
 		A36C11C0202F2BDD0024E841 /* ViewController+Chart.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ViewController+Chart.swift"; sourceTree = "<group>"; };
+		A3AEA08A203F3BBB00C4420F /* Settings.bundle */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.plug-in"; path = Settings.bundle; sourceTree = "<group>"; };
 		A3CCDC7F203897F7003ADDE9 /* About.html */ = {isa = PBXFileReference; lastKnownFileType = text.html; path = About.html; sourceTree = "<group>"; };
 		A3F855E4202F3AFB00640BD3 /* PMWatch.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = PMWatch.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		A3F855E7202F3AFC00640BD3 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Interface.storyboard; sourceTree = "<group>"; };
@@ -238,6 +240,7 @@
 				A304E88E202E32AD00B43B5A /* Info.plist */,
 				A344C5EA2038A936001572CD /* About.png */,
 				A3CCDC7F203897F7003ADDE9 /* About.html */,
+				A3AEA08A203F3BBB00C4420F /* Settings.bundle */,
 			);
 			name = Resources;
 			sourceTree = "<group>";
@@ -405,6 +408,7 @@
 				A304E88D202E32AD00B43B5A /* LaunchScreen.storyboard in Resources */,
 				A304E88A202E32AD00B43B5A /* Assets.xcassets in Resources */,
 				A304E888202E32AD00B43B5A /* Main.storyboard in Resources */,
+				A3AEA08B203F3BBB00C4420F /* Settings.bundle in Resources */,
 				A344C5EB2038A936001572CD /* About.png in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
