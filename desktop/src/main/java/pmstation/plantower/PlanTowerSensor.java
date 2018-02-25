@@ -97,6 +97,10 @@ public class PlanTowerSensor {
         return serialUART.isConnected();
     }
     
+    public String portDetails() {
+        return serialUART.portDetails();
+    }
+    
     private Runnable getMeasurementsRunnable() {
         return () -> {
             try {

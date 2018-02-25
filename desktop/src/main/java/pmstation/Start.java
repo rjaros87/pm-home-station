@@ -40,7 +40,7 @@ public class Start {
             } else if (line.hasOption("version")) {
                 System.out.println("version: " + Constants.VERSION);
             } else {
-                logger.info("Starting pm-home-station ({} v.{})...", Constants.PROJECT_URL, Constants.VERSION);
+                logger.info("Starting pm-home-station, v.{} ({})...", Constants.VERSION, Constants.PROJECT_URL);
                 setLookAndFeel();
                 PlanTowerSensor planTowerSensor = new PlanTowerSensor();
                 Station station = new Station(planTowerSensor);

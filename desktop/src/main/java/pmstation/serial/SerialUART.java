@@ -100,6 +100,25 @@ public class SerialUART implements ISerialUART {
         return comPort != null && comPort.isOpen();
     }
 
+    public String portDetails() {
+        String details;
+        if (comPort != null && comPort.isOpen()) {
+            details = String.format(
+                    "<html><table><tr><td><b>%s</b></td><td>%s</td></tr>"
+                    + "<tr><td><b>%s</b></td><td>%s</td></tr>"
+                    + "<tr><td><b>%s</b></td><td>%d</td></tr></table></html>",
+                    "Port name: ",
+                    comPort.getSystemPortName(),
+                    "Port description: ",
+                    comPort.getDescriptivePortName(),
+                    "Baud rate: ",
+                    comPort.getBaudRate());
+        } else {
+            details = "Not connected"; 
+        }
+        return details;
+    }
+    
     private boolean isSerialPort(SerialPort sp) {
         String portName = sp.getSystemPortName().toLowerCase();
         String portDesc = sp.getDescriptivePortName().toLowerCase();

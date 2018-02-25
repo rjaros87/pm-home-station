@@ -68,6 +68,7 @@ import pmstation.observers.ChartObserver;
 import pmstation.observers.ConsoleObserver;
 import pmstation.observers.LabelObserver;
 import pmstation.plantower.PlanTowerSensor;
+import java.awt.FlowLayout;
 
 public class Station {
     
@@ -133,6 +134,7 @@ public class Station {
         chart.getStyler().setLegendLayout(LegendLayout.Horizontal);
         
         JPanel chartPanel = new XChartPanel<XYChart>(chart);
+        FlowLayout flowLayout = (FlowLayout) chartPanel.getLayout();
         chartPanel.addMouseListener(new MouseAdapter() {
             @Override
             public void mouseEntered(MouseEvent e) {
@@ -164,6 +166,7 @@ public class Station {
                 SwingUtilities.invokeLater(() -> {
                     if (planTowerSensor.connectDevice()) {
                         btnConnect.setText("Disconnect"); // TODO move this to label observer...
+                        btnConnect.setToolTipText(planTowerSensor.portDetails());
                         scheduleMeasurements();
                     }
                     btnConnect.setEnabled(true);
@@ -173,6 +176,7 @@ public class Station {
                 diaplayWarnForDetach(frame);
                 planTowerSensor.disconnectDevice();
                 btnConnect.setText("Connect");
+                btnConnect.setToolTipText(planTowerSensor.portDetails());
                 break;
             }
             btnConnect.setEnabled(true);
@@ -181,7 +185,7 @@ public class Station {
         
         final JPanel panelMain = new JPanel();
         
-        panelMain.setLayout(new MigLayout("", "[50px][100px:120px,grow][150px]", "[29px][16px][338px][16px]"));
+        panelMain.setLayout(new MigLayout("", "[50px][100px:120px,grow][150px]", "[:29px:29px][16px][338px,grow][16px]"));
         panelMain.add(btnConnect, "cell 0 0,alignx left,aligny center");
         
         try {
@@ -225,7 +229,7 @@ public class Station {
         JPanel panelMeasurements = new JPanel();
         panelMeasurements.setBorder(new TitledBorder(null, "<html><b>Last measurements</b></html>", TitledBorder.LEADING, TitledBorder.TOP, null, null));
         panelMain.add(panelMeasurements, "cell 0 1 3 1,grow");
-        panelMeasurements.setLayout(new MigLayout("", "[:20px:40px][1px:1px:1px][60px:80px:80px,grow 60][1px:1px:3px][:20px:40px][1px:1px:1px][80px:80px:100px,grow][1px:1px:3px][:20px:40px][1px:1px:1px][80px:80px:100px,grow]", "[::20px][::20px][]"));
+        panelMeasurements.setLayout(new MigLayout("", "[:20px:40px][1px:1px:1px][60px:80px:80px,grow 60][1px:1px:3px][:20px:40px][1px:1px:1px][80px:80px:100px,grow][1px:1px:3px][:20px:40px][1px:1px:1px][80px:80px:100px,grow]", "[::20px][::2px][::15px]"));
         
                 JLabel pm1_0Label = new JLabel("PM 1.0:");
                 panelMeasurements.add(pm1_0Label, "cell 0 0,alignx left,aligny top");
@@ -250,9 +254,12 @@ public class Station {
                                                         panelMeasurements.add(pm10, "flowx,cell 10 0,alignx leading,aligny top");
                                                         pm10.setText("----");
                                                         labelsToBeUpdated.put("pm10", pm10);
-                                                        
+
+                                                        JLabel pmMeasurementTime_label = new JLabel("<html><small>Time: </small></html>");
+                                                        panelMeasurements.add(pmMeasurementTime_label, "cell 0 2,alignx left,aligny top");
+
                                                         JLabel pmMeasurementTime = new JLabel();
-                                                        panelMeasurements.add(pmMeasurementTime, "cell 2 2 9 1");
+                                                        panelMeasurements.add(pmMeasurementTime, "cell 2 2 6 1,aligny top");
                                                         labelsToBeUpdated.put("measurementTime", pmMeasurementTime);
 
                                                         JLabel lblAqi = new JLabel("<html><small>*) AQI colors</small></html>");
@@ -264,10 +271,8 @@ public class Station {
                                                             }
                                                         });
                                                         lblAqi.setToolTipText("<html>" + AQIAbout.getHtmlTable() + "</html>");
-                                                        panelMeasurements.add(lblAqi, "cell 10 2,alignx right");
+                                                        panelMeasurements.add(lblAqi, "cell 8 2 3 1,alignx left");
                                                         
-                                                        JLabel pmMeasurementTime_label = new JLabel("<html><small>Time: </small></html>");
-                                                        panelMeasurements.add(pmMeasurementTime_label, "cell 0 2,alignx left");
         panelMain.add(chartPanel, "cell 0 2 3 1,grow");
 
         JPanel panelStatus = new JPanel();
@@ -373,6 +378,7 @@ public class Station {
                 labelStatus.setText("Status: Device not found");
                 planTowerSensor.disconnectDevice();
             }
+            connectionBtn.setToolTipText(planTowerSensor.portDetails());
             connectionBtn.setEnabled(true);
         });
     }
