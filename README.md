@@ -156,8 +156,9 @@ The app screenshots gallery can be found [here](https://rjaros87.github.io/pm-ho
 - `gradlew android:build` - create APK-s for Android devices
 
 ## Known issues and workarounds
-#### Windows 10:
-There is a known issue with "odd" mouse behaviour (mouse cursor is jumping over the Windows desktop) when the PM device is being connected via FT232 adapter under Windows 10.
+#### Windows 10/7:
+There is a known issue with "odd" mouse behaviour (mouse cursor is jumping over the Windows desktop) 
+when the PM device is being connected via FT232 adapter under Windows 10 and 7.
 Somehow "Microsoft Serial Ballpoint" device is installed and visible under Mouse Devices in the Device Manager tool. 
 You can prevent enabling "Ballpoint device" using following link or ad hoc disable it in the Device Manager.
 Please refer to following location to turn off permanently using registry editor:
