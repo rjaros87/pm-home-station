@@ -3,6 +3,7 @@ version '1.1.0'
 
 apply plugin: 'java'
 apply plugin: 'application'
+apply plugin: 'com.github.johnrengelman.shadow'
 apply plugin: 'edu.sc.seis.launch4j'
 apply plugin: 'edu.sc.seis.macAppBundle'
 
@@ -22,41 +23,45 @@ configurations {
     extraLibs
 }
 
-// TODO ensure fat (uber) jar is created separately (by using shadow plugin?) to avoid having redundant uberjar + libs for .zip and DMG distribution versions
-jar {
+shadowJar {
+    baseName = project.name
+    classifier = null
+    version = version
+    
     manifest {
-        attributes(
-                'Implementation-Title': 'PM Home Station',
-                'Implementation-Version': version,
-                'Main-Class': mainClassName
-        )
+        attributes 'Implementation-Title': "${local_appName} - the standalone application (uber) JAR"
+        attributes 'Implementation-Version': version
+        attributes 'Implementation-Vendor': local_projectUrl
+        attributes 'Built-By': System.getProperty('user.name')
+        attributes 'Built-JDK': System.getProperty('java.version')
+        attributes 'Build-Time': new Date().format("yyyy-MM-dd'T'HH:mm:ssZ")
     }
-    from {
-        configurations.extraLibs.collect { it.isDirectory() ? it : zipTree(it) }
-    }
-
-    exclude('META-INF/*.txt')
+    
+    exclude 'META-INF/*.txt'
 }
 
 launch4j {
-    mainClassName = "${local_mainClassName}"
-    icon = "${projectDir}/app-icon.ico"
+    copyConfigurable = project.tasks.shadowJar.outputs.files
+    mainClassName = local_mainClassName
+    icon = "${projectDir}/icons/app-icon.ico"
     outfile = "${project.name}-${version}.exe"
-    supportUrl = "${local_projectUrl}"
-    companyName = "${local_projectUrl}"
-    version = "${version}"
-    textVersion = "${version}"
-    productName = "${local_appName}"
+    supportUrl = local_projectUrl
+    companyName = local_projectUrl
+    version = version
+    textVersion = version
+    productName = local_appName
     copyright = 'Copyright (C), licence: GPL-3.0'
 }
 
 macAppBundle {
-    appName = "${local_appName}"
-    mainClassName = "${local_mainClassName}"
-    icon = 'dmg-myIcon.icns'
+    appName = local_appName
+    mainClassName = local_mainClassName
+    runtimeConfigurationName = 'shadow'
+    jarTask = 'shadowJar'
+    icon = 'icons/dmg-myIcon.icns'
     bundleJRE = false
     javaProperties.put('apple.laf.useScreenMenuBar', 'true')
-    backgroundImage = 'dmg-bg.png'
+    backgroundImage = 'icons/dmg-bg.png'
     appIconX = 50
     appIconY = 120
     appFolderX = 330
