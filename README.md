@@ -125,6 +125,7 @@ The app screenshots gallery can be found [here](https://rjaros87.github.io/pm-ho
 - Desktop (standalone) app
   - Windows 7 & 10
     - before running the app, open the Device Manager, expand `Ports (COM & LPT)` and find your adapter. Ensure that the Device status states `This device is working properly`. If not, then you probably need to install older drivers for this adapter (a workaround).
+    - please refer to the Known Issues section in case of odd mouse behavior under Windows when PM is connected via FT232
   - Linux Ubuntu 16.04
     - the ownership of device `/dev/ttyUSB0` is `dialout` group so must add yourself to the group and re-login or run with `sudo` (not recommended)
   - macOS Sierra 10.12
