@@ -3,11 +3,15 @@ version '1.1.0'
 
 apply plugin: 'java'
 apply plugin: 'application'
+apply plugin: 'edu.sc.seis.launch4j'
 apply plugin: 'edu.sc.seis.macAppBundle'
 
-sourceCompatibility = 1.8
+def local_appName = 'PM Home Station'
+def local_mainClassName = 'pmstation.Start'
+def local_projectUrl = 'https://github.com/rjaros87/pm-home-station'
 
-mainClassName = 'pmstation.Start'
+sourceCompatibility = 1.8
+mainClassName = local_mainClassName
 
 repositories {
     mavenCentral()
@@ -34,11 +38,23 @@ jar {
     exclude('META-INF/*.txt')
 }
 
+launch4j {
+    mainClassName = "${local_mainClassName}"
+    icon = "${projectDir}/app-icon.ico"
+    outfile = "${project.name}-${version}.exe"
+    supportUrl = "${local_projectUrl}"
+    companyName = "${local_projectUrl}"
+    version = "${version}"
+    textVersion = "${version}"
+    productName = "${local_appName}"
+    copyright = 'Copyright (C), licence: GPL-3.0'
+}
+
 macAppBundle {
-    appName = 'PM Home Station'
-    mainClassName = 'pmstation.Start'
+    appName = "${local_appName}"
+    mainClassName = "${local_mainClassName}"
     icon = 'dmg-myIcon.icns'
-    bundleJRE = true
+    bundleJRE = false
     javaProperties.put('apple.laf.useScreenMenuBar', 'true')
     backgroundImage = 'dmg-bg.png'
     appIconX = 50
