@@ -39,7 +39,8 @@ public class Config {
         SCREEN_POS_X("screen.pos.x"),
         SCREEN_POS_Y("screen.pos.y"),
         SCREEN_POS_WIDTH("screen.pos.width"),
-        SCREEN_POS_HEIGHT("screen.pos.height");
+        SCREEN_POS_HEIGHT("screen.pos.height"),
+        PREFERRED_DEVICES("preferred.devices");
         
         
         private String key;

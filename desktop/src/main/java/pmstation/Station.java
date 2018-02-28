@@ -68,7 +68,6 @@ import pmstation.observers.ChartObserver;
 import pmstation.observers.ConsoleObserver;
 import pmstation.observers.LabelObserver;
 import pmstation.plantower.PlanTowerSensor;
-import java.awt.FlowLayout;
 
 public class Station {
     
@@ -134,7 +133,6 @@ public class Station {
         chart.getStyler().setLegendLayout(LegendLayout.Horizontal);
         
         JPanel chartPanel = new XChartPanel<XYChart>(chart);
-        FlowLayout flowLayout = (FlowLayout) chartPanel.getLayout();
         chartPanel.addMouseListener(new MouseAdapter() {
             @Override
             public void mouseEntered(MouseEvent e) {

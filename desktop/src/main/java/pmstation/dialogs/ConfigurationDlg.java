@@ -14,7 +14,11 @@ import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.Set;
 
+import javax.swing.DefaultListModel;
 import javax.swing.GroupLayout;
 import javax.swing.GroupLayout.Alignment;
 import javax.swing.JButton;
@@ -22,15 +26,24 @@ import javax.swing.JCheckBox;
 import javax.swing.JDialog;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
+import javax.swing.JList;
 import javax.swing.JPanel;
+import javax.swing.JScrollPane;
 import javax.swing.JSpinner;
 import javax.swing.JTabbedPane;
+import javax.swing.JTextField;
 import javax.swing.LayoutStyle.ComponentPlacement;
+import javax.swing.ListModel;
+import javax.swing.ListSelectionModel;
+import javax.swing.ScrollPaneConstants;
 import javax.swing.SpinnerNumberModel;
 import javax.swing.SwingConstants;
+import javax.swing.UIManager;
 import javax.swing.border.TitledBorder;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
+import javax.swing.event.DocumentEvent;
+import javax.swing.event.DocumentListener;
 
 import org.apache.commons.lang3.SystemUtils;
 import org.slf4j.Logger;
@@ -38,6 +51,7 @@ import org.slf4j.LoggerFactory;
 
 import pmstation.configuration.Config;
 import pmstation.configuration.Constants;
+import pmstation.serial.SerialUART;
 
 public class ConfigurationDlg {
 
@@ -48,6 +62,7 @@ public class ConfigurationDlg {
     private String title;
     private JSpinner textInterval;
     private JDialog frame = null;
+    private JTextField textAddDevice;
     
     public ConfigurationDlg(JFrame parent, String title) {
         this.mainFrame = parent;
@@ -65,7 +80,7 @@ public class ConfigurationDlg {
         }
         frame = new JDialog(mainFrame, title, ModalityType.APPLICATION_MODAL);
         frame.setResizable(false);
-        frame.setBounds(350, 350, 515, 426);
+        frame.setBounds(350, 350, 588, 496);
         frame.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
         frame.setLocationRelativeTo(mainFrame);
         Container mainCfg = frame.getContentPane();
@@ -79,11 +94,187 @@ public class ConfigurationDlg {
         JPanel panelUI = new JPanel();
         panelUI.setBorder(new TitledBorder(null, "<html><b>User Interface</b></html>", TitledBorder.LEADING, TitledBorder.TOP, null, null));
         
+        JPanel panelDevice = new JPanel();
+        panelDevice.setBorder(new TitledBorder(null, "<html><b>Device</b></html>", TitledBorder.LEADING, TitledBorder.TOP, null, null));
+                
         JPanel panelBottom = new JPanel();
         panelBottom.setBorder(null);
         
         tabbedPane.addTab("General", panelGeneral);
         tabbedPane.addTab("User Interface", panelUI);
+        tabbedPane.addTab("Device", panelDevice);
+                panelDevice.setLayout(null);
+        
+                JList<String> listAvailableDevices = new JList<String>();
+                JLabel lblWarnUserOSX = new JLabel("<html>Warn before close / disconnect if device is not detached:<br><small><i>- a workaround for macOS and faulty PL2303 drivers</i></small></html>");
+                lblWarnUserOSX.setBounds(6, 22, 358, 29);
+                panelDevice.add(lblWarnUserOSX);
+                lblWarnUserOSX.setEnabled(SystemUtils.IS_OS_MAC_OSX);
+                
+                JCheckBox chbxWarnOSX = new JCheckBox("");
+                chbxWarnOSX.setBounds(512, 22, 37, 23);
+                panelDevice.add(chbxWarnOSX);
+                chbxWarnOSX.setEnabled(SystemUtils.IS_OS_MAC_OSX);
+                chbxWarnOSX.setSelected(!SystemUtils.IS_OS_MAC_OSX || Config.instance().to().getBoolean(Config.Entry.WARN_ON_OSX_TO_DETACH.key(), SystemUtils.IS_OS_MAC_OSX));
+                chbxWarnOSX.addMouseListener(new MouseAdapter() {
+                    @Override
+                    public void mouseClicked(MouseEvent e) {
+                        Config.instance().to().setProperty(Config.Entry.WARN_ON_OSX_TO_DETACH.key(), chbxWarnOSX.isSelected());
+                    }
+                });
+                
+                JLabel lblPreferredDevices = new JLabel("<html>Preferred devices <small>(priority top -> down)</small>:</html>");
+                lblPreferredDevices.setBounds(6, 63, 260, 16);
+                panelDevice.add(lblPreferredDevices);
+                
+                JList<String> listPreferredDevices = new JList<String>();
+                JScrollPane listPreferredDevicesScroller = new JScrollPane();
+                listPreferredDevicesScroller.setViewportView(listPreferredDevices);
+                listPreferredDevicesScroller.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
+                listPreferredDevicesScroller.setBounds(6, 81, 502, 80);
+                listPreferredDevices.setModel(getPreferredDevices());
+                panelDevice.add(listPreferredDevicesScroller);
+                
+                JButton btnPriorityUp = new JButton("↑");
+                btnPriorityUp.setToolTipText("Up");
+                btnPriorityUp.setBounds(507, 81, 42, 29);
+                btnPriorityUp.addMouseListener(new MouseAdapter() {
+                    @Override
+                    public void mouseClicked(MouseEvent e) {
+                        int idx = listPreferredDevices.getSelectedIndex();
+                        if (idx > 0) {
+                            swapInList((DefaultListModel<String>)listPreferredDevices.getModel(), idx, idx - 1);
+                            listPreferredDevices.setSelectedIndex(idx - 1);
+                            listPreferredDevices.ensureIndexIsVisible(idx - 1);
+                            savePreferredDevices(listPreferredDevices);
+                        }
+                    }
+                });
+                panelDevice.add(btnPriorityUp);
+                
+                JButton btwPriorityRemove = new JButton("✂");
+                btwPriorityRemove.addMouseListener(new MouseAdapter() {
+                    @Override
+                    public void mouseClicked(MouseEvent e) {
+                        DefaultListModel<String> model = (DefaultListModel<String>) listPreferredDevices.getModel();
+                        if (listPreferredDevices.getSelectedIndices().length > 0) {
+                            int[] tmp = listPreferredDevices.getSelectedIndices();
+                            int[] selectedIndices = listPreferredDevices.getSelectedIndices();
+                            for (int i = tmp.length-1; i >=0; i--) {
+                                selectedIndices = listPreferredDevices.getSelectedIndices();
+                                model.removeElementAt(selectedIndices[i]);
+                                savePreferredDevices(listPreferredDevices);
+                            }
+                        }
+                    }
+                });
+                btwPriorityRemove.setToolTipText("Remove");
+                btwPriorityRemove.setBounds(507, 106, 42, 29);
+                panelDevice.add(btwPriorityRemove);
+                
+                JButton btnPriorityDown = new JButton("↓");
+                btnPriorityDown.addMouseListener(new MouseAdapter() {
+                    @Override
+                    public void mouseClicked(MouseEvent e) {
+                        int idx = listPreferredDevices.getSelectedIndex();
+                        if (idx + 1 < listPreferredDevices.getModel().getSize()) {
+                            swapInList((DefaultListModel<String>)listPreferredDevices.getModel(), idx, idx + 1);
+                            listPreferredDevices.setSelectedIndex(idx + 1);
+                            listPreferredDevices.ensureIndexIsVisible(idx + 1);
+                        }
+                        savePreferredDevices(listPreferredDevices);
+                        listPreferredDevices.updateUI();
+                    }
+                });
+                btnPriorityDown.setToolTipText("Down");
+                btnPriorityDown.setBounds(507, 132, 42, 29);
+                panelDevice.add(btnPriorityDown);
+                
+                JLabel lblAddPreferredDevice = new JLabel("Add preferred device:");
+                lblAddPreferredDevice.setBounds(6, 173, 142, 16);
+                panelDevice.add(lblAddPreferredDevice);
+                
+                JButton btnAddDevice = new JButton("Add");
+                btnAddDevice.addMouseListener(new MouseAdapter() {
+                    @Override
+                    public void mouseClicked(MouseEvent e) {
+                        addPreferredDevice(textAddDevice.getText());
+                        listPreferredDevices.setModel(getPreferredDevices()); // refresh
+                    }
+                });
+                btnAddDevice.setBounds(438, 168, 70, 29);
+                btnAddDevice.setEnabled(false);
+                panelDevice.add(btnAddDevice);
+                
+                textAddDevice = new JTextField();
+                textAddDevice.getDocument().addDocumentListener(new DocumentListener() {
+                    @Override
+                    public void changedUpdate(DocumentEvent e) {
+                        check();
+                    }
+                    @Override
+                    public void removeUpdate(DocumentEvent e) {
+                        check();
+                    }
+                    @Override
+                    public void insertUpdate(DocumentEvent e) {
+                        check();
+                    }
+                    private void check() {
+                        boolean isOK = false;
+                        String val = textAddDevice.getText();
+                        if (val != null && val.replaceAll("\\*", "").trim().length() > 0) {
+                            isOK = true;
+                            for (int i = 0; i < listPreferredDevices.getModel().getSize(); i++) {
+                                if (val.equals(listPreferredDevices.getModel().getElementAt(i))) {
+                                    isOK = false;
+                                    break;
+                                }
+                            }
+                        }
+                        btnAddDevice.setEnabled(isOK);
+                    }
+                  });
+                textAddDevice.setBounds(145, 168, 293, 26);
+                panelDevice.add(textAddDevice);
+                textAddDevice.setColumns(10);
+
+                JLabel lblAddPreferredDeviceContd = new JLabel("<html><small>You can double click an item on the list below to fill the device name and edit before adding to the list (wildcards supported)</small></html>");
+                lblAddPreferredDeviceContd.setBounds(6, 196, 403, 23);
+                panelDevice.add(lblAddPreferredDeviceContd);
+                
+                JLabel labelAvailableDevices = new JLabel("<html>Available devices:</html>");
+                labelAvailableDevices.setBounds(6, 221, 470, 16);
+                panelDevice.add(labelAvailableDevices);
+                
+                listAvailableDevices.addMouseListener(new MouseAdapter() {
+                    @Override
+                    public void mouseClicked(MouseEvent e) {
+                        if (e.getClickCount() == 2) {
+                            textAddDevice.setText(listAvailableDevices.getSelectedValue());
+                        }
+                    }
+                });
+                listAvailableDevices.setBackground(UIManager.getColor("Button.background"));
+                listAvailableDevices.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+                JScrollPane listAvailableDevicesScroller = new JScrollPane();
+                listAvailableDevicesScroller.setViewportView(listAvailableDevices);
+                listAvailableDevicesScroller.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
+                listAvailableDevicesScroller.setBounds(6, 237, 502, 112);
+                panelDevice.add(listAvailableDevicesScroller);
+                listAvailableDevices.setModel(getAvailableDevices());
+                
+                JButton btnReloadAvailable = new JButton("↻");
+                btnReloadAvailable.addMouseListener(new MouseAdapter() {
+                    @Override
+                    public void mouseClicked(MouseEvent e) {
+                        listAvailableDevices.setModel(getAvailableDevices());
+                        listAvailableDevices.updateUI();
+                    }
+                });
+                btnReloadAvailable.setToolTipText("Refresh");
+                btnReloadAvailable.setBounds(507, 237, 42, 29);
+                panelDevice.add(btnReloadAvailable);
 
         GroupLayout groupLayout = new GroupLayout(mainCfg);
         groupLayout.setHorizontalGroup(
@@ -99,9 +290,9 @@ public class ConfigurationDlg {
             groupLayout.createParallelGroup(Alignment.TRAILING)
                 .addGroup(groupLayout.createSequentialGroup()
                     .addContainerGap()
-                    .addComponent(tabbedPane, GroupLayout.PREFERRED_SIZE, 322, GroupLayout.PREFERRED_SIZE)
-                    .addPreferredGap(ComponentPlacement.UNRELATED)
-                    .addComponent(panelBottom, GroupLayout.PREFERRED_SIZE, 58, GroupLayout.PREFERRED_SIZE)
+                    .addComponent(tabbedPane, GroupLayout.PREFERRED_SIZE, 401, GroupLayout.PREFERRED_SIZE)
+                    .addPreferredGap(ComponentPlacement.RELATED)
+                    .addComponent(panelBottom, GroupLayout.PREFERRED_SIZE, 55, GroupLayout.PREFERRED_SIZE)
                     .addContainerGap())
         );
         
@@ -127,7 +318,7 @@ public class ConfigurationDlg {
             }
         });
         chbxAlwaysOnTop.setSelected(Config.instance().to().getBoolean(Config.Entry.ALWAYS_ON_TOP.key(), false));
-        chbxAlwaysOnTop.setBounds(393, 24, 76, 29);
+        chbxAlwaysOnTop.setBounds(494, 24, 55, 29);
         
         panelUI.add(chbxAlwaysOnTop);
         
@@ -139,7 +330,7 @@ public class ConfigurationDlg {
         JCheckBox chbxSystemTray = new JCheckBox("");
 
         chbxSystemTray.setSelected(SystemTray.isSupported() && Config.instance().to().getBoolean(Config.Entry.SYSTEM_TRAY.key(), false));
-        chbxSystemTray.setBounds(393, 74, 76, 23);
+        chbxSystemTray.setBounds(494, 74, 55, 23);
         chbxSystemTray.setEnabled(SystemTray.isSupported());
         panelUI.add(chbxSystemTray);
         
@@ -156,7 +347,7 @@ public class ConfigurationDlg {
             }
         });
         chbxHideMainWindow.setSelected(Config.instance().to().getBoolean(Config.Entry.HIDE_MAIN_WINDOW.key(), false));
-        chbxHideMainWindow.setBounds(393, 133, 76, 23);
+        chbxHideMainWindow.setBounds(494, 133, 55, 23);
         panelUI.add(chbxHideMainWindow);
 
         panelGeneral.setLayout(null);
@@ -170,24 +361,19 @@ public class ConfigurationDlg {
             }
         });
         
-        JLabel lblInterval = new JLabel("<html>Measurements interval <i>(in seconds)</i>:</html>");
-        lblInterval.setHorizontalAlignment(SwingConstants.LEFT);
-        lblInterval.setBounds(6, 98, 363, 16);
-        panelGeneral.add(lblInterval);
-        
         JCheckBox chkbxAutostart = new JCheckBox();
         chkbxAutostart.addChangeListener(new ChangeListener() {
             public void stateChanged(ChangeEvent e) {
                 Config.instance().to().setProperty(Config.Entry.AUTOSTART.key(), chkbxAutostart.isSelected());
             }
         });
-        chkbxAutostart.setBounds(393, 24, 76, 29);
-        chkbxAutostart.setSelected(Config.instance().to().getBoolean(Config.Entry.AUTOSTART.key(), true));
-        panelGeneral.add(chkbxAutostart);
         
         JLabel lblAutostart = new JLabel("<html>Autostart measurements:</html>");
         lblAutostart.setBounds(6, 30, 386, 16);
         panelGeneral.add(lblAutostart);
+        chkbxAutostart.setBounds(471, 24, 78, 29);
+        chkbxAutostart.setSelected(Config.instance().to().getBoolean(Config.Entry.AUTOSTART.key(), true));
+        panelGeneral.add(chkbxAutostart);
         
         textInterval = new JSpinner(new SpinnerNumberModel(
                 Config.instance().to().getInt(Config.Entry.INTERVAL.key(), Constants.DEFAULT_INTERVAL),
@@ -201,35 +387,18 @@ public class ConfigurationDlg {
             }
         });
         textInterval.addKeyListener(onlyDigitsKeyListener());
-        textInterval.setBounds(391, 93, 78, 26);
-        panelGeneral.add(textInterval);
-
-        JLabel lblWarnUserOSX = new JLabel("<html>Warn before close / disconnect if device is not detached:<br><small><i>- a workaround for macOS and faulty PL2303 drivers</i></small></html>");
-        lblWarnUserOSX.setEnabled(SystemUtils.IS_OS_MAC_OSX);
-        lblWarnUserOSX.setBounds(6, 50, 363, 45);
-        panelGeneral.add(lblWarnUserOSX);
         
-        JCheckBox chbxWarnOSX = new JCheckBox("");
-        chbxWarnOSX.setEnabled(SystemUtils.IS_OS_MAC_OSX);
-        chbxWarnOSX.setSelected(!SystemUtils.IS_OS_MAC_OSX || Config.instance().to().getBoolean(Config.Entry.WARN_ON_OSX_TO_DETACH.key(), SystemUtils.IS_OS_MAC_OSX));
-        chbxWarnOSX.addMouseListener(new MouseAdapter() {
-            @Override
-            public void mouseClicked(MouseEvent e) {
-                Config.instance().to().setProperty(Config.Entry.WARN_ON_OSX_TO_DETACH.key(), chbxWarnOSX.isSelected());
-            }
-        });
-        chbxWarnOSX.setBounds(393, 55, 76, 23);
-        panelGeneral.add(chbxWarnOSX);
+        JLabel lblInterval = new JLabel("<html>Measurements interval <i>(in seconds)</i>:</html>");
+        lblInterval.setHorizontalAlignment(SwingConstants.LEFT);
+        lblInterval.setBounds(6, 63, 363, 16);
+        panelGeneral.add(lblInterval);
+        textInterval.setBounds(471, 58, 78, 26);
+        panelGeneral.add(textInterval);
         
         JLabel lblPM25MaxSafe = new JLabel("<html>PM 2.5 maximum allowed concentration level:</html>");
         lblPM25MaxSafe.setHorizontalAlignment(SwingConstants.LEFT);
-        lblPM25MaxSafe.setBounds(6, 134, 363, 16);
+        lblPM25MaxSafe.setBounds(6, 99, 363, 16);
         panelGeneral.add(lblPM25MaxSafe);
-        
-        JLabel lblPM10MaxSafe = new JLabel("<html>PM 10 maximum allowed concentration level:</html>");
-        lblPM10MaxSafe.setHorizontalAlignment(SwingConstants.LEFT);
-        lblPM10MaxSafe.setBounds(6, 162, 363, 16);
-        panelGeneral.add(lblPM10MaxSafe);
         
         JSpinner textPM25MaxSafe = new JSpinner(new SpinnerNumberModel(
                 Config.instance().to().getInt(Config.Entry.PM25_MAX_SAFE_LIMIT.key(), Constants.DEFAULT_PM25_MAX_SAFE),
@@ -243,8 +412,13 @@ public class ConfigurationDlg {
             }
         });
         textPM25MaxSafe.addKeyListener(onlyDigitsKeyListener());
-        textPM25MaxSafe.setBounds(391, 129, 78, 26);
+        textPM25MaxSafe.setBounds(471, 89, 78, 26);
         panelGeneral.add(textPM25MaxSafe);
+        
+        JLabel lblPM10MaxSafe = new JLabel("<html>PM 10 maximum allowed concentration level:</html>");
+        lblPM10MaxSafe.setHorizontalAlignment(SwingConstants.LEFT);
+        lblPM10MaxSafe.setBounds(6, 127, 363, 16);
+        panelGeneral.add(lblPM10MaxSafe);
         
         JSpinner textPM10MaxSafe = new JSpinner(new SpinnerNumberModel(
                 Config.instance().to().getInt(Config.Entry.PM10_MAX_SAFE_LIMIT.key(), Constants.DEFAULT_PM10_MAX_SAFE),
@@ -258,7 +432,7 @@ public class ConfigurationDlg {
             }
         });
         textPM10MaxSafe.addKeyListener(onlyDigitsKeyListener());
-        textPM10MaxSafe.setBounds(391, 157, 78, 26);
+        textPM10MaxSafe.setBounds(471, 122, 78, 26);
         panelGeneral.add(textPM10MaxSafe);
 
         frame.getContentPane().setLayout(groupLayout);
@@ -295,5 +469,42 @@ public class ConfigurationDlg {
     
     private boolean verifyMaxLimit(int val) {
         return val > 0 && val <= 1000;
+    }
+    
+    private void addPreferredDevice(String deviceName) {
+        Config.instance().to().addProperty(Config.Entry.PREFERRED_DEVICES.key(), deviceName);
+    }
+    
+    private ListModel<String> getPreferredDevices() {
+        DefaultListModel<String> result = new DefaultListModel<>();
+        Set<String> ports = new HashSet<>(Config.instance().to().getList(String.class, Config.Entry.PREFERRED_DEVICES.key(), new ArrayList<String>()));
+        for (String port : ports) {
+            result.addElement(port);
+        }
+        return result;
+    }
+    
+    private void savePreferredDevices(JList<String> list) {
+        Config.instance().to().clearProperty(Config.Entry.PREFERRED_DEVICES.key());
+        for (int i = 0; i< list.getModel().getSize(); i++){
+            Config.instance().to().addProperty(Config.Entry.PREFERRED_DEVICES.key(), list.getModel().getElementAt(i));
+        }
+    }
+    
+    private ListModel<String> getAvailableDevices() {
+        DefaultListModel<String> result = new DefaultListModel<>();
+        SerialUART serial = new SerialUART();
+        Set<String> ports = serial.listPorts();
+        for (String port : ports) {
+            result.addElement(port);
+        }
+        return result;
+    }
+    
+    private void swapInList(DefaultListModel<String> model, int a, int b) {
+        String aObject = model.getElementAt(a);
+        String bObject = model.getElementAt(b);
+        model.set(a, bObject);
+        model.set(b, aObject);
     }
 }
