@@ -1,7 +1,9 @@
 package pmstation.serial;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 import org.apache.commons.lang3.SystemUtils;
@@ -26,44 +28,28 @@ public class SerialUART implements ISerialUART {
     private SerialPort comPort;
 
     public boolean openPort() {
-        SerialPort[] ports = SerialPort.getCommPorts();
-        if (ports.length == 0) {
+        Set<SerialPort> ports = new HashSet<>(Arrays.asList(SerialPort.getCommPorts()));
+        if (ports.isEmpty()) {
             logger.warn("No serial ports available!");
             return false;
         }
-        logger.debug("Got {} serial ports available", ports.length);
-        for (int i = 0; i < ports.length; i++) {
-            SerialPort sp = ports[i];
+        logger.debug("Got {} serial ports available", ports.size());
+        for (SerialPort sp : ports) {
             logger.debug("\t- {}, {}", sp.getSystemPortName(), sp.getDescriptivePortName());
         }
-
-        logger.debug("Trying to find preferred serial port...");
-
+ 
         comPort = findPreferredPort(ports); // try preferred ports first
-        
         if (comPort != null) { 
             logger.debug("Preferred serial port found!");
         } else { // try autodetection then
-            logger.debug("Trying to autodetect serial port...");
-            for (int i = 0; i < ports.length; i++) {
-                SerialPort sp = ports[i];
-                if (isSerialPort(sp)) {
-                    if (tryToConnect(sp)) {
-                        comPort = sp;
-                        break;
-                    } else {
-                        logger.debug("Unable to connect to autodetected serial port: {}", sp.getSystemPortName());
-                    }
-                }
-            }
+            comPort = autodetectPort(ports);
         }
         
         if (comPort == null) {
             logger.warn("No relevant serial usb found on this system!");
-            return false;
         }
         
-        return true;
+        return comPort != null;
     }
 
     public void closePort() {
@@ -158,24 +144,55 @@ public class SerialUART implements ISerialUART {
 
     }
     
-    private SerialPort findPreferredPort(SerialPort[] ports) {
+    private SerialPort findPreferredPort(Set<SerialPort> ports) {
         SerialPort result = null;
         Set<String> prefPorts = new HashSet<>(Config.instance().to().getList(String.class, Config.Entry.PREFERRED_DEVICES.key(), new ArrayList<String>()));
-        for (String prefPort : prefPorts) {
-            for (int i = 0; i < ports.length; i++) {
-                SerialPort port = ports[i];
-                String portName = port.getSystemPortName();
-                String regEx = prefPort.replaceAll("\\*", ".*");
-                if (portName.equals(prefPort) || portName.matches(regEx)) {
-                    logger.debug("Found matching preferred serial port: {} - trying to connect...", portName);
-                    if (tryToConnect(port)) {
-                        result = port;
+        
+        if (!prefPorts.isEmpty()) {
+            List<SerialPort> toRemove = new ArrayList<>();
+            logger.debug("Trying to find preferred serial port...");
+            for (String prefPort : prefPorts) {
+                for (SerialPort port : ports) {
+                    String portName = port.getSystemPortName();
+                    String regEx = prefPort.replaceAll("\\*", ".*");
+                    if (portName.equals(prefPort) || portName.matches(regEx)) {
+                        toRemove.add(port);
+                        logger.debug("Found matching preferred serial port: {} - trying to connect...", portName);
+                        if (tryToConnect(port)) {
+                            result = port;
+                            break;
+                        } else {
+                            logger.debug("Unable to connect to preferred port: {}", portName);
+                        }
+                    }
+                }
+                if (result != null) {
+                    break;
+                }
+            }
+            ports.removeAll(toRemove);
+        }
+        
+        return result;
+    }
+    
+    private SerialPort autodetectPort(Set<SerialPort> ports) {
+        SerialPort result = null;
+        if (!ports.isEmpty()) {
+            logger.debug("Trying to autodetect serial port...");
+            for (SerialPort sp : ports) {
+                if (isSerialPort(sp)) {
+                    if (tryToConnect(sp)) {
+                        comPort = sp;
                         break;
                     } else {
-                        logger.debug("Unable to connect to preferred port: {}", portName);
+                        logger.debug("Unable to connect to autodetected serial port: {}", sp.getSystemPortName());
                     }
                 }
             }
+            
+        } else {
+            logger.debug("No unchecked ports left to try autodetect");
         }
         return result;
     }
