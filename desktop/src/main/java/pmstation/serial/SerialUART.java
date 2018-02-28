@@ -36,25 +36,12 @@ public class SerialUART implements ISerialUART {
             SerialPort sp = ports[i];
             logger.debug("\t- {}, {}", sp.getSystemPortName(), sp.getDescriptivePortName());
         }
-        int portToUse = -1;
 
         logger.debug("Trying to find preferred serial port...");
-        // try preferred ports first
-        for (int i = 0; i < ports.length; i++) {
-            SerialPort sp = ports[i];
-            if (isPreferredPort(sp)) {
-                logger.debug("Found matching preferred serial port: {} - trying to connect...", sp.getSystemPortName());
-                if (tryToConnect(sp)) {
-                    portToUse = i;
-                    comPort = sp;
-                    break;
-                } else {
-                    logger.debug("Unable to connect to preferred port: {}", sp.getSystemPortName());
-                }
-            }
-        }
+
+        comPort = findPreferredPort(ports); // try preferred ports first
         
-        if (portToUse >= 0) { 
+        if (comPort != null) { 
             logger.debug("Preferred serial port found!");
         } else { // try autodetection then
             logger.debug("Trying to autodetect serial port...");
@@ -62,7 +49,6 @@ public class SerialUART implements ISerialUART {
                 SerialPort sp = ports[i];
                 if (isSerialPort(sp)) {
                     if (tryToConnect(sp)) {
-                        portToUse = i;
                         comPort = sp;
                         break;
                     } else {
@@ -72,7 +58,7 @@ public class SerialUART implements ISerialUART {
             }
         }
         
-        if (portToUse < 0) {
+        if (comPort == null) {
             logger.warn("No relevant serial usb found on this system!");
             return false;
         }
@@ -172,17 +158,26 @@ public class SerialUART implements ISerialUART {
 
     }
     
-    private boolean isPreferredPort(SerialPort sp) {
-        String portName = sp.getSystemPortName();
-        // yeah yeah, we shouldn't re-read all the time
-        Set<String> ports = new HashSet<>(Config.instance().to().getList(String.class, Config.Entry.PREFERRED_DEVICES.key(), new ArrayList<String>()));
-        for (String port : ports) {
-            String regEx = port.replaceAll("\\*", ".*");
-            if (portName.equals(port) || portName.matches(regEx)) {
-                return true;
+    private SerialPort findPreferredPort(SerialPort[] ports) {
+        SerialPort result = null;
+        Set<String> prefPorts = new HashSet<>(Config.instance().to().getList(String.class, Config.Entry.PREFERRED_DEVICES.key(), new ArrayList<String>()));
+        for (String prefPort : prefPorts) {
+            for (int i = 0; i < ports.length; i++) {
+                SerialPort port = ports[i];
+                String portName = port.getSystemPortName();
+                String regEx = prefPort.replaceAll("\\*", ".*");
+                if (portName.equals(prefPort) || portName.matches(regEx)) {
+                    logger.debug("Found matching preferred serial port: {} - trying to connect...", portName);
+                    if (tryToConnect(port)) {
+                        result = port;
+                        break;
+                    } else {
+                        logger.debug("Unable to connect to preferred port: {}", portName);
+                    }
+                }
             }
         }
-        return false;
+        return result;
     }
     
     private boolean isSerialPort(SerialPort sp) {
