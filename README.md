@@ -150,7 +150,8 @@ The app screenshots gallery can be found [here](https://rjaros87.github.io/pm-ho
 ### Useful commands
 
 #### Desktop:
-- `gradlew pm-home-station:jar` - create a single (fat) JAR file with the desktop application
+- `gradlew pm-home-station:shadowJar` - create a single (fat) JAR file with the desktop application
+- `gradlew pm-home-station:createExe` - create a Windows EXE file with the desktop application
 - `gradlew pm-home-station:run` - run the desktop application
 
 #### Android:

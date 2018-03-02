@@ -68,6 +68,7 @@ import pmstation.observers.ChartObserver;
 import pmstation.observers.ConsoleObserver;
 import pmstation.observers.LabelObserver;
 import pmstation.plantower.PlanTowerSensor;
+import java.awt.FlowLayout;
 
 public class Station {
     
@@ -151,45 +152,60 @@ public class Station {
         JLabel labelStatus = new JLabel("Status...");
         labelsToBeUpdated.put("deviceStatus", labelStatus);
         
-        JButton btnConnect = new JButton("Connect");
-        btnConnect.setFocusable(true);
-        btnConnect.grabFocus();
-        btnConnect.setEnabled(false);
-        btnConnect.addActionListener(actionEvent -> {
-            btnConnect.setEnabled(false);   // TODO move the connection long running tasks to a separate thread and don't use swing's execLater for this purpose
-            switch (btnConnect.getText()) { // TODO do this better thru label observer...
-            case "Connect":
-                labelStatus.setText("Status: Connecting...");
-                btnConnect.setEnabled(false);
-                SwingUtilities.invokeLater(() -> {
-                    if (planTowerSensor.connectDevice()) {
-                        btnConnect.setText("Disconnect"); // TODO move this to label observer...
-                        btnConnect.setToolTipText(planTowerSensor.portDetails());
-                        scheduleMeasurements();
-                    }
-                    btnConnect.setEnabled(true);
-                });
-                break;
-            case "Disconnect":
-                diaplayWarnForDetach(frame);
-                planTowerSensor.disconnectDevice();
-                btnConnect.setText("Connect");
-                btnConnect.setToolTipText(planTowerSensor.portDetails());
-                break;
-            }
-            btnConnect.setEnabled(true);
-        });
-        labelsToBeUpdated.put("connect", btnConnect);
-        
         final JPanel panelMain = new JPanel();
         
-        panelMain.setLayout(new MigLayout("", "[50px][100px:120px,grow][150px]", "[:29px:29px][16px][338px,grow][16px]"));
-        panelMain.add(btnConnect, "cell 0 0,alignx left,aligny center");
+        panelMain.setLayout(new MigLayout("", "[50px,grow][100px:120px,grow][150px]", "[:32px:32px,grow][16px][338px,grow][16px]"));
         
         try {
             JButton btnState = new JButton("");
             btnState.setToolTipText("State indicator");
             Icon referenceIcon = ResourceHelper.getIcon("btn_config.png");
+            
+            JPanel buttonContainer = new JPanel();
+            panelMain.add(buttonContainer, "cell 0 0,grow");
+            buttonContainer.setLayout(null);
+            
+            JButton btnPlayPause = new JButton("||");
+            btnPlayPause.setBounds(77, 0, 46, 29);
+            buttonContainer.add(btnPlayPause);
+            
+            JButton btnConnect = new JButton("Conn");
+            btnConnect.setBounds(0, 0, 77, 29);
+            btnConnect.setHorizontalAlignment(SwingConstants.LEFT);
+            buttonContainer.add(btnConnect);
+            btnConnect.setFocusable(true);
+            btnConnect.grabFocus();
+            btnConnect.addActionListener(actionEvent -> {
+                btnConnect.setEnabled(false);   // TODO move the connection long running tasks to a separate thread and don't use swing's execLater for this purpose
+                switch (btnConnect.getText()) { // TODO do this better thru label observer...
+                case "Connect":
+                    labelStatus.setText("Status: Connecting...");
+                    btnConnect.setEnabled(false);
+                    SwingUtilities.invokeLater(() -> {
+                        if (planTowerSensor.connectDevice()) {
+                            btnConnect.setText("Disconnect"); // TODO move this to label observer...
+                            btnConnect.setToolTipText(planTowerSensor.portDetails());
+                            scheduleMeasurements();
+                            btnPlayPause.setVisible(true);
+                            btnPlayPause.setText("||");
+                        }
+                        btnConnect.setEnabled(true);
+                    });
+                    break;
+                case "Disconnect":
+                    diaplayWarnForDetach(frame);
+                    planTowerSensor.disconnectDevice();
+                    btnConnect.setText("Connect");
+                    btnConnect.setToolTipText(planTowerSensor.portDetails());
+                    btnPlayPause.setVisible(false);
+                    break;
+                }
+                btnConnect.setEnabled(true);
+            });
+            labelsToBeUpdated.put("connect", btnConnect);
+            
+                    handleAutostart(labelStatus, btnConnect);
+                    btnConnect.setEnabled(false);
             btnState.setMaximumSize(new Dimension(ResourceHelper.getIcon("btn_config.png").getIconWidth()+12, ResourceHelper.getIcon("btn_config.png").getIconHeight()+12));
             btnState.setIcon(new ImageIcon(ResourceHelper.getAppIcon("app-icon-disconnected.png").getScaledInstance(referenceIcon.getIconWidth(), -1, Image.SCALE_SMOOTH)));
             panelMain.add(btnState, "flowx,cell 2 0,alignx right,aligny center");
@@ -310,9 +326,6 @@ public class Station {
         // register dialogs (they can be opened from SystemTray and OSX menubar)
         aboutDlg = new AboutDlg(frame, "About");
         configDlg = new ConfigurationDlg(frame, "Configuration");
-
-        handleAutostart(labelStatus, btnConnect);
-        btnConnect.setEnabled(true);
     }
 
     public void addObserver(IPlanTowerObserver observer) {
@@ -372,6 +385,7 @@ public class Station {
                 connectionBtn.setText("Disconnect");
                 labelStatus.setText("Status: Connected");
                 scheduleMeasurements();
+                btnPlayPause.setText("||");
             } else {
                 labelStatus.setText("Status: Device not found");
                 planTowerSensor.disconnectDevice();
