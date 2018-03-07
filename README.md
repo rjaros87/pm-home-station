@@ -11,6 +11,10 @@ That's why we've created this little project to let you build your own Particula
 
 Let's live healthier life and start measuring the air quality and filtering it if necessary.
 
+ Android | iPhone and Watch
+ --------|-----------------
+<a href="https://play.google.com/store/apps/details?id=pmstation.android&pcampaignid=MKT-Other-global-all-co-prtnr-py-PartBadge-Mar2515-1"><img alt="Get it on Google Play" src="https://play.google.com/intl/en_us/badges/images/generic/en_badge_web_generic.png" height="62" /></a>|<a href="https://itunes.apple.com/us/app/pm-home-station/id1347597971?mt=8" style="display:inline-block;overflow:hidden;background:url(https://linkmaker.itunes.apple.com/assets/shared/badges/en-us/appstore-lrg.svg) no-repeat;width:135px;height:40px;background-size:contain;"></a>
+
 ## Requirements
 
 ### USB
@@ -119,7 +123,7 @@ The app screenshots gallery can be found [here](https://rjaros87.github.io/pm-ho
 
 - Android APK
   - Android 6 / 7 / 8 / 8.1 (for USB version the OTG feature must be supported), minSDK=21 (Android 5.0)
-<a href="https://play.google.com/store/apps/details?id=pmstation.android&pcampaignid=MKT-Other-global-all-co-prtnr-py-PartBadge-Mar2515-1"><img alt="Get it on Google Play" src="https://play.google.com/intl/en_us/badges/images/generic/en_badge_web_generic.png" height="62" /></a>
+
 - Apple iPhone & Apple Watch
   - Build & Run [XCode project](https://github.com/rjaros87/pm-home-station/tree/master/iOS)
 - Desktop (standalone) app
@@ -194,3 +198,5 @@ As with any DIY project, lack of familiarity with the tools and process can be d
 You have been warned.
 
 <sub><sup>Google Play and the Google Play logo are trademarks of Google LLC.</sup></sub>
+
+<sub><sup>Apple, the Apple logo, Apple Watch and iPhone are trademarks of Apple Inc., registered in the U.S. and other countries. App Store is a service mark of Apple Inc., registered in the U.S. and other countries.</sup></sub>
