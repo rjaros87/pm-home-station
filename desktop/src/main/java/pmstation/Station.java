@@ -18,23 +18,21 @@ import java.awt.GraphicsEnvironment;
 import java.awt.Image;
 import java.awt.Point;
 import java.awt.Rectangle;
+import java.awt.SystemTray;
 import java.awt.Window.Type;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
-import java.awt.SystemTray;
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.net.URI;
 import java.net.URISyntaxException;
-import java.util.HashMap;
 
 import javax.swing.Icon;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
-import javax.swing.JComponent;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
@@ -87,7 +85,7 @@ public class Station {
      * @wbp.parser.entryPoint
      */
     public void showUI() {
-        frame = new JFrame("Particulate matter station");
+        frame = new JFrame(Constants.MAIN_WINDOW_TITLE);
         frame.setAlwaysOnTop(Config.instance().to().getBoolean(Config.Entry.ALWAYS_ON_TOP.key(), false));
         frame.setModalExclusionType(ModalExclusionType.NO_EXCLUDE);
         SwingUtilities.updateComponentTreeUI(frame);
@@ -121,7 +119,7 @@ public class Station {
             }
         });
 
-        HashMap<String, JComponent> labelsToBeUpdated = new HashMap<>();
+        LabelObserver.LabelsCollector labelsCollector = new LabelObserver.LabelsCollector();
         XYChart chart = new XYChartBuilder().xAxisTitle("samples").yAxisTitle(Constants.UNITS).build();
         chart.getStyler().setXAxisMin((double) 0);
         chart.getStyler().setXAxisMax((double) Constants.CHART_MAX_SAMPLES);
@@ -149,7 +147,7 @@ public class Station {
         addObserver(new ConsoleObserver());
 
         JLabel labelStatus = new JLabel("Status...");
-        labelsToBeUpdated.put("deviceStatus", labelStatus);
+        labelsCollector.add(LabelObserver.LabelsCollector.LABEL.DEVICE_STATUS, labelStatus);
         
         JButton btnConnect = new JButton("Connect");
         btnConnect.setFocusable(true);
@@ -179,7 +177,7 @@ public class Station {
             }
             btnConnect.setEnabled(true);
         });
-        labelsToBeUpdated.put("connect", btnConnect);
+        labelsCollector.add(LabelObserver.LabelsCollector.LABEL.CONNECT, btnConnect);
         
         final JPanel panelMain = new JPanel();
         
@@ -193,7 +191,7 @@ public class Station {
             btnState.setMaximumSize(new Dimension(ResourceHelper.getIcon("btn_config.png").getIconWidth()+12, ResourceHelper.getIcon("btn_config.png").getIconHeight()+12));
             btnState.setIcon(new ImageIcon(ResourceHelper.getAppIcon("app-icon-disconnected.png").getScaledInstance(referenceIcon.getIconWidth(), -1, Image.SCALE_SMOOTH)));
             panelMain.add(btnState, "flowx,cell 2 0,alignx right,aligny center");
-            labelsToBeUpdated.put("icon", btnState);
+            labelsCollector.add(LabelObserver.LabelsCollector.LABEL.ICON, btnState);
         } catch (IOException e) {
             logger.warn("Ugh, there was an error loading an icon", e);
         }
@@ -235,7 +233,7 @@ public class Station {
                         JLabel pm1_0 = new JLabel();
                         panelMeasurements.add(pm1_0, "flowy,cell 2 0,alignx leading,aligny top");
                         pm1_0.setText("----");
-                        labelsToBeUpdated.put("pm1_0", pm1_0);
+                        labelsCollector.add(LabelObserver.LabelsCollector.LABEL.PM1, pm1_0);
                         
                                 JLabel pm2_5Label = new JLabel("PM 2.5:");
                                 panelMeasurements.add(pm2_5Label, "cell 4 0,alignx left,aligny top");
@@ -243,7 +241,7 @@ public class Station {
                                         JLabel pm2_5 = new JLabel();
                                         panelMeasurements.add(pm2_5, "flowx,cell 6 0,alignx leading,aligny top");
                                         pm2_5.setText("----");
-                                        labelsToBeUpdated.put("pm2_5", pm2_5);
+                                        labelsCollector.add(LabelObserver.LabelsCollector.LABEL.PM25, pm2_5);
                                         
                                                 JLabel pm10Label = new JLabel("PM 10:");
                                                 panelMeasurements.add(pm10Label, "cell 8 0,alignx left,aligny top");
@@ -251,14 +249,14 @@ public class Station {
                                                         JLabel pm10 = new JLabel();
                                                         panelMeasurements.add(pm10, "flowx,cell 10 0,alignx leading,aligny top");
                                                         pm10.setText("----");
-                                                        labelsToBeUpdated.put("pm10", pm10);
+                                                        labelsCollector.add(LabelObserver.LabelsCollector.LABEL.PM10, pm10);
 
                                                         JLabel pmMeasurementTime_label = new JLabel("<html><small>Time: </small></html>");
                                                         panelMeasurements.add(pmMeasurementTime_label, "cell 0 2,alignx left,aligny top");
 
                                                         JLabel pmMeasurementTime = new JLabel();
                                                         panelMeasurements.add(pmMeasurementTime, "cell 2 2 6 1,aligny top");
-                                                        labelsToBeUpdated.put("measurementTime", pmMeasurementTime);
+                                                        labelsCollector.add(LabelObserver.LabelsCollector.LABEL.MEASURMENT_TIME, pmMeasurementTime);
 
                                                         JLabel lblAqi = new JLabel("<html><small>*) AQI colors</small></html>");
                                                         lblAqi.setCursor(new Cursor(Cursor.HAND_CURSOR));
@@ -298,8 +296,7 @@ public class Station {
         appNameLink.setToolTipText("Visit: " + Constants.PROJECT_URL);
         appNameLink.setHorizontalAlignment(SwingConstants.RIGHT);
         labelStatus.setText("... .   .     .         .               .");
-        LabelObserver labelObserver = new LabelObserver();
-        labelObserver.setLabelsToUpdate(labelsToBeUpdated);
+        LabelObserver labelObserver = new LabelObserver(labelsCollector);
         addObserver(labelObserver);
         
         frame.pack();

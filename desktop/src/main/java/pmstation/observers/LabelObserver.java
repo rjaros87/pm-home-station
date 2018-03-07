@@ -32,6 +32,28 @@ import pmstation.helpers.ResourceHelper;
 public class LabelObserver implements IPlanTowerObserver {
 
     private static final Logger logger = LoggerFactory.getLogger(LabelObserver.class);
+    
+    public static class LabelsCollector {
+        
+        public static enum LABEL {
+            DEVICE_STATUS, MEASURMENT_TIME, PM1, PM25, PM10, CONNECT, ICON; 
+        }
+        
+        private Map<LABEL, JComponent> labelsToBeUpdated = new HashMap<>();
+        
+        public void add(LABEL label, JComponent component) {
+            labelsToBeUpdated.put(label, component);
+        }
+        
+        JComponent get(LABEL label) {
+            JComponent component = labelsToBeUpdated.get(label);
+            if (component == null) {
+                logger.error("Component of name: {} not found! Going down.", label);
+                throw new IllegalArgumentException("Component of name: " + label + " not found! Going down.");
+            }
+            return component;
+        }
+    }
 
     private JLabel deviceStatus, measurementTime, pm1_0, pm2_5, pm10;
     private JButton btnConnect, icon;
@@ -44,18 +66,16 @@ public class LabelObserver implements IPlanTowerObserver {
     private Image disconnectedIcon = null;
     private Image defaultIcon = null;
 
-    public LabelObserver() {
+    public LabelObserver(LabelsCollector collected) {
         loadIcons();
-    }
-    
-    public void setLabelsToUpdate(HashMap<String, JComponent> components) {
-        deviceStatus = (JLabel)get(components, "deviceStatus");
-        measurementTime = (JLabel)get(components, "measurementTime");
-        pm1_0 = (JLabel)get(components, "pm1_0"); // TODO don't use hardcoded labels like that
-        pm2_5 = (JLabel)get(components, "pm2_5");
-        pm10 = (JLabel)get(components, "pm10");
-        btnConnect = (JButton)get(components, "connect");
-        icon = (JButton)get(components, "icon");
+
+        deviceStatus = (JLabel)collected.get(LabelsCollector.LABEL.DEVICE_STATUS);
+        measurementTime = (JLabel)collected.get(LabelsCollector.LABEL.MEASURMENT_TIME);
+        pm1_0 = (JLabel)collected.get(LabelsCollector.LABEL.PM1);
+        pm2_5 = (JLabel)collected.get(LabelsCollector.LABEL.PM25);
+        pm10 = (JLabel)collected.get(LabelsCollector.LABEL.PM10);
+        btnConnect = (JButton)collected.get(LabelsCollector.LABEL.CONNECT);
+        icon = (JButton)collected.get(LabelsCollector.LABEL.ICON);
     }
 
     @Override
@@ -113,15 +133,6 @@ public class LabelObserver implements IPlanTowerObserver {
     @Override
     public void disconnecting() {
         deviceStatus.setText("Status: Disconnecting from the sensor...");
-    }
-
-    private JComponent get(HashMap<String, JComponent> components, String name) {
-        JComponent component = components.get(name);
-        if (component == null) {
-            logger.error("Component of name: {} not found! Going down.", name);
-            throw new IllegalArgumentException("Component of name: " + name + " not found! Going down.");
-        }
-        return component;
     }
     
     private void setScaryIcon(JButton button, AQILevel pm2, AQILevel pm10) {

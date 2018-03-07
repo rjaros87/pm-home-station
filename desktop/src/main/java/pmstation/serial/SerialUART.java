@@ -183,7 +183,7 @@ public class SerialUART implements ISerialUART {
             for (SerialPort sp : ports) {
                 if (isSerialPort(sp)) {
                     if (tryToConnect(sp)) {
-                        comPort = sp;
+                        result = sp;
                         break;
                     } else {
                         logger.debug("Unable to connect to autodetected serial port: {}", sp.getSystemPortName());
