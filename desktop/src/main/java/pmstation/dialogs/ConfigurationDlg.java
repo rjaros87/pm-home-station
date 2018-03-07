@@ -434,6 +434,20 @@ public class ConfigurationDlg {
         textPM10MaxSafe.addKeyListener(onlyDigitsKeyListener());
         textPM10MaxSafe.setBounds(471, 122, 78, 26);
         panelGeneral.add(textPM10MaxSafe);
+        
+        JLabel labelCheckVersion = new JLabel("<html>Automatically check for new version on start:</html>");
+        labelCheckVersion.setBounds(6, 164, 386, 16);
+        panelGeneral.add(labelCheckVersion);
+        
+        JCheckBox chkbxCheckVersion = new JCheckBox();
+        chkbxCheckVersion.addChangeListener(new ChangeListener() {
+            public void stateChanged(ChangeEvent e) {
+                Config.instance().to().setProperty(Config.Entry.CHECK_LATEST_VERSION.key(), chkbxCheckVersion.isSelected());
+            }
+        });
+        chkbxCheckVersion.setSelected(Config.instance().to().getBoolean(Config.Entry.CHECK_LATEST_VERSION.key(), true));
+        chkbxCheckVersion.setBounds(471, 160, 78, 29);
+        panelGeneral.add(chkbxCheckVersion);
 
         frame.getContentPane().setLayout(groupLayout);
         frame.toFront();

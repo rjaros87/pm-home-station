@@ -39,6 +39,7 @@ public class NativeTrayIntegration {
     private final Map<AQIRiskLevel, Image> scaryIcons = new HashMap<>();
     private Image defaultIcon = null;
     private Image disconnectedIcon = null;
+    private TrayIcon menuBarIcon;
     
     public NativeTrayIntegration(Station station) {
         this.station = station;
@@ -79,7 +80,7 @@ public class NativeTrayIntegration {
         try {
             SystemTray tray = SystemTray.getSystemTray();
             
-            TrayIcon menuBarIcon = new TrayIcon(defaultIcon, "pm-home-station", menu);
+            menuBarIcon = new TrayIcon(defaultIcon, "pm-home-station", menu);
             
             station.addObserver(new IPlanTowerObserver() {
                 
@@ -112,7 +113,7 @@ public class NativeTrayIntegration {
                 public void disconnected() {
                     menuBarIcon.setImage(disconnectedIcon != null ? disconnectedIcon : defaultIcon);
                     if (warnDisconnect) {
-                        menuBarIcon.displayMessage("Device disconnected", "Sensor has just been disconnected", MessageType.INFO);
+                        displayTrayMessage("Device disconnected", "Sensor has just been disconnected");
                     }
                     menuBarIcon.setToolTip("Disconnected");
                     infoMenuItem.setLabel("Disconnected");
@@ -138,7 +139,13 @@ public class NativeTrayIntegration {
             logger.error("Error adding menubar app to OSX menubar", e);
         }
     }
-    
+
+    public void displayTrayMessage(String title, String message) {
+        if (menuBarIcon != null) {
+            menuBarIcon.displayMessage(title, message, MessageType.INFO);
+        }
+    }
+
     private void setScaryIcon(TrayIcon menuBarIcon, AQI25Level pm2, AQI10Level pm10) {
         Image icon = pm2.worseThan(pm10) ? scaryIcons.get(pm2.getRiskLevel()) : scaryIcons.get(pm10.getRiskLevel());
         menuBarIcon.setImage(icon != null ? icon : defaultIcon);

@@ -60,6 +60,7 @@ import pmstation.core.plantower.IPlanTowerObserver;
 import pmstation.dialogs.AboutDlg;
 import pmstation.dialogs.ConfigurationDlg;
 import pmstation.helpers.ResourceHelper;
+import pmstation.helpers.VersionChecker;
 import pmstation.integration.MacOSIntegration;
 import pmstation.integration.NativeTrayIntegration;
 import pmstation.observers.ChartObserver;
@@ -75,6 +76,7 @@ public class Station {
     private JFrame frame = null;
     private ConfigurationDlg configDlg = null;
     private AboutDlg aboutDlg = null;
+    private NativeTrayIntegration nativeTray = null;
     
     public Station(PlanTowerSensor planTowerSensor) {
         this.planTowerSensor = planTowerSensor;
@@ -310,6 +312,21 @@ public class Station {
 
         handleAutostart(labelStatus, btnConnect);
         btnConnect.setEnabled(true);
+
+        if (Config.instance().to().getBoolean(Config.Entry.CHECK_LATEST_VERSION.key(), true)) {
+            SwingUtilities.invokeLater(() -> {
+                VersionChecker vc = new VersionChecker();
+                VersionChecker.LatestRelease lr = vc.check();
+                if (lr.isNewerVersion()) {
+                    String newVerInfo = "A newer version version (" + lr.getVersion() + ") is available!";
+                    labelStatus.setText(newVerInfo);
+                    if (nativeTray != null) {
+                        nativeTray.displayTrayMessage("New version available!", newVerInfo);
+                    }
+                }
+            });
+
+        }
     }
 
     public void addObserver(IPlanTowerObserver observer) {
@@ -389,7 +406,8 @@ public class Station {
             new MacOSIntegration(this).integrate();
         }
         if (SystemTray.isSupported() && Config.instance().to().getBoolean(Config.Entry.SYSTEM_TRAY.key(), Constants.SYSTEM_TRAY)) {
-            new NativeTrayIntegration(this).integrate();
+            nativeTray = new NativeTrayIntegration(this);
+            nativeTray.integrate();
         } else {
             logger.info("System tray integration is either not supported or disabled in configuration.");
         }

@@ -19,6 +19,9 @@ public class Constants {
     public static final String DEFAULT_ICON = "app-icon.png";
     public static final String MAIN_WINDOW_TITLE = String.format("Particulate Matter home station (v%s)", VERSION);
     
+    public static final String GITHUB_LATEST_RELEASE = "https://api.github.com/repos/rjaros87/pm-home-station/releases/latest";
+    
+    
     public static final String UNITS = "\u03BCg/m\u00B3";
     
     // preferred Window size
