@@ -29,6 +29,9 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
 
 import javax.swing.Icon;
 import javax.swing.ImageIcon;
@@ -185,14 +188,22 @@ public class Station {
         
         panelMain.setLayout(new MigLayout("", "[50px][100px:120px,grow][150px]", "[:29px:29px][16px][338px,grow][16px]"));
         panelMain.add(btnConnect, "cell 0 0,alignx left,aligny center");
+
+        JButton btnNewVersion = new JButton("");
+        btnNewVersion.setVisible(false); // invisible unless new version is available
+        btnNewVersion.setToolTipText("New version available! Click to get more details!");
+        btnNewVersion.setIcon(ResourceHelper.getIcon("btn_new_version.png"));
+        btnNewVersion.setMaximumSize(new Dimension(btnNewVersion.getIcon().getIconWidth()+12, btnNewVersion.getIcon().getIconHeight()+12));
+        panelMain.add(btnNewVersion, "flowx,cell 2 0,alignx right,aligny center");
         
         try {
             JButton btnState = new JButton("");
             btnState.setToolTipText("State indicator");
             Icon referenceIcon = ResourceHelper.getIcon("btn_config.png");
-            btnState.setMaximumSize(new Dimension(ResourceHelper.getIcon("btn_config.png").getIconWidth()+12, ResourceHelper.getIcon("btn_config.png").getIconHeight()+12));
             btnState.setIcon(new ImageIcon(ResourceHelper.getAppIcon("app-icon-disconnected.png").getScaledInstance(referenceIcon.getIconWidth(), -1, Image.SCALE_SMOOTH)));
-            panelMain.add(btnState, "flowx,cell 2 0,alignx right,aligny center");
+            btnState.setMaximumSize(new Dimension(btnState.getIcon().getIconWidth()+12, btnState.getIcon().getIconHeight()+12));
+            
+            panelMain.add(btnState, "cell 2 0,alignx right,aligny center");
             labelsCollector.add(LabelObserver.LabelsCollector.LABEL.ICON, btnState);
         } catch (IOException e) {
             logger.warn("Ugh, there was an error loading an icon", e);
@@ -208,7 +219,7 @@ public class Station {
         btnCfg.setToolTipText("Configuration");
         btnCfg.setIcon(ResourceHelper.getIcon("btn_config.png"));
         btnCfg.setMaximumSize(new Dimension(btnCfg.getIcon().getIconWidth()+12, btnCfg.getIcon().getIconHeight()+12));
-        panelMain.add(btnCfg, "flowx,cell 2 0,alignx right,aligny center");
+        panelMain.add(btnCfg, "cell 2 0,alignx right,aligny center");
         
         JButton btnAbout = new JButton("");
         btnAbout.addMouseListener(new MouseAdapter() {
@@ -313,21 +324,12 @@ public class Station {
         handleAutostart(labelStatus, btnConnect);
         btnConnect.setEnabled(true);
 
+        
         if (Config.instance().to().getBoolean(Config.Entry.CHECK_LATEST_VERSION.key(), true)) {
-            SwingUtilities.invokeLater(() -> {
-                VersionChecker vc = new VersionChecker();
-                VersionChecker.LatestRelease lr = vc.check();
-                if (lr.isNewerVersion()) {
-                    String newVerInfo = "A newer version version (" + lr.getVersion() + ") is available!";
-                    labelStatus.setText(newVerInfo);
-                    if (nativeTray != null) {
-                        nativeTray.displayTrayMessage("New version available!", newVerInfo);
-                    }
-                }
-            });
-
+            versionCheck(btnNewVersion, labelStatus, nativeTray);
         }
     }
+    
 
     public void addObserver(IPlanTowerObserver observer) {
         planTowerSensor.addObserver(observer);
@@ -519,6 +521,41 @@ public class Station {
                 }
             }
         }
+    }
+
+    private void versionCheck(JButton btnNewVersion, JLabel labelStatus, NativeTrayIntegration nativeTray) {
+        ScheduledExecutorService executor = Executors.newScheduledThreadPool(1);
+        Runnable task = () -> {
+            VersionChecker vc = new VersionChecker();
+            VersionChecker.LatestRelease lr = vc.check();
+            if (lr.isNewerVersion()) {
+                SwingUtilities.invokeLater(() -> {
+                    String newVerInfo = "A newer version (" + lr.getVersion() + ") is available!";
+                    String newVerTitle = "New version available!";
+                    btnNewVersion.addMouseListener(new MouseAdapter() {
+                        @Override
+                        public void mouseClicked(MouseEvent e) {
+                            int response = JOptionPane.showConfirmDialog(frame,
+                                    "<html>" + newVerInfo + "<br/>" +
+                                    "Release date: " + lr.getDateString() + "<br/><br/>" +
+                                    "Do you want to open browser to visit download page?</html>",
+                                    newVerTitle, JOptionPane.YES_NO_OPTION);
+                            if (response == JOptionPane.YES_OPTION) {
+                                openUrl(lr.getUrl());
+                            }
+                        }
+                    });
+                    btnNewVersion.setVisible(true);
+                    labelStatus.setText(newVerInfo);
+                    // turned off - I think it is too annoying
+                    /*if (nativeTray != null) {
+                        nativeTray.displayTrayMessage(newVerTitle, newVerInfo);
+                    }*/
+                    
+                });
+            }
+        };
+        executor.schedule(task, 5, TimeUnit.SECONDS);
     }
 
     private void diaplayWarnForDetach(JFrame parent) {

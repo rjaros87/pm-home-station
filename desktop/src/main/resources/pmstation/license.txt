@@ -12,3 +12,21 @@ app-icon.png (copy of ic_launcher-web.png):
 https://github.com/rjaros87/pm-home-station
 
 
+app-icon-santa-hat.png:
+
+ROverhate, license: CC0 Creative Commons
+https://pixabay.com/pl/service/terms/#usage
+https://pixabay.com/en/santa-hat-christmas-hat-santa-1087651/
+
+
+app-icon-thug-life.png:
+Creative Commons Attribution-Share Alike 4.0 International license.
+https://commons.wikimedia.org/wiki/File:Thug_Life_Glasses.png
+
+btn_new_version.png:
+
+https://www.iconfinder.com/icons/40808/label_new_nuevo_icon#size=48
+
+Free for commercial use (Do not redistribute)
+http://www.webdesignerdepot.com/
+
