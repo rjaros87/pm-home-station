@@ -41,7 +41,8 @@ public class Config {
         SCREEN_POS_WIDTH("screen.pos.width"),
         SCREEN_POS_HEIGHT("screen.pos.height"),
         PREFERRED_DEVICES("preferred.devices"),
-        CHECK_LATEST_VERSION("check.latest.version");
+        CHECK_LATEST_VERSION("check.latest.version"),
+        WINDOW_THEME("window.theme");
         
         
         private String key;

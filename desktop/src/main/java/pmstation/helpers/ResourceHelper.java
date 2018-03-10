@@ -25,8 +25,12 @@ public class ResourceHelper {
         return new ImageIcon(Station.class.getResource("/pmstation/" + name));
     }
     
+    public static BufferedImage getImage(String name) throws IOException {
+        return ImageIO.read(Station.class.getResource("/pmstation/" + name));
+    }
+    
     public static BufferedImage getAppIcon(String name) throws IOException {
-        BufferedImage iconImage = ImageIO.read(Station.class.getResource("/pmstation/" + name));
+        BufferedImage iconImage = getImage(name);
         LocalDate localDate = LocalDate.now();
         if (localDate.getMonth().equals(Month.DECEMBER) && localDate.getDayOfMonth() > 21 && localDate.getDayOfMonth() < 28) {
             iconImage = combine(iconImage, Station.class.getResource("/pmstation/app-icon-santa-hat.png"));

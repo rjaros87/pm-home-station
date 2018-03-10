@@ -322,7 +322,7 @@ public class ConfigurationDlg {
         
         panelUI.add(chbxAlwaysOnTop);
         
-        JLabel lblSystemTray = new JLabel("<html>Show app icon in the System Tray:<br><small><i>- only on selected operating systems<br>- requires app restart</i></html>");
+        JLabel lblSystemTray = new JLabel("<html>Show app icon in the System Tray:<br><small><i>- only on selected operating systems<br>- requires app restart</i></small></html>");
         lblSystemTray.setBounds(6, 66, 386, 60);
         lblSystemTray.setEnabled(SystemTray.isSupported());
         panelUI.add(lblSystemTray);
@@ -349,6 +349,21 @@ public class ConfigurationDlg {
         chbxHideMainWindow.setSelected(Config.instance().to().getBoolean(Config.Entry.HIDE_MAIN_WINDOW.key(), false));
         chbxHideMainWindow.setBounds(494, 133, 55, 23);
         panelUI.add(chbxHideMainWindow);
+        
+        JLabel labelTheme = new JLabel("<html>Decorate the main window with theme:<br><small><i>- requires app restart</i></small></html>");
+        labelTheme.setBounds(6, 170, 386, 29);
+        panelUI.add(labelTheme);
+        
+        JCheckBox chbxTheme = new JCheckBox("");
+        chbxTheme.setSelected(Config.instance().to().getBoolean(Config.Entry.WINDOW_THEME.key(), true));
+        chbxTheme.addChangeListener(new ChangeListener() {
+            public void stateChanged(ChangeEvent e) {
+                Config.instance().to().setProperty(Config.Entry.WINDOW_THEME.key(), chbxTheme.isSelected());
+            }
+        });
+        chbxTheme.setEnabled(true);
+        chbxTheme.setBounds(494, 168, 55, 23);
+        panelUI.add(chbxTheme);
 
         panelGeneral.setLayout(null);
 

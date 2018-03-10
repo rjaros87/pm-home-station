@@ -13,6 +13,7 @@ import java.awt.Desktop;
 import java.awt.Dialog.ModalExclusionType;
 import java.awt.Dimension;
 import java.awt.Font;
+import java.awt.Graphics;
 import java.awt.GraphicsDevice;
 import java.awt.GraphicsEnvironment;
 import java.awt.Image;
@@ -24,11 +25,14 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
+import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.util.Arrays;
+import java.util.List;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
@@ -36,6 +40,7 @@ import java.util.concurrent.TimeUnit;
 import javax.swing.Icon;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
+import javax.swing.JComponent;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
@@ -126,6 +131,7 @@ public class Station {
 
         LabelObserver.LabelsCollector labelsCollector = new LabelObserver.LabelsCollector();
         XYChart chart = new XYChartBuilder().xAxisTitle("samples").yAxisTitle(Constants.UNITS).build();
+        chart.getStyler().setChartBackgroundColor(new Color(0, 0, 0, 0.05f));
         chart.getStyler().setXAxisMin((double) 0);
         chart.getStyler().setXAxisMax((double) Constants.CHART_MAX_SAMPLES);
         chart.getStyler().setLegendFont(new Font(Font.SERIF, Font.PLAIN, 10));
@@ -133,6 +139,8 @@ public class Station {
         chart.getStyler().setLegendBackgroundColor(new Color(255, 255, 255, 20)); // white with alpha
         chart.getStyler().setMarkerSize(2);
         chart.getStyler().setAntiAlias(true);
+        chart.getStyler().setPlotTicksMarksVisible(true);
+        chart.getStyler().setPlotGridVerticalLinesVisible(false);
         chart.getStyler().setLegendLayout(LegendLayout.Horizontal);
         
         JPanel chartPanel = new XChartPanel<XYChart>(chart);
@@ -292,7 +300,11 @@ public class Station {
         labelStatus.setForeground(Color.GRAY);
         labelStatus.setHorizontalAlignment(SwingConstants.LEFT);
         panelStatus.add(labelStatus, BorderLayout.WEST);
-        
+
+        if (Config.instance().to().getBoolean(Config.Entry.WINDOW_THEME.key(), true)) {
+            setFancyBackgroundImage(frame, Arrays.asList(panelMain, panelMeasurements, panelStatus, chartPanel));
+        }
+
         frame.getContentPane().setLayout(new BorderLayout(0, 0));
         frame.getContentPane().add(panelMain);
         frame.getContentPane().add(panelStatus, BorderLayout.SOUTH);
@@ -313,6 +325,8 @@ public class Station {
         addObserver(labelObserver);
         
         frame.pack();
+        frame.revalidate();
+        frame.repaint();
         setScreenAndDimensions(frame);  // must be after frame.pack()
         frame.setVisible(!Config.instance().to().getBoolean(Config.Entry.HIDE_MAIN_WINDOW.key(), Constants.HIDE_MAIN_WINDOW));
         integrateNativeOS(frame);
@@ -574,6 +588,28 @@ public class Station {
             }
         }
         
+    }
+    
+    private void setFancyBackgroundImage(JFrame frame, List<JPanel> translucentPanels) {
+        try {
+            BufferedImage bgImage = ResourceHelper.getImage(Constants.MAIN_BG_IMG);
+            frame.setMaximumSize(new Dimension(bgImage.getWidth(), bgImage.getHeight()));
+            JComponent bgComponent = new JPanel() {
+                private static final long serialVersionUID = -656821255790619499L;
+
+                @Override
+                protected void paintComponent(Graphics g) {
+                    super.paintComponent(g);
+                    g.drawImage(bgImage, 0, 0, this);
+                }
+            };
+            frame.setContentPane(bgComponent);
+            for (JPanel p : translucentPanels) {
+                p.setOpaque(false);
+            }
+        } catch (IOException ex) {
+            logger.error("Error loading background image", ex);
+        }
     }
     
     private void openUrl(String url) {

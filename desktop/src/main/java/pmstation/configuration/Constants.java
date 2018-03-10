@@ -30,11 +30,13 @@ public class Constants {
     // min Window size
     public static final int MIN_WINDOW_WIDTH = 484;
     public static final int MIN_WINDOW_HEIGHT = 180;
+    
+    public static final String MAIN_BG_IMG = "bg.jpg"; // if used, its dimensions become max window size
 
     public static final boolean HIDE_MAIN_WINDOW = false;
     public static final boolean SYSTEM_TRAY = true;
     
-    public static final int CHART_MAX_SAMPLES = 30;
+    public static final int CHART_MAX_SAMPLES = 60;
     
     public static final FastDateFormat DATE_FORMAT = FastDateFormat.getInstance("yyyy-MM-dd HH:mm:ss", DEFAULT_LOCALE);
     public static final int DEFAULT_INTERVAL = 3; // in sec
