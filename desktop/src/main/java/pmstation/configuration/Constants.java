@@ -31,7 +31,7 @@ public class Constants {
     public static final int MIN_WINDOW_WIDTH = 484;
     public static final int MIN_WINDOW_HEIGHT = 180;
     
-    public static final String MAIN_BG_IMG = "bg.jpg"; // if used, its dimensions become max window size
+    public static final String MAIN_BG_IMG = "bg.jpg";
 
     public static final boolean HIDE_MAIN_WINDOW = false;
     public static final boolean SYSTEM_TRAY = true;

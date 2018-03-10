@@ -108,7 +108,6 @@ public class Station {
         }
 
         frame.setMinimumSize(new Dimension(Constants.MIN_WINDOW_WIDTH, Constants.MIN_WINDOW_HEIGHT));
-        frame.setPreferredSize(new Dimension(Constants.WINDOW_WIDTH, Constants.WINDOW_HEIGHT));
 
         frame.setDefaultCloseOperation(
                 SystemTray.isSupported() && Config.instance().to().getBoolean(Config.Entry.SYSTEM_TRAY.key(), false) ?
@@ -303,6 +302,8 @@ public class Station {
 
         if (Config.instance().to().getBoolean(Config.Entry.WINDOW_THEME.key(), true)) {
             setFancyBackgroundImage(frame, Arrays.asList(panelMain, panelMeasurements, panelStatus, chartPanel));
+        } else {
+            frame.setPreferredSize(new Dimension(Constants.WINDOW_WIDTH, Constants.WINDOW_HEIGHT));
         }
 
         frame.getContentPane().setLayout(new BorderLayout(0, 0));
@@ -593,14 +594,30 @@ public class Station {
     private void setFancyBackgroundImage(JFrame frame, List<JPanel> translucentPanels) {
         try {
             BufferedImage bgImage = ResourceHelper.getImage(Constants.MAIN_BG_IMG);
-            frame.setMaximumSize(new Dimension(bgImage.getWidth(), bgImage.getHeight()));
             JComponent bgComponent = new JPanel() {
                 private static final long serialVersionUID = -656821255790619499L;
 
+                // remember last upscaled img and its ratio to avoid never-ending call of #paintComponent due to lag caused by resize
+                private float lastScale = -1;
+                private Image lastScaledImg = null;
+                
                 @Override
                 protected void paintComponent(Graphics g) {
                     super.paintComponent(g);
-                    g.drawImage(bgImage, 0, 0, this);
+                    
+                    if (frame.getWidth() < bgImage.getWidth() &&
+                        frame.getHeight() < bgImage.getHeight()) {
+                        g.drawImage(bgImage, 0, 0, this);
+                    } else {
+                        float upScale = Math.max((float)frame.getWidth() / bgImage.getWidth(), (float)frame.getHeight() / bgImage.getHeight());
+                        Image scaledImg = upScale == lastScale ? lastScaledImg : bgImage.getScaledInstance(
+                                Math.round(bgImage.getWidth() * upScale),
+                                Math.round(bgImage.getHeight() * upScale),
+                                Image.SCALE_SMOOTH);
+                        lastScale = upScale;
+                        lastScaledImg = scaledImg;
+                        g.drawImage(scaledImg, 0, 0, this);
+                    }
                 }
             };
             frame.setContentPane(bgComponent);
