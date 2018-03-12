@@ -10,10 +10,13 @@ import java.awt.Dialog.ModalityType;
 import java.awt.SystemTray;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.ItemEvent;
+import java.awt.event.ItemListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.io.File;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Set;
@@ -24,6 +27,7 @@ import javax.swing.GroupLayout.Alignment;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JDialog;
+import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JList;
@@ -38,12 +42,14 @@ import javax.swing.ListSelectionModel;
 import javax.swing.ScrollPaneConstants;
 import javax.swing.SpinnerNumberModel;
 import javax.swing.SwingConstants;
+import javax.swing.SwingUtilities;
 import javax.swing.UIManager;
 import javax.swing.border.TitledBorder;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
+import javax.swing.filechooser.FileNameExtensionFilter;
 
 import org.apache.commons.lang3.SystemUtils;
 import org.slf4j.Logger;
@@ -311,8 +317,8 @@ public class ConfigurationDlg {
         panelUI.add(labelAlwaysOnTop);
         
         JCheckBox chbxAlwaysOnTop = new JCheckBox();
-        chbxAlwaysOnTop.addChangeListener(new ChangeListener() {
-            public void stateChanged(ChangeEvent e) {
+        chbxAlwaysOnTop.addItemListener(new ItemListener() {
+            public void itemStateChanged(ItemEvent e) {
                 Config.instance().to().setProperty(Config.Entry.ALWAYS_ON_TOP.key(), chbxAlwaysOnTop.isSelected());
                 mainFrame.setAlwaysOnTop(chbxAlwaysOnTop.isSelected());
             }
@@ -341,8 +347,8 @@ public class ConfigurationDlg {
         
         JCheckBox chbxHideMainWindow = new JCheckBox("");
         chbxHideMainWindow.setEnabled(chbxSystemTray.isSelected() && chbxSystemTray.isEnabled());
-        chbxHideMainWindow.addChangeListener(new ChangeListener() {
-            public void stateChanged(ChangeEvent e) {
+        chbxHideMainWindow.addItemListener(new ItemListener() {
+            public void itemStateChanged(ItemEvent e) {
                 Config.instance().to().setProperty(Config.Entry.HIDE_MAIN_WINDOW.key(), chbxHideMainWindow.isSelected());
             }
         });
@@ -356,8 +362,8 @@ public class ConfigurationDlg {
         
         JCheckBox chbxTheme = new JCheckBox("");
         chbxTheme.setSelected(Config.instance().to().getBoolean(Config.Entry.WINDOW_THEME.key(), true));
-        chbxTheme.addChangeListener(new ChangeListener() {
-            public void stateChanged(ChangeEvent e) {
+        chbxTheme.addItemListener(new ItemListener() {
+            public void itemStateChanged(ItemEvent e) {
                 Config.instance().to().setProperty(Config.Entry.WINDOW_THEME.key(), chbxTheme.isSelected());
             }
         });
@@ -367,9 +373,9 @@ public class ConfigurationDlg {
 
         panelGeneral.setLayout(null);
 
-        chbxSystemTray.addChangeListener(new ChangeListener() {
+        chbxSystemTray.addItemListener(new ItemListener() {
             @Override
-            public void stateChanged(ChangeEvent e) {
+            public void itemStateChanged(ItemEvent e) {
                 Config.instance().to().setProperty(Config.Entry.SYSTEM_TRAY.key(), chbxSystemTray.isSelected());
                 lblHideMainWindow.setEnabled(chbxSystemTray.isSelected());
                 chbxHideMainWindow.setEnabled(chbxSystemTray.isSelected());
@@ -377,8 +383,8 @@ public class ConfigurationDlg {
         });
         
         JCheckBox chkbxAutostart = new JCheckBox();
-        chkbxAutostart.addChangeListener(new ChangeListener() {
-            public void stateChanged(ChangeEvent e) {
+        chkbxAutostart.addItemListener(new ItemListener() {
+            public void itemStateChanged(ItemEvent e) {
                 Config.instance().to().setProperty(Config.Entry.AUTOSTART.key(), chkbxAutostart.isSelected());
             }
         });
@@ -451,18 +457,62 @@ public class ConfigurationDlg {
         panelGeneral.add(textPM10MaxSafe);
         
         JLabel labelCheckVersion = new JLabel("<html>Automatically check for new version on start:</html>");
-        labelCheckVersion.setBounds(6, 164, 386, 16);
+        labelCheckVersion.setBounds(6, 164, 386, 16); 
         panelGeneral.add(labelCheckVersion);
         
         JCheckBox chkbxCheckVersion = new JCheckBox();
-        chkbxCheckVersion.addChangeListener(new ChangeListener() {
-            public void stateChanged(ChangeEvent e) {
+        chkbxCheckVersion.addItemListener(new ItemListener() {
+            public void itemStateChanged(ItemEvent e) {
                 Config.instance().to().setProperty(Config.Entry.CHECK_LATEST_VERSION.key(), chkbxCheckVersion.isSelected());
             }
         });
         chkbxCheckVersion.setSelected(Config.instance().to().getBoolean(Config.Entry.CHECK_LATEST_VERSION.key(), true));
         chkbxCheckVersion.setBounds(471, 160, 78, 29);
         panelGeneral.add(chkbxCheckVersion);
+        
+        JLabel lblCSVLog = new JLabel("<html>Log measurements to CSV file:</html>");
+        lblCSVLog.setBounds(6, 199, 386, 37);
+        panelGeneral.add(lblCSVLog);
+        
+        JButton btnChooseCSVFilePath = new JButton("...");
+        
+        JCheckBox chkbxCSVLog = new JCheckBox();
+        chkbxCSVLog.addItemListener(new ItemListener() {
+            public void itemStateChanged(ItemEvent e) {
+                btnChooseCSVFilePath.setEnabled(chkbxCSVLog.isSelected());
+                if (!chkbxCSVLog.isSelected()) {
+                    Config.instance().to().setProperty(Config.Entry.CSV_LOG_ENABLED.key(), false);
+                } else {
+                    SwingUtilities.invokeLater(() -> btnChooseCSVFilePath.doClick());
+                }
+            }
+        });
+        chkbxCSVLog.setSelected(Config.instance().to().getBoolean(Config.Entry.CSV_LOG_ENABLED.key(), false));
+        chkbxCSVLog.setBounds(471, 199, 35, 29);
+        panelGeneral.add(chkbxCSVLog);
+        
+        btnChooseCSVFilePath.setEnabled(chkbxCSVLog.isSelected());
+        btnChooseCSVFilePath.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                JFileChooser fileChooser = new JFileChooser();
+                fileChooser.setFileSelectionMode(JFileChooser.FILES_ONLY);
+                fileChooser.setDialogTitle("Please specify where to write CSV file...");
+                fileChooser.setSelectedFile(new File("pm-home-station.csv"));
+                fileChooser.setFileFilter(new FileNameExtensionFilter("CSV file","csv"));
+                if (fileChooser.showSaveDialog(frame) == JFileChooser.APPROVE_OPTION) {
+                    File file = fileChooser.getSelectedFile();
+                    Config.instance().to().setProperty(Config.Entry.CSV_LOG_ENABLED.key(), true);
+                    Config.instance().to().setProperty(Config.Entry.CSV_LOG_FILE.key(), file.getAbsolutePath());
+                } else {
+                    chkbxCSVLog.setSelected(false);
+                }
+            } 
+        });
+        btnChooseCSVFilePath.setToolTipText("Choose filepath to write meaurements in CSV format");
+        btnChooseCSVFilePath.setBounds(508, 204, 28, 21);
+        panelGeneral.add(btnChooseCSVFilePath);
+        
+        
 
         frame.getContentPane().setLayout(groupLayout);
         frame.toFront();

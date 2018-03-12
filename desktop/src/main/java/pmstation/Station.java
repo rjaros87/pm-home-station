@@ -1,6 +1,6 @@
 /*
  * pm-home-station
- * 2017 (C) Copyright - https://github.com/rjaros87/pm-home-station
+ * 2017-2018 (C) Copyright - https://github.com/rjaros87/pm-home-station
  * License: GPL 3.0
  */
 
@@ -71,6 +71,7 @@ import pmstation.helpers.ResourceHelper;
 import pmstation.helpers.VersionChecker;
 import pmstation.integration.MacOSIntegration;
 import pmstation.integration.NativeTrayIntegration;
+import pmstation.observers.CSVObserver;
 import pmstation.observers.ChartObserver;
 import pmstation.observers.ConsoleObserver;
 import pmstation.observers.LabelObserver;
@@ -158,6 +159,7 @@ public class Station {
         
         addObserver(new ChartObserver(chart, chartPanel));
         addObserver(new ConsoleObserver());
+        addObserver(new CSVObserver());
 
         JLabel labelStatus = new JLabel("Status...");
         labelsCollector.add(LabelObserver.LabelsCollector.LABEL.DEVICE_STATUS, labelStatus);

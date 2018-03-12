@@ -1,6 +1,6 @@
 /*
  * pm-home-station
- * 2017 (C) Copyright - https://github.com/rjaros87/pm-home-station
+ * 2017-2018 (C) Copyright - https://github.com/rjaros87/pm-home-station
  * License: GPL 3.0
  */
 package pmstation.configuration;
@@ -42,7 +42,9 @@ public class Config {
         SCREEN_POS_HEIGHT("screen.pos.height"),
         PREFERRED_DEVICES("preferred.devices"),
         CHECK_LATEST_VERSION("check.latest.version"),
-        WINDOW_THEME("window.theme");
+        WINDOW_THEME("window.theme"),
+        CSV_LOG_ENABLED("csv.log.enabled"),
+        CSV_LOG_FILE("csv.log.file");
         
         
         private String key;

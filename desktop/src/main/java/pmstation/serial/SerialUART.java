@@ -1,3 +1,8 @@
+/*
+ * pm-home-station
+ * 2017-2018 (C) Copyright - https://github.com/rjaros87/pm-home-station
+ * License: GPL 3.0
+ */
 package pmstation.serial;
 
 import java.util.ArrayList;
