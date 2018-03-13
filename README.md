@@ -4,7 +4,7 @@ _Language versions:_\
 [![DE](https://github.com/rjaros87/pm-home-station/raw/master/www/flags/lang-DE.png)](https://translate.googleusercontent.com/translate_c?sl=en&tl=de&u=https://github.com/rjaros87/pm-home-station) 
 <a href="https://zrzutka.pl/en/ra6pw7/wplac"><img src="https://img.shields.io/badge/Donate-zrzutka.pl-green.svg" height="24" align="right" /></a>
 
-# Home use particulate matter sensor
+# Home use particulate matter sensor [![Build Status](https://travis-ci.org/rjaros87/pm-home-station.svg?branch=master)](https://travis-ci.org/rjaros87/pm-home-station)
 
 Since we live in big polluted cities the air quality is on a very poor level. But, the problem is not only connected to the big cities - even smaller cities and villages may suffer from air pollution.
 That's why we've created this little project to let you build your own Particulate Matter monitoring station and use our open-source software so you could monitor the air quality in your place of living.
