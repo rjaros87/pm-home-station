@@ -23,3 +23,4 @@ matrix:
       osx_image: xcode9.2
       xcode_project: iOS/PMMonitor.xcodeproj
       xcode_scheme: PMMonitor
+      script: cd iOS && xcodebuild clean && xcodebuild test -sdk iphonesimulator11.0 -project PMMonitor.xcodeproj -scheme PMMonitor CODE_SIGNING_REQUIRED=NO
