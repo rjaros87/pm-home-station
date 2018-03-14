@@ -19,7 +19,7 @@ matrix:
       script:
         - ./gradlew shadowJar createExe
 
-    - language swift
+    - language: objective-c
       osx_image: xcode9.2
       xcode_project: iOS/PMMonitor.xcodeproj
       xcode_scheme: PMMonitor
