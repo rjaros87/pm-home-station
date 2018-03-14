@@ -18,3 +18,8 @@ matrix:
       jdk: oraclejdk8
       script:
         - ./gradlew shadowJar createExe
+
+    - language swift
+      osx_image: xcode9.2
+      xcode_project: iOS/PMMonitor.xcodeproj
+      xcode_scheme: PMMonitor
