@@ -101,6 +101,26 @@ public class PlanTowerSensor {
         return serialUART.portDetails();
     }
     
+    public void waitUntilDisconnected() {
+        Runnable runnable = () -> {
+            disconnectDevice();
+        };
+        Thread shutdownHook = new Thread(runnable);
+        Runtime.getRuntime().addShutdownHook(shutdownHook);
+        while (true) {
+            try {
+                if (scheduledMeasurements.isCancelled() || scheduledMeasurements.isDone()) {
+                    logger.info("Measurements finished for whatever reason, bailing out");
+                    return;
+                }
+                Thread.sleep(100);
+            } catch (InterruptedException ex) {
+                Thread.currentThread().interrupt();
+                throw new RuntimeException(ex);
+            }
+        }
+    }
+    
     private Runnable getMeasurementsRunnable() {
         return () -> {
             try {

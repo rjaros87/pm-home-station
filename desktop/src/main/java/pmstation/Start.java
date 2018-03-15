@@ -22,6 +22,8 @@ import org.slf4j.LoggerFactory;
 
 import pmstation.configuration.Config;
 import pmstation.configuration.Constants;
+import pmstation.observers.CSVObserver;
+import pmstation.observers.ConsoleObserver;
 import pmstation.plantower.PlanTowerSensor;
 
 public class Start {
@@ -39,6 +41,21 @@ public class Start {
                 formatter.printHelp(Constants.PROJECT_NAME, options, true);
             } else if (line.hasOption("version")) {
                 System.out.println("version: " + Constants.VERSION);
+            } else if (line.hasOption("headless")) {
+                logger.info("Starting pm-home-station (headless mode), v.{} ({})...", Constants.VERSION, Constants.PROJECT_URL);
+                PlanTowerSensor planTowerSensor = new PlanTowerSensor();
+                planTowerSensor.addObserver(new ConsoleObserver());
+                planTowerSensor.addObserver(new CSVObserver());
+                planTowerSensor.connectDevice();
+                if (planTowerSensor.isConnected()) {
+                    planTowerSensor.startMeasurements(Config.instance().to().getInt(Config.Entry.INTERVAL.key(), Constants.DEFAULT_INTERVAL) * 1000L);
+                    planTowerSensor.waitUntilDisconnected();
+                    logger.info("Exiting!");
+                    System.exit(0);
+                } else {
+                    logger.warn("Unable to connect to any sensor. Exiting!");
+                    System.exit(1);
+                }
             } else {
                 logger.info("Starting pm-home-station, v.{} ({})...", Constants.VERSION, Constants.PROJECT_URL);
                 setLookAndFeel();
@@ -74,6 +91,7 @@ public class Start {
         Options options = new Options();
         //options.addOption("noui", false, "no UI, console only");
         options.addOption("h", "help", false, "print this message and exit");
+        options.addOption("c", "headless", false, "headless mode (cli mode) - autostarts measurements based on config");
         options.addOption("v", "version", false, "print the version information and exit");
         return options;
     }
