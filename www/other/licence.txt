@@ -16,5 +16,6 @@ http://www.softicons.com/toolbar-icons/danish-royalty-free-icons-by-jonasrask-de
 
 laptop+install.png
 
-joint of laptop.png + install.png
+joint of laptop.png + install.png + text
+
 

@@ -11,9 +11,9 @@ That's why we've created this little project to let you build your own Particula
 
 Let's live healthier life and start measuring the air quality and filtering it if necessary.
 
- Android | iPhone and Watch |     Desktop    |
- --------|------------------|-----------------
-<a href="https://play.google.com/store/apps/details?id=pmstation.android&pcampaignid=MKT-Other-global-all-co-prtnr-py-PartBadge-Mar2515-1"><img alt="Get it on Google Play" src="https://play.google.com/intl/en_us/badges/images/generic/en_badge_web_generic.png" height="62" /></a>|<a href="https://itunes.apple.com/us/app/pm-home-station/id1347597971?mt=8"><img src="https://linkmaker.itunes.apple.com/assets/shared/badges/en-us/appstore-lrg.png" width="135" height="40" /></a>|<a href="https://github.com/rjaros87/pm-home-station/releases"><img alt="Download and install" src="https://github.com/rjaros87/pm-home-station/raw/master/www/other/laptop+install.png" width="87" height="75"/></a>
+|  Android  | iPhone & Watch |    Desktop    |
+|-----------|----------------|---------------|
+|<a href="https://play.google.com/store/apps/details?id=pmstation.android&pcampaignid=MKT-Other-global-all-co-prtnr-py-PartBadge-Mar2515-1"><img alt="Get it on Google Play" src="https://play.google.com/intl/en_us/badges/images/generic/en_badge_web_generic.png" height="58" /></a>|<a href="https://itunes.apple.com/us/app/pm-home-station/id1347597971?mt=8"><img src="https://linkmaker.itunes.apple.com/assets/shared/badges/en-us/appstore-lrg.png" width="135" height="40" /></a>|<a href="https://github.com/rjaros87/pm-home-station/releases"><img alt="Download and install" src="https://github.com/rjaros87/pm-home-station/raw/master/www/other/laptop+install.png" width="135" height="58"/></a>|
 
 ## Hardware Requirements
 
@@ -51,7 +51,7 @@ You may want to use the following rebate coupon: __A9XS1FPF__ on purchases made 
 
 ## Assemble the PM sensor
 
-### USB
+### USB version
 
 1. Connect the PlanTower device with ICD10 adapter (~~like on photo below~~). 
 > Caution! The pins on the PlanTower device are located in the top right corner. Numeration starts from the right top corner (1) and ends in the left bottom corner (10). 
@@ -71,7 +71,7 @@ TXD           | RXD
 
 4. Start the application and check the air quality of your environment :smile:
 
-### Bluetooth
+### Bluetooth version
 
 1. Follow 1-3 steps of USB instruction above, but use your Bluetooth or Bluetooth LE module instead of UART-USB adapter
 
