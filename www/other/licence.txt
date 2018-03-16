@@ -1,0 +1,16 @@
+laptop.png:
+
+Icon set:   Free Icon Set
+Author:     eclipSe-Saitex
+License:    Freeware
+Commercial usage:       Allowed
+http://www.softicons.com/web-icons/free-icon-set-by-eclipse-saitex/laptop-black-icon
+
+install.png
+
+con set:    Danish Royalty Free Icons
+Author:     Jonas Rask Design
+License:    Freeware
+Commercial usage: Allowed
+http://www.softicons.com/toolbar-icons/danish-royalty-free-icons-by-jonasrask-design/install-icon
+

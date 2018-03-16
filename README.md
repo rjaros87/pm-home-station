@@ -11,9 +11,9 @@ That's why we've created this little project to let you build your own Particula
 
 Let's live healthier life and start measuring the air quality and filtering it if necessary.
 
- Android | iPhone and Watch
- --------|-----------------
-<a href="https://play.google.com/store/apps/details?id=pmstation.android&pcampaignid=MKT-Other-global-all-co-prtnr-py-PartBadge-Mar2515-1"><img alt="Get it on Google Play" src="https://play.google.com/intl/en_us/badges/images/generic/en_badge_web_generic.png" height="62" /></a>|<a href="https://itunes.apple.com/us/app/pm-home-station/id1347597971?mt=8"><img src="https://linkmaker.itunes.apple.com/assets/shared/badges/en-us/appstore-lrg.png" width=135 height=40 /></a>
+ Android | iPhone and Watch |     Desktop    |
+ --------|------------------|-----------------
+<a href="https://play.google.com/store/apps/details?id=pmstation.android&pcampaignid=MKT-Other-global-all-co-prtnr-py-PartBadge-Mar2515-1"><img alt="Get it on Google Play" src="https://play.google.com/intl/en_us/badges/images/generic/en_badge_web_generic.png" height="62" /></a>|<a href="https://itunes.apple.com/us/app/pm-home-station/id1347597971?mt=8"><img src="https://linkmaker.itunes.apple.com/assets/shared/badges/en-us/appstore-lrg.png" width="135" height="40" /></a>|<a href="https://github.com/rjaros87/pm-home-station/releases"><img alt="Download and install" src="https://github.com/rjaros87/pm-home-station/raw/master/www/other/laptop.png" width="64" height="64"/><img alt="Download and install" src="https://github.com/rjaros87/pm-home-station/raw/master/www/other/install.png" width="32" height="32"/></a>
 
 ## Requirements
 
@@ -121,54 +121,11 @@ The app screenshots gallery can be found [here](https://rjaros87.github.io/pm-ho
 
 ## Tested platforms
 
-- Android APK
-  - Android 6 / 7 / 8 / 8.1 (for USB version the OTG feature must be supported), minSDK=21 (Android 5.0)
-
-- Apple iPhone & Apple Watch
-  - Build & Run [XCode project](https://github.com/rjaros87/pm-home-station/tree/master/iOS)
-- Desktop (standalone) app
-  - Windows 7 & 10
-    - before running the app, open the Device Manager, expand `Ports (COM & LPT)` and find your adapter. Ensure that the Device status states `This device is working properly`. If not, then you probably need to install older drivers for this adapter (a workaround).
-    - please refer to the Known Issues section in case of odd mouse behavior under Windows when PM is connected via FT232
-  - Linux Ubuntu 16.04
-    - the ownership of device `/dev/ttyUSB0` is `dialout` group so must add yourself to the group and re-login or run with `sudo` (not recommended)
-  - macOS Sierra 10.12
-    - you may need to install correct driver for your version of uart-to-usb
-      - for PL2303 you can use [this](http://www.prolific.com.tw/US/ShowProduct.aspx?p_id=229&pcid=41) one, however for some uart-to-usb versions you must always detach the device before closing the app otherwise the java process may hang blocked by the driver on I/O operation.
-      - for FT232 the built-in (com.apple.driver.AppleUSBFTDI) driver just works, what's more FT232 based uart-to-usb implementations behave much better on macOS (see above)
+[See wiki page](https://github.com/rjaros87/pm-home-station/wiki/Tested-(supported)-platforms)
 
 ## Build and run
 
-
-### Requirements
-
-- Java Development Kit 8+
-
-#### Android:
-- Android Studio 3.0 (Android Plugin for Gradle 3.0.0+)
-- Build tools and SDK 27+
-
-#### iOS:
-- XCode 9+
-
-### Useful commands
-
-#### Desktop:
-- `gradlew pm-home-station:shadowJar` - create a single (fat) JAR file with the desktop application
-- `gradlew pm-home-station:createExe` - create a Windows EXE file with the desktop application
-- `gradlew pm-home-station:run` - run the desktop application
-
-#### Android:
-- `gradlew android:build` - create APK-s for Android devices
-
-## Known issues and workarounds
-#### Windows 7-10:
-There is a known issue with "odd" mouse behaviour (mouse cursor is jumping over the Windows desktop) 
-when the PM device is being connected via FT232 adapter under Windows operating system.
-"Microsoft Serial Ballpoint" device driver is being automatically installed and visible under "Mice and other pointing devices" in the Device Manager.
-You can prevent enabling "Ballpoint" device using the link below or directly disable it in the Device Manager.
-Please refer to the following location to turn off permanently using registry editor:
-* [Disabling the Microsoft Serial Ballpoint ](https://stackoverflow.com/questions/9226082/device-misdetected-as-serial-mouse)
+[See wiki page](https://github.com/rjaros87/pm-home-station/wiki/Building-&-Requirements)
 
 
 ## Contributing

@@ -102,10 +102,7 @@ public class PlanTowerSensor {
     }
     
     public void waitUntilDisconnected() {
-        Runnable runnable = () -> {
-            disconnectDevice();
-        };
-        Thread shutdownHook = new Thread(runnable);
+        Thread shutdownHook = new Thread(() -> disconnectDevice());
         Runtime.getRuntime().addShutdownHook(shutdownHook);
         while (true) {
             try {
