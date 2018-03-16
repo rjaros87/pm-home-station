@@ -14,3 +14,7 @@ License:    Freeware
 Commercial usage: Allowed
 http://www.softicons.com/toolbar-icons/danish-royalty-free-icons-by-jonasrask-design/install-icon
 
+laptop+install.png
+
+joint of laptop.png + install.png
+
