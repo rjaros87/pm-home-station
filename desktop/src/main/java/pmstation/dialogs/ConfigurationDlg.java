@@ -477,6 +477,7 @@ public class ConfigurationDlg {
         JButton btnChooseCSVFilePath = new JButton("...");
         
         JCheckBox chkbxCSVLog = new JCheckBox();
+        chkbxCSVLog.setSelected(Config.instance().to().getBoolean(Config.Entry.CSV_LOG_ENABLED.key(), false));
         chkbxCSVLog.addItemListener(new ItemListener() {
             public void itemStateChanged(ItemEvent e) {
                 btnChooseCSVFilePath.setEnabled(chkbxCSVLog.isSelected());
@@ -487,7 +488,6 @@ public class ConfigurationDlg {
                 }
             }
         });
-        chkbxCSVLog.setSelected(Config.instance().to().getBoolean(Config.Entry.CSV_LOG_ENABLED.key(), false));
         chkbxCSVLog.setBounds(471, 199, 35, 29);
         panelGeneral.add(chkbxCSVLog);
         
