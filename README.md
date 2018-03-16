@@ -15,9 +15,9 @@ Let's live healthier life and start measuring the air quality and filtering it i
  --------|------------------|-----------------
 <a href="https://play.google.com/store/apps/details?id=pmstation.android&pcampaignid=MKT-Other-global-all-co-prtnr-py-PartBadge-Mar2515-1"><img alt="Get it on Google Play" src="https://play.google.com/intl/en_us/badges/images/generic/en_badge_web_generic.png" height="62" /></a>|<a href="https://itunes.apple.com/us/app/pm-home-station/id1347597971?mt=8"><img src="https://linkmaker.itunes.apple.com/assets/shared/badges/en-us/appstore-lrg.png" width="135" height="40" /></a>|<a href="https://github.com/rjaros87/pm-home-station/releases"><img alt="Download and install" src="https://github.com/rjaros87/pm-home-station/raw/master/www/other/laptop+install.png" width="87" height="75"/></a>
 
-## Requirements
+## Hardware Requirements
 
-### USB
+### USB version (supported by Android & Desktop apps)
 - [PlanTower PMS7003](https://kamami.pl/czujniki-gazow/564008-plantower-pms7003-laserowy-czujnik-pylu-pm25.html) ~$26
 - [ICD10 adapter with 10 pins(1.27 mm) to 6 pins (2.54 mm) (also called `G7 switch`)](https://kamami.pl/zlacza-inne/564553-adapter-idc10-127mm-na-zlacze-254mm-dla-czujnika-pms7003.html) ~$2
 - UART to USB adapter:
@@ -26,7 +26,7 @@ Let's live healthier life and start measuring the air quality and filtering it i
 - [Female-Female wires 5 items (required for PL2303 otherwise optional since FT232 can be bought with wires already included)](https://kamami.pl/przewody-f-f/199418--przewody-polaczeniowe-f-f-roznokolorowe-17-cm-10-szt.html) ~$1-2
 - [USB OTG cable](https://kamami.pl/przewody-usb/560191-przewod-adapter-microusb-otg.html) ~$1
 
-### Bluetooth
+### Bluetooth 2.0 (supported by Desktop app, possible support by Android app)
 > Caution! Connectivity to the sensor over Bluetooth is currently only supported by the desktop application ran on macOS.
 
 > Caution! If you want to connect from Apple iPhone or Apple Watch - please see Low Energy version (below)
@@ -37,15 +37,15 @@ Let's live healthier life and start measuring the air quality and filtering it i
 - [Bluetooth UART HC-06](https://kamami.pl/moduly-bluetooth/198260-zestaw-bluetooth-z-modulem-hc-06-20edr-zasilany-3-6-6-v.html?search_query=hc-06&results=2) ~$7
 - recycled old USB cable to provide power to Sensor and Bluetooth tandem
 
-### Bluetooth Low Energy
-> Caution! Connectivity to the sensor over Bluetooth LE is currently only tested on the iOS application running on iPhone or Apple Watch.
+### Bluetooth Low Energy (supported by iOS app, possible support by Android app)
+> Caution! Connectivity to the sensor over Bluetooth LE is currently only tested on the iOS application running on iPhone or Apple Watch. Multi-platform desktop support not planned in near feature.
 
 - [PlanTower PMS7003](https://kamami.pl/czujniki-gazow/564008-plantower-pms7003-laserowy-czujnik-pylu-pm25.html) ~$26
 - [ICD10 adapter with 10 pins(1.27 mm) to 6 pins (2.54 mm) (also called `G7 switch`)](https://kamami.pl/zlacza-inne/564553-adapter-idc10-127mm-na-zlacze-254mm-dla-czujnika-pms7003.html) ~$2
 - [Bluetooth Low Energy UART HC-08](https://kamami.pl/moduly-bluetooth/562367-modhc-08-modul-bluetooth-hc-08.html) (includes wires) ~$7
 - recycled old USB cable to provide power to Sensor and Bluetooth tandem
 
-## Discount
+## Discount offers
 
 You may want to use the following rebate coupon: __A9XS1FPF__ on purchases made on [KAMAMI.COM](https://kamami.com) or [KAMAMI.PL](https://kamami.pl) to get 5% OFF on orders which include PMS7003 (to be used only once for each buyer).
 
@@ -79,7 +79,7 @@ TXD           | RXD
 
 3. Connect the power (5V) from USB cable or socket to Vcc and GND (2 most outside pins of USB plug, usually red 5V cable and black GND). You may need to shortcircuit data pin/wires (2 center pins) or connect them via ~200ohm resistor in order to be recognized by charger. Details can be found [here](http://pinouts.ru/Slots/USB_pinout.shtml "USB pinout").
 
-## 3D enclosure for the PlanTower device & the UART-USB adapter
+## 3D printed enclosure
 
 - 4x M3 x 25 machine screws with nuts are required to assemble the enclosure
 
@@ -130,11 +130,11 @@ The app screenshots gallery can be found [here](https://rjaros87.github.io/pm-ho
 
 ## Contributing
 
-* [Contribution Guidelines](/CONTRIBUTING.md)
+[Contribution Guidelines](/CONTRIBUTING.md)
 
 ## License
 
-- [License GPL-3.0](/LICENSE)
+[License GPL-3.0](/LICENSE)
 
 ## Authors
 
