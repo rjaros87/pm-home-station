@@ -2,7 +2,14 @@ rootProject.name = 'PMStation'
 
 include ':core'
 
-if (System.env['ANDROID_HOME'] != null) {
+Properties properties = new Properties()
+properties.load(file('local.properties').newDataInputStream())
+def sdkDir = properties.getProperty('sdk.dir')
+if (sdkDir == null) {
+	sdkDir = System.env['ANDROID_HOME']
+}
+
+if (sdkDir != null) {
     include ':android'
 }
 
