@@ -2,11 +2,15 @@ rootProject.name = 'PMStation'
 
 include ':core'
 
-Properties properties = new Properties()
-properties.load(file('local.properties').newDataInputStream())
-def sdkDir = properties.getProperty('sdk.dir')
-if (sdkDir == null) {
-	sdkDir = System.env['ANDROID_HOME']
+def sdkDir = System.env['ANDROID_HOME']
+
+File propertiesFile = file('local.properties')
+if (propertiesFile.exists()) {
+  Properties properties = new Properties()
+  properties.load(propertiesFile.newDataInputStream())
+  if (properties.getProperty('sdk.dir') != null) {
+    sdkDir = properties.getProperty('sdk.dir')
+  }
 }
 
 if (sdkDir != null) {
