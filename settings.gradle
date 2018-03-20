@@ -11,6 +11,8 @@ if (sdkDir == null) {
 
 if (sdkDir != null) {
     include ':android'
+} else {
+    logger.warn('Android subproject is being excluded since you have neither ANDROID_HOME env variable nor local.properties with sdk.dir present')
 }
 
 include ':desktop'
