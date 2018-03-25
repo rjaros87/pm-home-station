@@ -6,7 +6,6 @@
 
 package pmstation.plantower;
 
-import android.app.Service;
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
 import android.bluetooth.BluetoothGatt;
@@ -27,20 +26,20 @@ import java.util.List;
  * Service for managing connection and data communication with a GATT server hosted on a
  * given Bluetooth LE device.
  */
-public class BluetoothLeService extends Service {
+public class BluetoothLeService extends PlanTowerService {
     public final static String ACTION_GATT_CONNECTED = "pmstation.android.ble.ACTION_GATT_CONNECTED";
     public final static String ACTION_GATT_DISCONNECTED = "pmstation.android.ble.ACTION_GATT_DISCONNECTED";
-    public final static String ACTION_GATT_SERVICES_DISCOVERED =
-            "pmstation.android.ble.ACTION_GATT_SERVICES_DISCOVERED";
-    public final static String ACTION_DATA_AVAILABLE = "pmstation.android.ble.ACTION_DATA_AVAILABLE";
-    public final static String EXTRA_DATA = "pmstation.android.ble.EXTRA_DATA";
     private final static String TAG = BluetoothLeService.class.getSimpleName();
     private static final int STATE_DISCONNECTED = 0;
     private static final int STATE_CONNECTING = 1;
     private static final int STATE_CONNECTED = 2;
+    private static final String SERVICE_UUID = "0000ffe0";
+    private static final String CHARACTERISTIC_UUID = "0000ffe1";
     private final IBinder binder = new LocalBinder();
     private BluetoothManager bluetoothManager;
     private BluetoothAdapter bluetoothAdapter;
+    private BluetoothGattCharacteristic notifyCharacteristic;
+
     private String bluetoothDeviceAddress;
     private BluetoothGatt bluetoothGatt;
     private int connectionState = STATE_DISCONNECTED;
@@ -70,7 +69,7 @@ public class BluetoothLeService extends Service {
         @Override
         public void onServicesDiscovered(BluetoothGatt gatt, int status) {
             if (status == BluetoothGatt.GATT_SUCCESS) {
-                broadcastUpdate(ACTION_GATT_SERVICES_DISCOVERED);
+                findSerialChatacteristic(getSupportedGattServices());
             } else {
                 Log.w(TAG, "onServicesDiscovered received: " + status);
             }
@@ -81,31 +80,26 @@ public class BluetoothLeService extends Service {
                                          BluetoothGattCharacteristic characteristic,
                                          int status) {
             if (status == BluetoothGatt.GATT_SUCCESS) {
-                broadcastUpdate(ACTION_DATA_AVAILABLE, characteristic);
+                getData(characteristic);
             }
         }
 
         @Override
         public void onCharacteristicChanged(BluetoothGatt gatt,
                                             BluetoothGattCharacteristic characteristic) {
-            broadcastUpdate(ACTION_DATA_AVAILABLE, characteristic);
+            getData(characteristic);
         }
     };
 
-    private void broadcastUpdate(final String action) {
-        final Intent intent = new Intent(action);
-        sendBroadcast(intent);
-    }
-
-    private void broadcastUpdate(final String action,
-                                 final BluetoothGattCharacteristic characteristic) {
-        final Intent intent = new Intent(action);
-
-        // For all other profiles, writes the data formatted in HEX.
+    private void getData(BluetoothGattCharacteristic characteristic) {
         final byte[] data = characteristic.getValue();
         if (data != null && data.length > 0) {
-            intent.putExtra(EXTRA_DATA, data);
+            parseData(data);
         }
+    }
+
+    private void broadcastUpdate(final String action) {
+        final Intent intent = new Intent(action);
         sendBroadcast(intent);
     }
 
@@ -257,6 +251,57 @@ public class BluetoothLeService extends Service {
         }
 
         return bluetoothGatt.getServices();
+    }
+
+    private void findSerialChatacteristic(List<BluetoothGattService> gattServices) {
+        if (gattServices == null) {
+            return;
+        }
+        String uuid;
+
+        // Loops through available GATT Services.
+        for (BluetoothGattService gattService : gattServices) {
+            uuid = gattService.getUuid().toString();
+
+            if (!uuid.toLowerCase().startsWith(SERVICE_UUID)) {
+                continue;
+            }
+
+            List<BluetoothGattCharacteristic> gattCharacteristics =
+                    gattService.getCharacteristics();
+
+            // Loops through available Characteristics.
+            for (BluetoothGattCharacteristic gattCharacteristic : gattCharacteristics) {
+                uuid = gattCharacteristic.getUuid().toString();
+                if (uuid.toLowerCase().startsWith(CHARACTERISTIC_UUID)) {
+                    final int charaProp = gattCharacteristic.getProperties();
+                    if ((charaProp | BluetoothGattCharacteristic.PROPERTY_READ) > 0) {
+                        // If there is an active notification on a characteristic, clear
+                        // it first so it doesn't update the data field on the user interface.
+                        if (notifyCharacteristic != null) {
+                            setCharacteristicNotification(notifyCharacteristic, false);
+                            notifyCharacteristic = null;
+                        }
+                        readCharacteristic(gattCharacteristic);
+                    }
+                    if ((charaProp | BluetoothGattCharacteristic.PROPERTY_NOTIFY) > 0) {
+                        notifyCharacteristic = gattCharacteristic;
+                        setCharacteristicNotification(gattCharacteristic, true);
+                    }
+                    break;
+                }
+            }
+        }
+    }
+
+    @Override
+    protected boolean wakeUp() {
+        return false;
+    }
+
+    @Override
+    protected boolean sleep() {
+        return false;
     }
 
     public class LocalBinder extends Binder {

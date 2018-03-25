@@ -12,29 +12,24 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
-import android.content.SharedPreferences;
 import android.hardware.usb.UsbDevice;
 import android.hardware.usb.UsbDeviceConnection;
 import android.hardware.usb.UsbManager;
 import android.os.Binder;
 import android.os.Bundle;
-import android.os.Handler;
 import android.os.IBinder;
-import android.preference.PreferenceManager;
 import android.support.annotation.Nullable;
 import android.util.Log;
 
 import com.felhr.usbserial.UsbSerialDevice;
 import com.felhr.usbserial.UsbSerialInterface;
 
-import java.lang.ref.WeakReference;
 import java.util.HashMap;
 import java.util.Map;
 
-import pmstation.core.plantower.ParticulateMatterSample;
 import pmstation.core.plantower.PlanTowerDevice;
 
-public class USBSensor extends Service {
+public class USBService extends PlanTowerService {
     public static final String ACTION_USB_ATTACHED = "android.hardware.usb.action.USB_DEVICE_ATTACHED";
     public static final String ACTION_USB_DETACHED = "android.hardware.usb.action.USB_DEVICE_DETACHED";
     public static final String ACTION_USB_PERMISSION = "pmstation.USB_PERMISSION";
@@ -43,8 +38,7 @@ public class USBSensor extends Service {
             "pmstation.plantower.sensor.USB_PERMISSION_NOT_GRANTED";
     public static final String ACTION_USB_CONNECTED = "pmstation.plantower.sensor.USB_CONNECTED";
     public static final String ACTION_USB_DISCONNECTED = "pmstation.plantower.sensor.USB_DISCONNECTED";
-    public static final int MESSAGE_FROM_SERIAL_PORT = 0;
-    private static final String TAG = USBSensor.class.getSimpleName();
+    private static final String TAG = USBService.class.getSimpleName();
     private static final int BAUD_RATE = 9600;
     public static boolean SERVICE_CONNECTED = false;
 
@@ -54,7 +48,6 @@ public class USBSensor extends Service {
     private UsbSerialDevice serialPort;
     private boolean serialPortConnected;
     private boolean requested = false;
-    private Context context;
     /*
      * Different notifications from OS will be received here (USB attached, detached, permission responses...)
      * About BroadcastReceiver: http://developer.android.com/reference/android/content/BroadcastReceiver.html
@@ -102,48 +95,10 @@ public class USBSensor extends Service {
             }
         }
     };
-    private SharedPreferences preferences;
-    private int sampleCounter = 0;
-    private Handler handler;
+
     private IBinder binder = new LocalBinder();
-    private Thread fakeDataThread;
-    private WeakReference<Thread> workerThread;
     private UsbSerialInterface.UsbReadCallback readCallback = this::parseData;
 
-    public void parseData(byte[] bytes) {
-        workerThread = new WeakReference<>(Thread.currentThread());
-        Log.d(TAG, "parseData() called");
-        final ParticulateMatterSample sample = PlanTowerDevice.parse(bytes);
-        if (sample != null) {
-            notifyActivity(sample);
-        }
-        try {
-            sampleCounter = ++sampleCounter % 10;
-            String intervalPref = preferences.getString("sampling_interval", "1000");
-            int interval = Integer.parseInt(intervalPref);
-            if (interval > 3000) {
-                if (sampleCounter == 0) {
-                    sleep();
-                    Thread.sleep(interval);
-                    wakeUp();
-                } else {
-                    Thread.sleep(1000);
-                }
-            } else {
-                Thread.sleep(interval);
-            }
-        } catch (InterruptedException e) {
-            Log.d(TAG, "ConnectionThread sleep interrupted, most likely the sampling interval changed");
-            wakeUp();
-        }
-    }
-
-    public void wakeWorkerThread() {
-        Thread thread = workerThread.get();
-        if (thread != null) {
-            thread.interrupt();
-        }
-    }
 
     public void findSerialPortDevice() {
         // This snippet will try to open the first encountered usb device connected, excluding usb root hubs
@@ -168,12 +123,6 @@ public class USBSensor extends Service {
                     break;
                 }
             }
-        }
-    }
-
-    private void notifyActivity(final ParticulateMatterSample sample) {
-        if (handler != null && sample != null) {
-            handler.obtainMessage(MESSAGE_FROM_SERIAL_PORT, sample).sendToTarget();
         }
     }
 
@@ -210,6 +159,7 @@ public class USBSensor extends Service {
      *
      * @return whether the sensor is connected or not
      */
+    @Override
     public boolean sleep() {
         write(PlanTowerDevice.MODE_SLEEP);
         return isConnected();
@@ -220,6 +170,7 @@ public class USBSensor extends Service {
      *
      * @return whether the sensor is connected or not
      */
+    @Override
     public boolean wakeUp() {
         write(PlanTowerDevice.MODE_WAKEUP);
         return isConnected();
@@ -231,7 +182,7 @@ public class USBSensor extends Service {
     private void requestUserPermission() {
         if (!requested) {
             requested = true;
-            PendingIntent pendingIntent = PendingIntent.getBroadcast(context, 0, new Intent(ACTION_USB_PERMISSION), 0);
+            PendingIntent pendingIntent = PendingIntent.getBroadcast(this, 0, new Intent(ACTION_USB_PERMISSION), 0);
             usbManager.requestPermission(device, pendingIntent);
         }
     }
@@ -240,45 +191,18 @@ public class USBSensor extends Service {
         return serialPortConnected;
     }
 
-    public void startFakeDataThread() {
-        if (fakeDataThread != null) {
-            return;
-        }
-        fakeDataThread = new Thread(() -> {
-            int i = 0;
-            while (!Thread.currentThread().isInterrupted()) {
-                i = (i + 1) % 14;
-                try {
-                    notifyActivity(new ParticulateMatterSample(20, i * 10, 100));
-                    String intervalPref = preferences.getString("sampling_interval", "1000");
-                    int interval = Integer.parseInt(intervalPref);
-                    Thread.sleep(sampleCounter == 0 ? interval : 1000);
-                } catch (InterruptedException e) {
-                    Log.d(TAG, "Thread interrupted");
-                    Thread.currentThread().interrupt();
-                }
-            }
-        });
-        fakeDataThread.start();
-    }
-
-    public void stopFakeDataThread() {
-        fakeDataThread.interrupt();
-    }
-
     /*
     * onCreate will be executed when service is started. It configures an IntentFilter to listen for
     * incoming Intents (USB ATTACHED, USB DETACHED...) and it tries to open a serial port.
     */
     @Override
     public void onCreate() {
-        this.context = this;
+        super.onCreate();
         serialPortConnected = false;
-        USBSensor.SERVICE_CONNECTED = true;
+        USBService.SERVICE_CONNECTED = true;
         setFilter();
         usbManager = (UsbManager) getSystemService(Context.USB_SERVICE);
         serialPortConnected = false;
-        preferences = PreferenceManager.getDefaultSharedPreferences(context);
         findSerialPortDevice();
     }
 
@@ -290,10 +214,6 @@ public class USBSensor extends Service {
         registerReceiver(usbReceiver, filter);
     }
 
-    public void setHandler(Handler mHandler) {
-        this.handler = mHandler;
-    }
-
     @Override
     public void onTaskRemoved(Intent rootIntent) {
         sleep();
@@ -303,7 +223,7 @@ public class USBSensor extends Service {
     @Override
     public void onDestroy() {
         Log.d(TAG, "USB service onDestroy");
-        USBSensor.SERVICE_CONNECTED = false;
+        USBService.SERVICE_CONNECTED = false;
         super.onDestroy();
     }
 
@@ -319,8 +239,8 @@ public class USBSensor extends Service {
     }
 
     public class LocalBinder extends Binder {
-        public USBSensor getService() {
-            return USBSensor.this;
+        public USBService getService() {
+            return USBService.this;
         }
     }
 

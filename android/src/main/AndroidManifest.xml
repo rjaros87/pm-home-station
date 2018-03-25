@@ -19,7 +19,7 @@
             </intent-filter>
         </activity>
         <service android:name=".plantower.BluetoothLeService"/>
-        <service android:name=".plantower.USBSensor"/>
+        <service android:name=".plantower.USBService"/>
     </application>
 
 </manifest>
