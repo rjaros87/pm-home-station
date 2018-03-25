@@ -24,10 +24,6 @@ public enum AQIColor {
         this.alpha = alpha;
     }
 
-    public int getColor() {
-        return color;
-    }
-
     public static AQIColor fromPM10Level(int pmLevel) {
         if (pmLevel > 200) {
             return HAZARDOUS;
@@ -58,6 +54,10 @@ public enum AQIColor {
         } else {
             return VERY_GOOD;
         }
+    }
+
+    public int getColor() {
+        return color;
     }
 
     public float getAlpha() {

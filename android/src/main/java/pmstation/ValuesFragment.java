@@ -29,10 +29,7 @@ import pmstation.core.plantower.ParticulateMatterSample;
 import pmstation.plantower.Settings;
 
 public class ValuesFragment extends Fragment implements IPlanTowerObserver {
-    private static final String TAG = "ValuesFragment";
-    SharedPreferences.OnSharedPreferenceChangeListener spChanged = (sharedPreferences, key) -> {
-
-    };
+    private static final String TAG = ValuesFragment.class.getSimpleName();
     private CardView pm1Card;
     private CardView pm25Card;
     private CardView pm10Card;
@@ -103,7 +100,9 @@ public class ValuesFragment extends Fragment implements IPlanTowerObserver {
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
         MainActivity activity = (MainActivity) getActivity();
-        activity.getSensor().addValueObserver(this);
+        if (activity != null) {
+            activity.addValueObserver(this);
+        }
         preferences = PreferenceManager.getDefaultSharedPreferences(activity);
         changeMainValue();
         changePM25Norm();
@@ -115,7 +114,9 @@ public class ValuesFragment extends Fragment implements IPlanTowerObserver {
     public void onDetach() {
         super.onDetach();
         MainActivity activity = (MainActivity) getActivity();
-        activity.getSensor().removeValueObserver(this);
+        if (activity != null) {
+            activity.removeValueObserver(this);
+        }
     }
 
     @Override

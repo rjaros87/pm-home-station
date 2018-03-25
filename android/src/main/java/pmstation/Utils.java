@@ -10,8 +10,8 @@ import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
 
-public class Utils {
-    public static void launchWebIntent(Context context, String url) {
+class Utils {
+    static void launchWebIntent(Context context, String url) {
         Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(url));
         context.startActivity(browserIntent);
     }

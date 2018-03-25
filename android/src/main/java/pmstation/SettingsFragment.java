@@ -68,6 +68,11 @@ public class SettingsFragment extends PreferenceFragmentCompat
         ValuesFragment valuesFragment =
                 (ValuesFragment) getActivity().getSupportFragmentManager()
                                               .findFragmentByTag(MainActivity.VALUES_FRAGMENT);
+
+        if (key.equals("sampling_interval")) {
+            ((MainActivity) getActivity()).wakeConnection();
+            return;
+        }
         if (valuesFragment == null) {
             return;
         }

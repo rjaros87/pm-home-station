@@ -31,5 +31,9 @@
             android:summary="@string/norm_summary"
             android:dialogMessage="@string/norm_message"
             android:defaultValue="50"/>
+        <EditTextPreference
+            android:key="bt_mac"
+            android:title="BT LE Mac"
+            android:defaultValue="00:25:83:00:62:E7"/>
     </PreferenceCategory>
 </PreferenceScreen>

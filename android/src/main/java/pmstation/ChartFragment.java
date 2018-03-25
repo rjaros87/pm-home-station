@@ -56,7 +56,9 @@ public class ChartFragment extends Fragment implements IPlanTowerObserver {
     public void onDetach() {
         super.onDetach();
         MainActivity activity = (MainActivity) getActivity();
-        activity.getSensor().removeValueObserver(this);
+        if (activity != null) {
+            activity.removeValueObserver(this);
+        }
     }
 
     @Override
@@ -66,7 +68,7 @@ public class ChartFragment extends Fragment implements IPlanTowerObserver {
         pm25Label = getString(R.string.pm25);
         pm10Label = getString(R.string.pm10);
         MainActivity activity = (MainActivity) getActivity();
-        activity.getSensor().addValueObserver(this);
+        activity.addValueObserver(this);
         final List<ParticulateMatterSample> values = activity.getValues();
         IAxisValueFormatter formatter =
                 (value, axis) -> {

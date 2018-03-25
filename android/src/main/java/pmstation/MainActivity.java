@@ -6,16 +6,24 @@
 
 package pmstation;
 
+import android.bluetooth.BluetoothGattCharacteristic;
+import android.bluetooth.BluetoothGattService;
 import android.content.BroadcastReceiver;
+import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.content.ServiceConnection;
 import android.graphics.Color;
 import android.graphics.PorterDuff;
 import android.graphics.drawable.Drawable;
-import android.hardware.usb.UsbManager;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.HandlerThread;
+import android.os.IBinder;
+import android.os.Looper;
+import android.os.Message;
 import android.preference.PreferenceManager;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
@@ -26,74 +34,119 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.WindowManager;
 import android.widget.ImageView;
+import android.widget.Toast;
 
 import com.google.firebase.crash.FirebaseCrash;
 
+import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Set;
 
 import pmstation.core.plantower.IPlanTowerObserver;
 import pmstation.core.plantower.ParticulateMatterSample;
-import pmstation.plantower.Sensor;
+import pmstation.plantower.BluetoothLeService;
+import pmstation.plantower.USBSensor;
 
 public class MainActivity extends AppCompatActivity implements IPlanTowerObserver {
-    public static final String ACTION_USB_ATTACHED = "android.hardware.usb.action.USB_DEVICE_ATTACHED";
-    public static final String ACTION_USB_DETACHED = "android.hardware.usb.action.USB_DEVICE_DETACHED";
-    public static final String ACTION_USB_PERMISSION = "pmstation.USB_PERMISSION";
     public static final String VALUES_FRAGMENT = "VALUES_FRAGMENT";
     public static final String CHART_FRAGMENT = "CHART_FRAGMENT";
     public static final String SETTINGS_FRAGMENT = "SETTINGS_FRAGMENT";
     public static final String ABOUT_FRAGMENT = "ABOUT_FRAGMENT";
-    private static final String TAG = "MainActivity";
     public static final String LAST_SINGLE_PANE_FRAGMENT = "lastSinglePaneFragment";
+    private static final String TAG = MainActivity.class.getSimpleName();
+    private static final String SERVICE_UUID = "0000ffe0";
+    private static final String CHARACTERISTIC_UUID = "0000ffe1";
+
+    private final List<IPlanTowerObserver> valueObservers = Collections.synchronizedList(new ArrayList<>());
+    private List<ParticulateMatterSample> values = Collections.synchronizedList(new ArrayList<>());
     private Menu menu;
     private ImageView smog;
-    private List<ParticulateMatterSample> values = Collections.synchronizedList(new ArrayList<>());
-    private boolean running = false;
     private String lastSinglePaneFragment;
-    private Sensor sensor;
-    /*
-     * Different notifications from OS will be received here (USB attached, detached, permission responses...)
-     * About BroadcastReceiver: http://developer.android.com/reference/android/content/BroadcastReceiver.html
-     */
+    private USBSensor sensor;
+    private boolean running = false;
+    private boolean justConnected;
     private final BroadcastReceiver usbReceiver = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
-            String action = intent.getAction();
-            if (action == null) {
-                return;
-            }
             switch (intent.getAction()) {
-                case ACTION_USB_PERMISSION:
-                    sensor.clearPermissionReqestFlag();
-                    Bundle extras = intent.getExtras();
-                    if (extras == null) {
-                        return;
+                case USBSensor.ACTION_USB_PERMISSION_GRANTED: // USB PERMISSION GRANTED
+                    Toast.makeText(context, "USB Ready", Toast.LENGTH_SHORT).show();
+                    getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
+                    // if was just connected then it's not asleep
+                    if (!justConnected) {
+                        sensor.wakeUp();
                     }
-                    boolean granted = extras.getBoolean(UsbManager.EXTRA_PERMISSION_GRANTED);
-                    if (granted) { // User accepted our USB connection. Try to open the device as a serial port
-                        if (sensor.connectDevice()) {
-                            getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
-                            setStatus(true);
-                        }
-                    } else { // User not accepted our USB connection.
-                        setStatus(false);
-                    }
+                    setStatus(true);
                     break;
-                case ACTION_USB_ATTACHED:
-                    if (!sensor.isConnected()) {
-                        sensor.findSerialPortDevice(); // A USB device has been attached. Try to open it as a Serial port
-                    }
-                    break;
-                case ACTION_USB_DETACHED:
-                    // Usb device was disconnected.
+                case USBSensor.ACTION_USB_PERMISSION_NOT_GRANTED: // USB PERMISSION NOT GRANTED
+                    Toast.makeText(context, "USB Permission not granted", Toast.LENGTH_SHORT).show();
                     setStatus(false);
-                    if (sensor.isConnected()) {
-                        sensor.disconnectDevice();
-                    }
+                    break;
+                case USBSensor.ACTION_USB_CONNECTED: // NO USB CONNECTED
+                    justConnected = true;
+                    break;
+                case USBSensor.ACTION_USB_DISCONNECTED: // USB DISCONNECTED
+                    Toast.makeText(context, "USB disconnected", Toast.LENGTH_SHORT).show();
+                    setStatus(false);
                     getWindow().clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
                     break;
+            }
+        }
+    };
+    private USBHandler usbHandler;
+    private final ServiceConnection usbConnection = new ServiceConnection() {
+        @Override
+        public void onServiceConnected(ComponentName name, IBinder service) {
+            sensor = ((USBSensor.LocalBinder) service).getService();
+            sensor.setHandler(usbHandler);
+            if (isEmulator()) {
+                sensor.startFakeDataThread();
+            }
+        }
+
+        @Override
+        public void onServiceDisconnected(ComponentName name) {
+            sensor.stopFakeDataThread();
+            sensor = null;
+        }
+    };
+    private HandlerThread handlerThread;
+    private BluetoothLeService bluetoothLeService;
+    private String deviceAddress;
+    private final ServiceConnection btConnection = new ServiceConnection() {
+        @Override
+        public void onServiceConnected(ComponentName componentName, IBinder service) {
+            bluetoothLeService = ((BluetoothLeService.LocalBinder) service).getService();
+            if (!bluetoothLeService.initialize()) {
+                Log.e(TAG, "Unable to initialize Bluetooth");
+                return;
+            }
+            // Automatically connects to the device upon successful start-up initialization.
+            bluetoothLeService.connect(deviceAddress);
+        }
+
+        @Override
+        public void onServiceDisconnected(ComponentName componentName) {
+            bluetoothLeService = null;
+        }
+    };
+    private boolean btConnected = false;
+    private BluetoothGattCharacteristic notifyCharacteristic;
+    private final BroadcastReceiver gattUpdateReceiver = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            final String action = intent.getAction();
+            if (BluetoothLeService.ACTION_GATT_CONNECTED.equals(action)) {
+                btConnected = true;
+            } else if (BluetoothLeService.ACTION_GATT_DISCONNECTED.equals(action)) {
+                btConnected = false;
+            } else if (BluetoothLeService.ACTION_GATT_SERVICES_DISCOVERED.equals(action)) {
+                findSerialChatacteristic(bluetoothLeService.getSupportedGattServices());
+            } else if (BluetoothLeService.ACTION_DATA_AVAILABLE.equals(action)) {
+                byte[] data = intent.getByteArrayExtra(BluetoothLeService.EXTRA_DATA);
+//                sensor.parseData(data);
             }
         }
     };
@@ -113,6 +166,56 @@ public class MainActivity extends AppCompatActivity implements IPlanTowerObserve
         Drawable icon = item.getIcon();
         icon.mutate();
         icon.setColorFilter(Color.WHITE, PorterDuff.Mode.SRC_IN);
+    }
+
+    private static IntentFilter makeGattUpdateIntentFilter() {
+        final IntentFilter intentFilter = new IntentFilter();
+        intentFilter.addAction(BluetoothLeService.ACTION_GATT_CONNECTED);
+        intentFilter.addAction(BluetoothLeService.ACTION_GATT_DISCONNECTED);
+        intentFilter.addAction(BluetoothLeService.ACTION_GATT_SERVICES_DISCOVERED);
+        intentFilter.addAction(BluetoothLeService.ACTION_DATA_AVAILABLE);
+        return intentFilter;
+    }
+
+    private void findSerialChatacteristic(List<BluetoothGattService> gattServices) {
+        if (gattServices == null) {
+            return;
+        }
+        String uuid;
+
+        // Loops through available GATT Services.
+        for (BluetoothGattService gattService : gattServices) {
+            uuid = gattService.getUuid().toString();
+
+            if (!uuid.toLowerCase().startsWith(SERVICE_UUID)) {
+                continue;
+            }
+
+            List<BluetoothGattCharacteristic> gattCharacteristics =
+                    gattService.getCharacteristics();
+
+            // Loops through available Characteristics.
+            for (BluetoothGattCharacteristic gattCharacteristic : gattCharacteristics) {
+                uuid = gattCharacteristic.getUuid().toString();
+                if (uuid.toLowerCase().startsWith(CHARACTERISTIC_UUID)) {
+                    final int charaProp = gattCharacteristic.getProperties();
+                    if ((charaProp | BluetoothGattCharacteristic.PROPERTY_READ) > 0) {
+                        // If there is an active notification on a characteristic, clear
+                        // it first so it doesn't update the data field on the user interface.
+                        if (notifyCharacteristic != null) {
+                            bluetoothLeService.setCharacteristicNotification(notifyCharacteristic, false);
+                            notifyCharacteristic = null;
+                        }
+                        bluetoothLeService.readCharacteristic(gattCharacteristic);
+                    }
+                    if ((charaProp | BluetoothGattCharacteristic.PROPERTY_NOTIFY) > 0) {
+                        notifyCharacteristic = gattCharacteristic;
+                        bluetoothLeService.setCharacteristicNotification(gattCharacteristic, true);
+                    }
+                    break;
+                }
+            }
+        }
     }
 
     private ValuesFragment getDetatchedValuesFragment(boolean popBackStack) {
@@ -156,6 +259,7 @@ public class MainActivity extends AppCompatActivity implements IPlanTowerObserve
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         FirebaseCrash.setCrashCollectionEnabled(!BuildConfig.DEBUG);
+        usbHandler = new USBHandler(this);
 
         PreferenceManager.setDefaultValues(this, R.xml.preferences, false);
         setContentView(R.layout.activity_main);
@@ -163,13 +267,16 @@ public class MainActivity extends AppCompatActivity implements IPlanTowerObserve
         smog = findViewById(R.id.smog);
         smog.setAlpha(0f);
 
-        sensor = new Sensor(this);
-        sensor.addValueObserver(this);
+        addValueObserver(this);
 
         boolean dualPane = findViewById(R.id.dual_pane) != null;
 
         if (savedInstanceState != null) {
             lastSinglePaneFragment = savedInstanceState.getString(LAST_SINGLE_PANE_FRAGMENT);
+            running = savedInstanceState.getBoolean("running");
+            if (running) {
+                getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
+            }
         }
 
         FragmentManager fm = getSupportFragmentManager();
@@ -189,22 +296,18 @@ public class MainActivity extends AppCompatActivity implements IPlanTowerObserve
             ChartFragment chartFragment = getDetatchedChartFragment();
             fm.beginTransaction().add(R.id.chart_dual, chartFragment, CHART_FRAGMENT).commit();
         }
-    }
 
-    @Override
-    protected void onStart() {
-        super.onStart();
-        if (isEmulator()) {
-            sensor.startFakeDataThread();
-        }
+        handlerThread = new HandlerThread("ht");
+        handlerThread.start();
+
+        deviceAddress = PreferenceManager.getDefaultSharedPreferences(this).getString("bt_mac", "00:25:83:00:62:E7");
+        Intent gattServiceIntent = new Intent(this, BluetoothLeService.class);
+        bindService(gattServiceIntent, btConnection, BIND_AUTO_CREATE);
     }
 
     @Override
     protected void onStop() {
-        if (isEmulator()) {
-            sensor.stopFakeDataThread();
-        }
-        if (!isChangingConfigurations()) {
+        if (!isChangingConfigurations() && sensor != null) {
             sensor.sleep();
         }
         super.onStop();
@@ -215,9 +318,18 @@ public class MainActivity extends AppCompatActivity implements IPlanTowerObserve
         super.onResume();
         Log.d(TAG, "Registering receiver");
         registerReceiver();
-        sensor.findSerialPortDevice();
-        if (isRunning()) {
+        startService(USBSensor.class, usbConnection,
+                     null); // Start UsbService(if it was not started before) and Bind it
+        if (sensor != null) {
             sensor.wakeUp();
+        }
+
+        Looper looper = handlerThread.getLooper();
+        Handler handler = new Handler(looper);
+        registerReceiver(gattUpdateReceiver, makeGattUpdateIntentFilter(), null, handler);
+        if (bluetoothLeService != null) {
+            final boolean result = bluetoothLeService.connect(deviceAddress);
+            Log.d(TAG, "Connect request result=" + result);
         }
     }
 
@@ -226,7 +338,18 @@ public class MainActivity extends AppCompatActivity implements IPlanTowerObserve
         super.onPause();
         Log.d(TAG, "Unregistering receiver");
         unregisterReceiver(usbReceiver);
+        unregisterReceiver(gattUpdateReceiver);
+        unbindService(usbConnection);
     }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        unbindService(btConnection);
+        bluetoothLeService = null;
+        handlerThread.quit();
+    }
+
 
     public List<ParticulateMatterSample> getValues() {
         return values;
@@ -306,8 +429,8 @@ public class MainActivity extends AppCompatActivity implements IPlanTowerObserve
             return;
         }
         getSupportFragmentManager().beginTransaction()
-                            .replace(android.R.id.content, fragment, fragmentTag).addToBackStack(null)
-                            .commit();
+                                   .replace(android.R.id.content, fragment, fragmentTag).addToBackStack(null)
+                                   .commit();
     }
 
     void setStatus(boolean connected) {
@@ -321,9 +444,9 @@ public class MainActivity extends AppCompatActivity implements IPlanTowerObserve
 
     private void registerReceiver() {
         IntentFilter filter = new IntentFilter();
-        filter.addAction(ACTION_USB_PERMISSION);
-        filter.addAction(ACTION_USB_DETACHED);
-        filter.addAction(ACTION_USB_ATTACHED);
+        filter.addAction(USBSensor.ACTION_USB_PERMISSION_GRANTED);
+        filter.addAction(USBSensor.ACTION_USB_DISCONNECTED);
+        filter.addAction(USBSensor.ACTION_USB_PERMISSION_NOT_GRANTED);
         registerReceiver(usbReceiver, filter);
     }
 
@@ -348,7 +471,67 @@ public class MainActivity extends AppCompatActivity implements IPlanTowerObserve
         super.onSaveInstanceState(outState);
     }
 
-    public Sensor getSensor() {
+    public USBSensor getSensor() {
         return sensor;
+    }
+
+    private void startService(Class<?> service, ServiceConnection serviceConnection, Bundle extras) {
+        if (!USBSensor.SERVICE_CONNECTED) {
+            Intent startService = new Intent(this, service);
+            if (extras != null && !extras.isEmpty()) {
+                Set<String> keys = extras.keySet();
+                for (String key : keys) {
+                    String extra = extras.getString(key);
+                    startService.putExtra(key, extra);
+                }
+            }
+            startService(startService);
+        }
+        Intent bindingIntent = new Intent(this, service);
+        bindService(bindingIntent, serviceConnection, Context.BIND_AUTO_CREATE);
+    }
+
+    public void addValueObserver(IPlanTowerObserver observer) {
+        valueObservers.add(observer);
+    }
+
+    public void removeValueObserver(IPlanTowerObserver observer) {
+        valueObservers.remove(observer);
+    }
+
+    private void notifyAllObservers(final ParticulateMatterSample sample) {
+        synchronized (valueObservers) {
+            for (IPlanTowerObserver valueObserver : valueObservers) {
+                valueObserver.update(sample);
+            }
+        }
+    }
+
+    public void wakeConnection() {
+        if (sensor == null) {
+            return;
+        }
+        sensor.wakeWorkerThread();
+    }
+
+    private static class USBHandler extends Handler {
+        private final WeakReference<MainActivity> mActivity;
+
+        public USBHandler(MainActivity activity) {
+            mActivity = new WeakReference<>(activity);
+        }
+
+        @Override
+        public void handleMessage(Message msg) {
+            switch (msg.what) {
+                case USBSensor.MESSAGE_FROM_SERIAL_PORT:
+                    ParticulateMatterSample sample = (ParticulateMatterSample) msg.obj;
+                    MainActivity mainActivity = mActivity.get();
+                    if (mainActivity != null) {
+                        mainActivity.notifyAllObservers(sample);
+                    }
+                    break;
+            }
+        }
     }
 }
