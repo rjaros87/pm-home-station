@@ -1,0 +1,51 @@
+{
+  "project_info": {
+    "project_number": "281442579800",
+    "firebase_url": "https://mock.firebaseio.com",
+    "project_id": "mock-a1111",
+    "storage_bucket": "mock-a1111.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:111111111111:android:1111111111111111",
+        "android_client_info": {
+          "package_name": "pmstation.android"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "111111111111111111111111111111111111111111111.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "pmstation.android",
+            "certificate_hash": "1111111111111111111111111111111111111111"
+          }
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AAAAAAAAAAAAAAAA-AAAAAAAAAAAAAAAAAAAAAA"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 2,
+          "other_platform_oauth_client": [
+            {
+              "client_id": "111111111111111111111111111111111111111111111.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
