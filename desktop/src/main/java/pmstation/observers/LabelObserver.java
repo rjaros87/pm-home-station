@@ -87,6 +87,8 @@ public class LabelObserver implements IPlanTowerObserver {
                 icon.setIcon(new ImageIcon(disconnectedIcon.getScaledInstance(icon.getIcon().getIconWidth(), -1, Image.SCALE_SMOOTH)));
             }
         } else {
+            deviceStatus.setText("Status: Measuring ...");
+
             int pm25maxSafe = Config.instance().to().getInt(Config.Entry.PM25_MAX_SAFE_LIMIT.key(), Constants.DEFAULT_PM25_MAX_SAFE);
             int pm10maxSafe = Config.instance().to().getInt(Config.Entry.PM10_MAX_SAFE_LIMIT.key(), Constants.DEFAULT_PM10_MAX_SAFE);
             int pm25percent = Math.round(sample.getPm2_5() * 1f / pm25maxSafe * 100);
