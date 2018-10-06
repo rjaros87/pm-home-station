@@ -24,4 +24,6 @@
     <string name="norm_message">Wprowadź wartość, według której będzie liczony procent stężenia</string>
     <string name="invalid_number">Niepoprawna liczba całkowita</string>
     <string name="main_value_summary">Wartość wyświetlana jako większa liczba na głównym ekranie</string>
+    <string name="policy">Polityka Prywatności</string>
+    <string name="policy_desc">Polityka prywatności aplikacji znajduje się na&#160;<font color='#008295'><u>stronie projektu</u></font></string>
 </resources>

@@ -14,12 +14,13 @@ The app does use third party services that may collect information used to ident
 Link to privacy policy of third party service providers used by the app
 
 * [Firebase Analytics](https://firebase.google.com/policies/analytics)
+* [Crashlytics](https://docs.fabric.io/apple/fabric/data-privacy.html#data-collection-policies)
 
 ### Log Data
 
 We want to inform you that whenever you use our application, in a case of an error in the app we collect data and information (through third party products) on your phone called Log Data. This Log Data may include information such as your device Internet Protocol (“IP”) address, device name, operating system version, the configuration of the app, the time and date of your use of the app, and other statistics.
 
-###Cookies
+### Cookies
 
 Cookies are files with a small amount of data that are commonly used as anonymous unique identifiers. These are sent to your browser from the websites that you visit and are stored on your device's internal memory.
 

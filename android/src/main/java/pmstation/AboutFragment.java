@@ -6,6 +6,7 @@
 
 package pmstation;
 
+import android.content.Context;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -24,16 +25,23 @@ public class AboutFragment extends Fragment {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
+        Context context = getContext();
+        if (context == null) {
+            return;
+        }
+
         view.findViewById(R.id.author_rg)
-            .setOnClickListener(view1 -> Utils.launchWebIntent(getContext(), "https://github.com/sanchin"));
+            .setOnClickListener(view1 -> Utils.launchWebIntent(context, "https://github.com/sanchin"));
         view.findViewById(R.id.author_rj)
-            .setOnClickListener(view1 -> Utils.launchWebIntent(getContext(), "https://github.com/rjaros87"));
+            .setOnClickListener(view1 -> Utils.launchWebIntent(context, "https://github.com/rjaros87"));
         view.findViewById(R.id.author_ps)
-            .setOnClickListener(view1 -> Utils.launchWebIntent(getContext(), "https://github.com/pskowronek"));
+            .setOnClickListener(view1 -> Utils.launchWebIntent(context, "https://github.com/pskowronek"));
         view.findViewById(R.id.project_desc).setOnClickListener(
-                view1 -> Utils.launchWebIntent(getContext(), "https://github.com/rjaros87/pm-home-station"));
+                view1 -> Utils.launchWebIntent(context, "https://github.com/rjaros87/pm-home-station"));
+        view.findViewById(R.id.policy_desc).setOnClickListener(
+                view1 -> Utils.launchWebIntent(context, "https://github.com/rjaros87/pm-home-station/blob/master/PRIVACY.md"));
         view.findViewById(R.id.lgpl3).setOnClickListener(
-                view1 -> Utils.launchWebIntent(getContext(), "https://www.gnu.org/licenses/gpl-3.0.en.html"));
+                view1 -> Utils.launchWebIntent(context, "https://www.gnu.org/licenses/gpl-3.0.en.html"));
         view.findViewById(R.id.third_party).setOnClickListener(view1 -> showAttribution());
     }
 

@@ -31,13 +31,14 @@ import android.view.MenuItem;
 import android.view.WindowManager;
 import android.widget.ImageView;
 
-import com.google.firebase.crash.FirebaseCrash;
+import com.crashlytics.android.Crashlytics;
 
 import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+import io.fabric.sdk.android.Fabric;
 import pmstation.core.plantower.IPlanTowerObserver;
 import pmstation.core.plantower.ParticulateMatterSample;
 import pmstation.plantower.BluetoothLeService;
@@ -206,7 +207,9 @@ public class MainActivity extends AppCompatActivity implements IPlanTowerObserve
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        FirebaseCrash.setCrashCollectionEnabled(!BuildConfig.DEBUG);
+        if (!BuildConfig.DEBUG) {
+            Fabric.with(this, new Crashlytics());
+        }
         dataHandler = new DataHandler(this);
 
         PreferenceManager.setDefaultValues(this, R.xml.preferences, false);

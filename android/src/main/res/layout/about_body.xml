@@ -54,6 +54,21 @@
             android:layout_height="wrap_content"
             />
     <TextView
+        android:text="@string/policy"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textAppearance="@style/TextAppearance.AppCompat.Medium"
+        android:layout_marginBottom="8dp"
+        android:layout_marginTop="16dp"
+        android:textStyle="bold"
+        android:textSize="18sp"/>
+    <TextView
+        android:id="@+id/policy_desc"
+        android:text="@string/policy_desc"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        />
+    <TextView
             android:text="@string/license"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
