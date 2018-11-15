@@ -5,8 +5,8 @@ matrix:
       android:
         components:
           - tools
-          - android-27
-          - build-tools-27.0.2
+          - android-28
+          - build-tools-28.0.2
       licenses:
         - 'android-sdk-license-.+'
       before_install:
