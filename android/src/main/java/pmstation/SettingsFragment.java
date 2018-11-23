@@ -6,6 +6,7 @@
 
 package pmstation;
 
+import android.bluetooth.BluetoothAdapter;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.v7.preference.Preference;
@@ -19,17 +20,21 @@ public class SettingsFragment extends PreferenceFragmentCompat
         implements SharedPreferences.OnSharedPreferenceChangeListener {
     Preference.OnPreferenceChangeListener numberCheckListener = (preference, newValue) -> {
         //Check that the string is an integer.
-        return numberCheck(newValue);
-    };
-
-    private boolean numberCheck(Object newValue) {
         if (!newValue.toString().equals("") && newValue.toString().matches("\\d*")) {
             return true;
         } else {
             Toast.makeText(getActivity(), getResources().getString(R.string.invalid_number), Toast.LENGTH_SHORT).show();
             return false;
         }
-    }
+    };
+
+    Preference.OnPreferenceChangeListener macCheckListener = (preference, newValue) -> {
+        if (!BluetoothAdapter.checkBluetoothAddress(newValue.toString())) {
+            Toast.makeText(getActivity(), getResources().getString(R.string.invalid_mac), Toast.LENGTH_SHORT).show();
+            return false;
+        }
+        return true;
+    };
 
     @Override
     public void onCreatePreferences(Bundle savedInstanceState, String rootKey) {
@@ -47,6 +52,8 @@ public class SettingsFragment extends PreferenceFragmentCompat
         pm25norm.setOnPreferenceChangeListener(numberCheckListener);
         Preference pm10norm = findPreference("pm_10_norm");
         pm10norm.setOnPreferenceChangeListener(numberCheckListener);
+        Preference btMac = findPreference("bt_mac");
+        btMac.setOnPreferenceChangeListener(macCheckListener);
         return view;
     }
 

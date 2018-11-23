@@ -69,6 +69,9 @@ public abstract class PlanTowerService extends Service {
     protected abstract boolean sleep();
 
     public void wakeWorkerThread() {
+        if (workerThread == null) {
+            return;
+        }
         Thread thread = workerThread.get();
         if (thread != null) {
             thread.interrupt();

@@ -16,7 +16,7 @@
     <string name="pref_sampling_interval">Sampling interval</string>
     <string name="pref_main_value">Main value</string>
     <string name="about">About</string>
-    <string name="version_name" translatable="false">1.1.2</string>
+    <string name="version_name" translatable="false">1.1.3</string>
     <string name="authors">Authors</string>
     <string name="rg" translatable="false"><font color='#008295'><u>Radosław Gabiga</u></font></string>
     <string name="rj" translatable="false"><font color='#008295'><u>Radosław Jaros</u></font></string>
@@ -41,6 +41,7 @@
     <string name="norm_summary">Maximum allowed concentration level</string>
     <string name="norm_message">Set the value which will be a base for percentage calculation</string>
     <string name="invalid_number">Not a valid integer, try again</string>
+    <string name="invalid_mac">Not a valid MAC address, try again</string>
     <string name="main_value_summary">Value displayed as the bigger number on main screen</string>
     <string name="policy">Privacy Policy</string>
     <string name="policy_desc">The app privacy policy can be found on the&#160;<font color='#008295'><u>project\'s page</u></font></string>

@@ -158,8 +158,7 @@ public class BluetoothLeService extends PlanTowerService {
         }
 
         // Previously connected device.  Try to reconnect.
-        if (bluetoothDeviceAddress != null && address.equals(bluetoothDeviceAddress)
-                && bluetoothGatt != null) {
+        if (address.equals(bluetoothDeviceAddress) && bluetoothGatt != null) {
             Log.d(TAG, "Trying to use an existing bluetoothGatt for connection.");
             if (bluetoothGatt.connect()) {
                 connectionState = STATE_CONNECTING;

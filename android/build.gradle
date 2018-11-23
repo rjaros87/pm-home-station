@@ -8,8 +8,8 @@ android {
         applicationId "pmstation.android"
         minSdkVersion 21
         targetSdkVersion 28
-        versionCode 5
-        versionName "1.1.2"
+        versionCode 706
+        versionName "1.1.3"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
     }
     buildTypes {
@@ -58,40 +58,5 @@ dependencies {
 
 if (project.file('google-services.json').exists()) {
     apply plugin: 'com.google.gms.google-services'
-}
-
-ext.additionalDensities = ['xhdpi': ['280'], 'xxhdpi': ['420', '400', '360'], 'xxxhdpi': ['560']]
-import com.android.build.OutputFile
-
-android.applicationVariants.all { variant ->
-    // modify manifests to add in-between densities, workaround for skipping them in split
-    variant.outputs.each { output ->
-        if (output.getFilter(OutputFile.DENSITY) != null && project.ext.additionalDensities.containsKey(output.getFilter(OutputFile.DENSITY))) {
-            output.processManifest.doFirst {
-                def manifestFile = new File(project.buildDir, "intermediates/compatible_screen_manifest/"
-                        + variant.buildType.name + "/create" + variant.buildType.name.capitalize() + "CompatibleScreenManifests/out/"
-                        + output.getFilter(OutputFile.DENSITY) + "/AndroidManifest.xml")
-                def manifestText = manifestFile.text
-                for (String density : project.ext.additionalDensities.get(output.getFilter(OutputFile.DENSITY))) {
-                    manifestText = manifestText.replaceAll("</compatible-screens>",
-                            "<screen android:screenSize=\"small\" android:screenDensity=\"${density}\" />\n" +
-                            "<screen android:screenSize=\"large\" android:screenDensity=\"${density}\" />\n" +
-                            "<screen android:screenSize=\"xlarge\" android:screenDensity=\"${density}\" />\n" +
-                            "<screen android:screenSize=\"normal\" android:screenDensity=\"${density}\" />\n</compatible-screens>")
-                }
-                manifestFile.text = manifestText
-            }
-        }
-    }
-}
-
-// map for the version code
-ext.versionCodes = [all: 1, mdpi: 2, hdpi: 3, xhdpi: 4, xxhdpi: 5, xxxhdpi: 6]
-android.applicationVariants.all { variant ->
-    // assign different version code for each output
-    variant.outputs.each { output ->
-        def key = output.getFilter(OutputFile.DENSITY) == null ? "all" : output.getFilter(OutputFile.DENSITY)
-        output.versionCodeOverride = project.ext.versionCodes.get(key) * 100 + android.defaultConfig.versionCode
-    }
 }
 

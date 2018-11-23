@@ -224,6 +224,7 @@ public class USBService extends PlanTowerService {
     public void onDestroy() {
         Log.d(TAG, "USB service onDestroy");
         USBService.SERVICE_CONNECTED = false;
+        unregisterReceiver(usbReceiver);
         super.onDestroy();
     }
 
