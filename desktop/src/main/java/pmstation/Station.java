@@ -385,6 +385,10 @@ public class Station {
             }
         });
     }
+    
+    public JFrame getJFrame() {
+        return frame;
+    }
 
     private void handleAutostart(JLabel labelStatus, JButton connectionBtn) {
         boolean autostart = Config.instance().to().getBoolean(Config.Entry.AUTOSTART.key(), true);

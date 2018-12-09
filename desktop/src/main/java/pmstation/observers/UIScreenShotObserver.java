@@ -61,7 +61,14 @@ public class UIScreenShotObserver implements IPlanTowerObserver {
         BufferedImage image = new BufferedImage(component.getWidth(), component.getHeight(), BufferedImage.TYPE_INT_RGB);
         component.paint(image.getGraphics());
         try {
-            ImageIO.write(image, "png", new File(screenShotPath));
+            File destFile = new File(screenShotPath);
+            File tmpFile = File.createTempFile("pm-station-screenshot", "png", destFile.getParentFile());
+            
+            ImageIO.write(image, "png", tmpFile);
+            destFile.delete();
+            if (!tmpFile.renameTo(destFile)) {
+                logger.error("There was a problem renaming temp screenshot file to target name"); 
+            }
             logger.info("Screenshot written to: {}", screenShotPath);
         } catch (Exception e) {
             logger.error("Error writing screenshot to {}", screenShotPath, e);

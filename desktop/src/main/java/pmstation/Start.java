@@ -24,6 +24,7 @@ import pmstation.configuration.Config;
 import pmstation.configuration.Constants;
 import pmstation.observers.CSVObserver;
 import pmstation.observers.ConsoleObserver;
+import pmstation.observers.UIScreenShotObserver;
 import pmstation.plantower.PlanTowerSensor;
 
 public class Start {
@@ -61,7 +62,12 @@ public class Start {
                 setLookAndFeel();
                 PlanTowerSensor planTowerSensor = new PlanTowerSensor();
                 Station station = new Station(planTowerSensor);
-                SwingUtilities.invokeLater(() -> { station.showUI(); });
+                SwingUtilities.invokeLater(() -> { 
+                    station.showUI();
+                    if (line.hasOption("screenshot")) {
+                        planTowerSensor.addObserver(new UIScreenShotObserver(station.getJFrame(), line.getOptionValue("screenshot")));
+                    }
+                });
             }
         } catch (ParseException e) {
             logger.error("Ooops", e);
@@ -89,10 +95,10 @@ public class Start {
     
     private static Options getOptions() {
         Options options = new Options();
-        //options.addOption("noui", false, "no UI, console only");
         options.addOption("h", "help", false, "print this message and exit");
         options.addOption("c", "headless", false, "headless mode (cli mode) - autostarts measurements based on config");
-        options.addOption("v", "version", false, "print the version information and exit");
+        options.addOption("s", "screenshot", true, "takes a screenshot of main window every measurment, the argument is filename where png will be (re)written");
+        options.addOption("v", "version", false, "print version information and exit");
         return options;
     }
 }
