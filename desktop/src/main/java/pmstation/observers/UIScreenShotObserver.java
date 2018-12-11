@@ -11,6 +11,7 @@ import java.io.File;
 
 import javax.imageio.ImageIO;
 import javax.swing.JFrame;
+import javax.swing.SwingUtilities;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -59,19 +60,21 @@ public class UIScreenShotObserver implements IPlanTowerObserver {
         logger.info("Going to take a screenshot...");
         Component component = jFrame.getContentPane();
         BufferedImage image = new BufferedImage(component.getWidth(), component.getHeight(), BufferedImage.TYPE_INT_RGB);
-        component.paint(image.getGraphics());
-        try {
-            File destFile = new File(screenShotPath);
-            File tmpFile = File.createTempFile("pm-station-screenshot", "png", destFile.getParentFile());
-            
-            ImageIO.write(image, "png", tmpFile);
-            destFile.delete();
-            if (!tmpFile.renameTo(destFile)) {
-                logger.error("There was a problem renaming temp screenshot file to target name"); 
-            }
-            logger.info("Screenshot written to: {}", screenShotPath);
-        } catch (Exception e) {
-            logger.error("Error writing screenshot to {}", screenShotPath, e);
-        }
+        SwingUtilities.invokeLater(() -> {
+            component.paint(image.getGraphics());
+            try {
+                File destFile = new File(screenShotPath);
+                File tmpFile = File.createTempFile("pm-station-screenshot", ".png", destFile.getParentFile());
+                
+                ImageIO.write(image, "png", tmpFile);
+                destFile.delete();
+                if (!tmpFile.renameTo(destFile)) {
+                    logger.error("There was a problem renaming temp screenshot file to target name"); 
+                }
+                logger.info("Screenshot written to: {}", screenShotPath);
+            } catch (Exception e) {
+                logger.error("Error writing screenshot to {}", screenShotPath, e);
+            }            
+        });
     }
 }
