@@ -76,7 +76,7 @@ public class SerialUART implements ISerialUART {
         logger.trace("Available number of bytes (old data and garbage): {}", availBytes);
         int guard = 0;
         while ((availBytes = comPort.bytesAvailable()) > 0 && guard < 100) {
-            byte[] ignoredBuffer = new byte[PlanTowerDevice.DATA_LENGTH]; 
+            byte[] ignoredBuffer = new byte[PlanTowerDevice.DATA_LENGTH]; // TODO: sko? what is this?
             comPort.readBytes(ignoredBuffer, Math.min(availBytes, ignoredBuffer.length));
             guard++;
         }

@@ -31,6 +31,7 @@ public class PlanTowerSensor {
     private final ScheduledExecutorService scheduledExecutor;
     private ScheduledFuture<?> scheduledMeasurements = null;
     private long interval = -1;
+    private int sizeOfPlanTowerBuffer= -1;
 
     public PlanTowerSensor() {
         serialUART = new SerialUART();
@@ -117,14 +118,52 @@ public class PlanTowerSensor {
             }
         }
     }
-    
+
+    private static int planToweBufferSize(byte[] sampleArray, byte[] needle) {
+        ArrayList<Integer> founds = new ArrayList<Integer>();
+
+        for (int i = 0; i < sampleArray.length - needle.length + 1; ++i) {
+            boolean found = true;
+            for (int j = 0; j < needle.length; ++j) {
+                if (sampleArray[i + j] != needle[j]) {
+                    found = false;
+                    break;
+                }
+            }
+
+            if (found) {
+                founds.add(i);
+                found = false;
+            }
+
+            if (founds.size() == 2) {
+                return founds.get(1) - founds.get(0);
+            }
+        }
+        return -1;
+    }
+
     private Runnable getMeasurementsRunnable() {
         return () -> {
             try {
                 if (serialUART.isConnected()) {
-                    byte[] readBuffer = serialUART.readBytes(PlanTowerDevice.DATA_LENGTH);
+                    if (sizeOfPlanTowerBuffer == -1) {
+                        byte[] planTowerBufferSize = serialUART.readBytes(60);
+                        if (planTowerBufferSize != null) {
+                            sizeOfPlanTowerBuffer = planToweBufferSize(planTowerBufferSize, PlanTowerDevice.START_CHARACTERS);
+                            logger.info("PlanTower buffer size: {}", sizeOfPlanTowerBuffer);
+                        }
+                    }
+
+                    if (sizeOfPlanTowerBuffer == -1) {
+                        logger.info("Unable to calculate buffer size from the sensor (a sudden device disconnection?)");
+                        scheduledMeasurements.cancel(false);
+                        notifyAboutDisconnection();
+                    }
+
+                    byte[] readBuffer = serialUART.readBytes(sizeOfPlanTowerBuffer);
                     if (readBuffer != null) {
-                        notify(PlanTowerDevice.parse(readBuffer));
+                        notify(PlanTowerDevice.parse(readBuffer, sizeOfPlanTowerBuffer));
                     } else {
                         logger.info("Unable to read bytes from the sensor (a sudden device disconnection?)");
                         scheduledMeasurements.cancel(false);
