@@ -33,8 +33,8 @@ public class ConsoleObserver implements IPlanTowerObserver {
                     formatNonNeg("%.3f", ((double)sample.getHcho())/1000), Constants.HHCO_MG_UNITS,
                     formatNonNeg("%.1f", sample.getHumidity()), Constants.HUMI_UNITS,
                     formatNonNan("%.1f", sample.getTemperature()), Constants.TEMP_UNITS,
-                    String.format("%02X", sample.getModelVersion()),
-                    String.format("%02X", sample.getErrCode())
+                    "0x" + String.format("%02X", sample.getModelVersion()),
+                    "0x" + String.format("%02X", sample.getErrCode())
             );
         }
     }
