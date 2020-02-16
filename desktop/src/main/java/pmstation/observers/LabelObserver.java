@@ -36,7 +36,7 @@ public class LabelObserver implements IPlanTowerObserver {
     public static class LabelsCollector {
         
         public static enum LABEL {
-            DEVICE_STATUS, MEASURMENT_TIME,
+            DEVICE_STATUS, TIME_LABEL, MEASURMENT_TIME,
             PM1, PM25, PM10,
             HCHO, HUMIDITY, TEMP,
             HCHO_LABEL, HUMIDITY_LABEL, TEMP_LABEL,
@@ -59,7 +59,7 @@ public class LabelObserver implements IPlanTowerObserver {
         }
     }
 
-    private JLabel deviceStatus, measurementTime;
+    private JLabel deviceStatus, measurementTime, timeLabel;
     private JLabel pm1_0, pm2_5, pm10;
     private JLabel hcho, humi, temp;
     private JLabel hchoLabel, humiLabel, tempLabel;
@@ -84,6 +84,8 @@ public class LabelObserver implements IPlanTowerObserver {
 
         deviceStatus = (JLabel)collected.get(LabelsCollector.LABEL.DEVICE_STATUS);
         measurementTime = (JLabel)collected.get(LabelsCollector.LABEL.MEASURMENT_TIME);
+        timeLabel = (JLabel)collected.get(LabelsCollector.LABEL.TIME_LABEL);
+         
         pm1_0 = (JLabel)collected.get(LabelsCollector.LABEL.PM1);
         pm2_5 = (JLabel)collected.get(LabelsCollector.LABEL.PM25);
         pm10 = (JLabel)collected.get(LabelsCollector.LABEL.PM10);
@@ -117,6 +119,7 @@ public class LabelObserver implements IPlanTowerObserver {
             int pm10percent = Math.round(sample.getPm10() * 1f / pm10maxSafe * 100);
 
             measurementTime.setText("<html><small>" + Constants.DATE_FORMAT.format(sample.getDate()) + "</small></html>");
+            timeLabel.setVisible(true);
             pm1_0.setText(PRE_HTML + String.valueOf(sample.getPm1_0()) + PM_UNIT  + POST_HTML);
             
             pm2_5.setText(PRE_HTML + String.valueOf(sample.getPm2_5()) + PM_UNIT + "<br/>(" + pm25percent + "%)" + POST_HTML);

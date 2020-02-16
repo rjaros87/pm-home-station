@@ -23,7 +23,11 @@ public class ParticulateMatterSample implements Serializable {
 
     public ParticulateMatterSample(int pm1_0, int pm2_5, int pm10, int hcho, int humidity, int temperature) {
         date = new Date();
-        this.hcho = hcho; // ug/m^3, see levels in mg/m^3: http://archiwum.ciop.pl/13999
+        this.hcho = hcho; // ug/m^3
+                // see levels in mg/m^3:
+                // http://archiwum.ciop.pl/13999 (quite old, 1995),
+                // or here in ug/m^3:
+                // https://www.canada.ca/content/dam/canada/health-canada/migration/healthy-canadians/publications/healthy-living-vie-saine/formaldehyde/alt/formaldehyde-eng.pdf (2006)
         this.humidity = humidity >= 0 ? (double) humidity / 10.0 : -1; // %
         this.pm1_0 = pm1_0; // ug/m^3
         this.pm2_5 = pm2_5; // ug/m^3
@@ -64,7 +68,7 @@ public class ParticulateMatterSample implements Serializable {
     }
 
     /**
-     * Returns temperatur readings ('C)
+     * Returns temperature readings ('C)
      * @return a value, negative means no reading
      */
     public double getTemperature() {

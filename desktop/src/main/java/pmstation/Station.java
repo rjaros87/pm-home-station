@@ -350,7 +350,9 @@ public class Station {
 
         
         JLabel pmMeasurementTime_label = new JLabel("<html><small>@time</small></html>");
+        pmMeasurementTime_label.setVisible(false);
         panelMeasurements.add(pmMeasurementTime_label, "cell 0 3 2 2,aligny bottom");
+        labelsCollector.add(LabelObserver.LabelsCollector.LABEL.TIME_LABEL, pmMeasurementTime_label);
 
         JLabel pmMeasurementTime = new JLabel();
         panelMeasurements.add(pmMeasurementTime, "cell 2 3 6 1,aligny bottom");
