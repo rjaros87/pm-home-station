@@ -96,7 +96,7 @@ public class NativeTrayIntegration {
                                      "PM2.5 : " + sample.getPm2_5() + Constants.PM_UNITS + " \n" +
                                      "PM10  : " + sample.getPm10() + Constants.PM_UNITS;
                     
-                    if (sample.getHcho() >= 0 && sample.getHumidity() >= 0 && sample.getTemperature() >= 0) {
+                    if (sample.getHcho() >= 0 && sample.getHumidity() >= 0 && sample.getTemperature() != Double.NaN) {
                         toolTip += " \n" +
                                      "CH₂O  : " + ((double)sample.getHcho())/1000 + Constants.HHCO_MG_UNITS + " \n" + 
                                      "RH      : " + sample.getHumidity() + Constants.HUMI_UNITS + " \n" + // add'l spaces for macOS (non monospace fonts :/)

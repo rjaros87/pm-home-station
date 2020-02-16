@@ -8,18 +8,24 @@ package pmstation.core.plantower;
 public class PlanTowerDevice {
     
     public enum PLANTOWER_MODEL {
-        PMS7003(32),
-        PMS5003ST(40),
-        UNKNOWN(0);
+        PMS7003(32, 2),
+        PMS5003ST(40, 3),
+        UNKNOWN(0, -1);
         
         private int dataLength;
+        private int lastBytesToSkipForChecksum;
         
-        PLANTOWER_MODEL(int dataLength) {
+        PLANTOWER_MODEL(int dataLength, int lastBytesToSkipForChecksum) {
             this.dataLength = dataLength;
+            this.lastBytesToSkipForChecksum = lastBytesToSkipForChecksum;
         }
         
         public int dataLength() {
             return dataLength;
+        }
+        
+        public int lastBytesToSkipForChecksum() {
+            return lastBytesToSkipForChecksum;
         }
         
         public static PLANTOWER_MODEL identify(int dataLength) {
@@ -69,34 +75,63 @@ public class PlanTowerDevice {
     }
 
     public ParticulateMatterSample parse(byte[] readBuffer) {
-        int headIndex = indexOfArray(readBuffer, START_CHARACTERS);
         ParticulateMatterSample result = null;
+        if (!modelIdentified()) {
+            return result;
+        }
+        if (!frameVerified(readBuffer)) {
+            return result;
+        }
 
-        if (modelIdentified() && headIndex >= 0 && readBuffer.length >= headIndex + 16) {
+        // if (readBuffer.length == DATA_LENGTH && readBuffer[0] == START_CHARACTERS[0] && readBuffer[1] == START_CHARACTERS[1]) {
+        // remark #1: << 8 is ~2 times faster than *0x100 - compiler does not optimize that, not even JIT in runtime
+        // remark #2: it's necessary to ensure usigned bytes stays unsigned in java - either by using & 0xFF or Byte#toUnsignedInt (java 8)
 
-//            if (readBuffer.length == DATA_LENGTH && readBuffer[0] == START_CHARACTERS[0] && readBuffer[1] == START_CHARACTERS[1]) {
-            // remark #1: << 8 is ~2 times faster than *0x100 - compiler does not optimize that, not even JIT in runtime
-            // remark #2: it's necessary to ensure usigned bytes stays unsigned in java - either by using & 0xFF or Byte#toUnsignedInt (java 8)
-            int pm1_0 = ((readBuffer[10 + headIndex] & 0xFF) << 8) + (readBuffer[11 + headIndex] & 0xFF);
-            int pm2_5 = ((readBuffer[12 + headIndex] & 0xFF) << 8) + (readBuffer[13 + headIndex] & 0xFF);
-            int pm10 = ((readBuffer[14 + headIndex] & 0xFF) << 8) + (readBuffer[15 + headIndex] & 0xFF);
+        int pm1_0 = ((readBuffer[10] & 0xFF) << 8) + (readBuffer[11] & 0xFF);
+        int pm2_5 = ((readBuffer[12] & 0xFF) << 8) + (readBuffer[13] & 0xFF);
+        int pm10 = ((readBuffer[14] & 0xFF) << 8) + (readBuffer[15] & 0xFF);
 
-            int hcho = -1;
-            int temperature = -1;
-            int humidity = -1;
+        int hcho = -1;
+        int temperature = -1;
+        int humidity = -1;
+        byte modelVersion = 0;
+        byte errCode = 0;
+        
+        if (model == PLANTOWER_MODEL.PMS5003ST) {
+            hcho = ((readBuffer[28] & 0xFF) << 8) + (readBuffer[29] & 0xFF);
+            humidity = ((readBuffer[32] & 0xFF) << 8) | (readBuffer[33] & 0xFF);
+            // value is signed (can be negative):
+            temperature = (short) (readBuffer[30] << 8) + (readBuffer[31] & 0xFF);
+            modelVersion = readBuffer[36];
+            errCode = readBuffer[37];
+        }
+        result = new ParticulateMatterSample(pm1_0, pm2_5, pm10, hcho, humidity, temperature, modelVersion, errCode);
 
-            if (model == PLANTOWER_MODEL.PMS5003ST && readBuffer.length >= headIndex + 34) {
-                hcho = ((readBuffer[28 + headIndex] & 0xFF) << 8) + (readBuffer[29 + headIndex] & 0xFF);
-                humidity = ((readBuffer[32 + headIndex] & 0xFF) << 8) | (readBuffer[33 + headIndex] & 0xFF);
-                // value is signed (can be negative):
-                temperature = (short) (readBuffer[30 + headIndex] << 8) + (readBuffer[31 + headIndex] & 0xFF);
-            } else {    // left for debug pruposes... 
-                if (model == PLANTOWER_MODEL.PMS5003ST) {
-                    System.out.println("**** buffer too small as head idx found != 0? - data length: " + readBuffer.length + ", headidx: " + headIndex);
-                }
-            }
+        return result;
+    }
+    
+    private boolean frameVerified(byte[] data) {
+        boolean result = false;
+        if (indexOfArray(data, START_CHARACTERS) != 0 || data.length != model.dataLength()) {
+            return result;
+        }
 
-            result = new ParticulateMatterSample(pm1_0, pm2_5, pm10, hcho, humidity, temperature);
+        int checkSum = ((data[data.length - 2] & 0xFF) << 8) | (data[data.length - 1] & 0xFF);
+        int calcdCheckSum = checksum(data, model.lastBytesToSkipForChecksum);
+        if (checkSum == calcdCheckSum) {
+            result = true;
+        }
+        return result;
+    }
+    
+    private int checksum(byte[] data, int lastBytesToSkip) {
+        int result = 0;
+        result += data[0] & 0xFF;
+        result += data[1] & 0xFF;
+        
+        int dataLength = ((data[2] & 0xFF) << 8) | (data[3] & 0xFF);
+        for (int i = 0; i <= dataLength - lastBytesToSkip; i++) {
+            result += data[3 + i] & 0xFF;
         }
         return result;
     }

@@ -132,7 +132,7 @@ public class LabelObserver implements IPlanTowerObserver {
             pm10.setForeground(AQIColor.fromLevel(color10).getColor());
             pm10.setToolTipText(color10.getDescription());
             
-            if (sample.getHcho() >= 0 && sample.getHumidity() >= 0 && sample.getTemperature() >= 0) {
+            if (sample.getHcho() >= 0 && sample.getHumidity() >= 0 && sample.getTemperature() != Double.NaN) {
                 hcho.setText(PRE_HTML + sample.getHcho() + HCHO_UG_UNIT + POST_HTML);
                 humi.setText(PRE_HTML + formatDouble("%.1f", sample.getHumidity()) + HUMI_UNIT + POST_HTML);
                 temp.setText(PRE_HTML + formatDouble("%.1f", sample.getTemperature()) + TEMP_UNIT + POST_HTML);
