@@ -72,9 +72,10 @@ import pmstation.helpers.VersionChecker;
 import pmstation.integration.MacOSIntegration;
 import pmstation.integration.NativeTrayIntegration;
 import pmstation.observers.CSVObserver;
-import pmstation.observers.ChartObserver;
 import pmstation.observers.ConsoleObserver;
+import pmstation.observers.HHTChartObserver;
 import pmstation.observers.LabelObserver;
+import pmstation.observers.PMChartObserver;
 import pmstation.plantower.PlanTowerSensor;
 
 public class Station {
@@ -131,33 +132,61 @@ public class Station {
         });
 
         LabelObserver.LabelsCollector labelsCollector = new LabelObserver.LabelsCollector();
-        XYChart chart = new XYChartBuilder().xAxisTitle("samples").yAxisTitle(Constants.UNITS).build();
-        chart.getStyler().setChartBackgroundColor(new Color(0, 0, 0, 0.05f));
-        chart.getStyler().setXAxisMin((double) 0);
-        chart.getStyler().setXAxisMax((double) Constants.CHART_MAX_SAMPLES);
-        chart.getStyler().setLegendFont(new Font(Font.SERIF, Font.PLAIN, 10));
-        chart.getStyler().setLegendPosition(Styler.LegendPosition.InsideNW);
-        chart.getStyler().setLegendBackgroundColor(new Color(255, 255, 255, 20)); // white with alpha
-        chart.getStyler().setMarkerSize(2);
-        chart.getStyler().setAntiAlias(true);
-        chart.getStyler().setPlotTicksMarksVisible(true);
-        chart.getStyler().setPlotGridVerticalLinesVisible(false);
-        chart.getStyler().setLegendLayout(LegendLayout.Horizontal);
         
-        JPanel chartPanel = new XChartPanel<XYChart>(chart);
-        chartPanel.addMouseListener(new MouseAdapter() {
+        XYChart pmChart = new XYChartBuilder().xAxisTitle("samples").yAxisTitle(Constants.PM_UNITS).build();
+        pmChart.getStyler().setChartBackgroundColor(new Color(0, 0, 0, 0.05f));
+        pmChart.getStyler().setXAxisMin((double) 0);
+        pmChart.getStyler().setXAxisMax((double) Constants.CHART_MAX_SAMPLES);
+        pmChart.getStyler().setLegendFont(new Font(Font.SERIF, Font.PLAIN, 10));
+        pmChart.getStyler().setLegendPosition(Styler.LegendPosition.InsideNW);
+        pmChart.getStyler().setLegendBackgroundColor(new Color(255, 255, 255, 20)); // white with alpha
+        pmChart.getStyler().setMarkerSize(2);
+        pmChart.getStyler().setAntiAlias(true);
+        pmChart.getStyler().setPlotTicksMarksVisible(true);
+        pmChart.getStyler().setPlotGridVerticalLinesVisible(false);
+        pmChart.getStyler().setLegendLayout(LegendLayout.Horizontal);
+        
+        JPanel pmChartPanel = new XChartPanel<XYChart>(pmChart);
+        pmChartPanel.addMouseListener(new MouseAdapter() {
             @Override
             public void mouseEntered(MouseEvent e) {
-                chart.getStyler().setLegendVisible(false);
+                pmChart.getStyler().setLegendVisible(false);
             }
             @Override
             public void mouseExited(MouseEvent e) {
-                chart.getStyler().setLegendVisible(true);
+                pmChart.getStyler().setLegendVisible(true);
             }
         });
-        chartPanel.setMinimumSize(new Dimension(50, 50));
+        pmChartPanel.setMinimumSize(new Dimension(50, 50));
         
-        addObserver(new ChartObserver(chart, chartPanel));
+        XYChart hhtChart = new XYChartBuilder().xAxisTitle("samples").yAxisTitle(Constants.HHT_UNITS).build();
+        hhtChart.getStyler().setChartBackgroundColor(new Color(0, 0, 0, 0.05f));
+        hhtChart.getStyler().setXAxisMin((double) 0);
+        hhtChart.getStyler().setXAxisMax((double) Constants.CHART_MAX_SAMPLES);
+        hhtChart.getStyler().setLegendFont(new Font(Font.SERIF, Font.PLAIN, 10));
+        hhtChart.getStyler().setLegendPosition(Styler.LegendPosition.InsideNW);
+        hhtChart.getStyler().setLegendBackgroundColor(new Color(255, 255, 255, 20)); // white with alpha
+        hhtChart.getStyler().setMarkerSize(2);
+        hhtChart.getStyler().setAntiAlias(true);
+        hhtChart.getStyler().setPlotTicksMarksVisible(true);
+        hhtChart.getStyler().setPlotGridVerticalLinesVisible(false);
+        hhtChart.getStyler().setLegendLayout(LegendLayout.Horizontal);
+        
+        JPanel hhtChartPanel = new XChartPanel<XYChart>(hhtChart);
+        hhtChartPanel.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseEntered(MouseEvent e) {
+                hhtChart.getStyler().setLegendVisible(false);
+            }
+            @Override
+            public void mouseExited(MouseEvent e) {
+                hhtChart.getStyler().setLegendVisible(true);
+            }
+        });
+        hhtChartPanel.setMinimumSize(new Dimension(50, 50));
+        
+        addObserver(new PMChartObserver(pmChart, pmChartPanel));
+        addObserver(new HHTChartObserver(hhtChart, hhtChartPanel));
         addObserver(new ConsoleObserver());
         addObserver(new CSVObserver());
 
@@ -196,7 +225,7 @@ public class Station {
         
         final JPanel panelMain = new JPanel();
         
-        panelMain.setLayout(new MigLayout("", "[50px][100px:120px,grow][150px]", "[:29px:29px][16px][338px,grow][16px]"));
+        panelMain.setLayout(new MigLayout("", "[50px][100px:120px,grow][150px]", "[:29px:29px][16px][338px,grow][338px,grow][16px]"));
         panelMain.add(btnConnect, "cell 0 0,alignx left,aligny center");
 
         JButton btnNewVersion = new JButton("");
@@ -246,53 +275,82 @@ public class Station {
         panelMain.add(btnAbout, "cell 2 0,alignx right,aligny center");
         
         JPanel panelMeasurements = new JPanel();
-        panelMeasurements.setBorder(new TitledBorder(null, "<html><b>Last measurements</b></html>", TitledBorder.LEADING, TitledBorder.TOP, null, null));
+        panelMeasurements.setBorder(new TitledBorder(null, "<html><b>Latest measurements</b></html>", TitledBorder.LEADING, TitledBorder.TOP, null, null));
         panelMain.add(panelMeasurements, "cell 0 1 3 1,grow");
-        panelMeasurements.setLayout(new MigLayout("", "[:20px:40px][1px:1px:1px][60px:80px:80px,grow 60][1px:1px:3px][:20px:40px][1px:1px:1px][80px:80px:100px,grow][1px:1px:3px][:20px:40px][1px:1px:1px][80px:80px:100px,grow]", "[::20px][::2px][::15px]"));
+        panelMeasurements.setLayout(new MigLayout("", "[:20px:40px][1px:1px:1px][60px:80px:80px,grow 60][1px:1px:3px][:20px:40px][1px:1px:1px][80px:80px:100px,grow][1px:1px:3px][:20px:40px][1px:1px:1px][80px:80px:100px,grow]", "[::20px][::20px][::15px]"));
         
-                JLabel pm1_0Label = new JLabel("PM 1.0:");
-                panelMeasurements.add(pm1_0Label, "cell 0 0,alignx left,aligny top");
-                
-                        JLabel pm1_0 = new JLabel();
-                        panelMeasurements.add(pm1_0, "flowy,cell 2 0,alignx leading,aligny top");
-                        pm1_0.setText("----");
-                        labelsCollector.add(LabelObserver.LabelsCollector.LABEL.PM1, pm1_0);
-                        
-                                JLabel pm2_5Label = new JLabel("PM 2.5:");
-                                panelMeasurements.add(pm2_5Label, "cell 4 0,alignx left,aligny top");
-                                
-                                        JLabel pm2_5 = new JLabel();
-                                        panelMeasurements.add(pm2_5, "flowx,cell 6 0,alignx leading,aligny top");
-                                        pm2_5.setText("----");
-                                        labelsCollector.add(LabelObserver.LabelsCollector.LABEL.PM25, pm2_5);
-                                        
-                                                JLabel pm10Label = new JLabel("PM 10:");
-                                                panelMeasurements.add(pm10Label, "cell 8 0,alignx left,aligny top");
-                                                
-                                                        JLabel pm10 = new JLabel();
-                                                        panelMeasurements.add(pm10, "flowx,cell 10 0,alignx leading,aligny top");
-                                                        pm10.setText("----");
-                                                        labelsCollector.add(LabelObserver.LabelsCollector.LABEL.PM10, pm10);
+        JLabel pm1_0Label = new JLabel("PM 1.0:");
+        panelMeasurements.add(pm1_0Label, "cell 0 0,alignx left,aligny top");
 
-                                                        JLabel pmMeasurementTime_label = new JLabel("<html><small>Time: </small></html>");
-                                                        panelMeasurements.add(pmMeasurementTime_label, "cell 0 2,alignx left,aligny top");
+        JLabel pm1_0 = new JLabel();
+        panelMeasurements.add(pm1_0, "flowy,cell 2 0,alignx leading,aligny top");
+        pm1_0.setText("----");
+        labelsCollector.add(LabelObserver.LabelsCollector.LABEL.PM1, pm1_0);
 
-                                                        JLabel pmMeasurementTime = new JLabel();
-                                                        panelMeasurements.add(pmMeasurementTime, "cell 2 2 6 1,aligny top");
-                                                        labelsCollector.add(LabelObserver.LabelsCollector.LABEL.MEASURMENT_TIME, pmMeasurementTime);
+        JLabel pm2_5Label = new JLabel("PM 2.5:");
+        panelMeasurements.add(pm2_5Label, "cell 4 0,alignx left,aligny top");
 
-                                                        JLabel lblAqi = new JLabel("<html><small>*) AQI colors</small></html>");
-                                                        lblAqi.setCursor(new Cursor(Cursor.HAND_CURSOR));
-                                                        lblAqi.addMouseListener(new MouseAdapter() {
-                                                            @Override
-                                                            public void mouseClicked(MouseEvent e) {
-                                                                openUrl(AQIAbout.AQI_PL_INFO);
-                                                            }
-                                                        });
-                                                        lblAqi.setToolTipText("<html>" + AQIAbout.getHtmlTable() + "</html>");
-                                                        panelMeasurements.add(lblAqi, "cell 8 2 3 1,alignx left");
+        JLabel pm2_5 = new JLabel();
+        panelMeasurements.add(pm2_5, "flowx,cell 6 0,alignx leading,aligny top");
+        pm2_5.setText("----");
+        labelsCollector.add(LabelObserver.LabelsCollector.LABEL.PM25, pm2_5);
+
+        JLabel pm10Label = new JLabel("PM 10:");
+        panelMeasurements.add(pm10Label, "cell 8 0,alignx left,aligny top");
+
+        JLabel pm10 = new JLabel();
+        panelMeasurements.add(pm10, "flowx,cell 10 0,alignx leading,aligny top");
+        pm10.setText("----");
+        labelsCollector.add(LabelObserver.LabelsCollector.LABEL.PM10, pm10);
+
+        JLabel hchoLabel = new JLabel("CH₂O:");
+        panelMeasurements.add(hchoLabel, "cell 0 1,alignx left,aligny top");
+        labelsCollector.add(LabelObserver.LabelsCollector.LABEL.HCHO_LABEL, hchoLabel);
+
+        JLabel hcho = new JLabel();
+        panelMeasurements.add(hcho, "flowy,cell 2 1,alignx leading,aligny top");
+        hcho.setText("----");
+        labelsCollector.add(LabelObserver.LabelsCollector.LABEL.HCHO, hcho);
+
+        JLabel humidityLabel = new JLabel("RH:");
+        panelMeasurements.add(humidityLabel, "cell 4 1,alignx left,aligny top");
+        labelsCollector.add(LabelObserver.LabelsCollector.LABEL.HUMIDITY_LABEL, humidityLabel);
+
+        JLabel humidity = new JLabel();
+        panelMeasurements.add(humidity, "flowx,cell 6 1,alignx leading,aligny top");
+        humidity.setText("----");
+        labelsCollector.add(LabelObserver.LabelsCollector.LABEL.HUMIDITY, humidity);
+
+        JLabel tempLabel = new JLabel("Temp:");
+        panelMeasurements.add(tempLabel, "cell 8 1,alignx left,aligny top");
+        labelsCollector.add(LabelObserver.LabelsCollector.LABEL.TEMP_LABEL, tempLabel);
+
+        JLabel temp = new JLabel();
+        panelMeasurements.add(temp, "flowx,cell 10 1,alignx leading,aligny top");
+        temp.setText("----");
+        labelsCollector.add(LabelObserver.LabelsCollector.LABEL.TEMP, temp);
+
+        
+        JLabel pmMeasurementTime_label = new JLabel("<html><small>Time: </small></html>");
+        panelMeasurements.add(pmMeasurementTime_label, "cell 0 2,alignx left,aligny top");
+
+        JLabel pmMeasurementTime = new JLabel();
+        panelMeasurements.add(pmMeasurementTime, "cell 2 2 6 1,aligny top");
+        labelsCollector.add(LabelObserver.LabelsCollector.LABEL.MEASURMENT_TIME, pmMeasurementTime);
+
+        JLabel lblAqi = new JLabel("<html><small>*) AQI colors</small></html>");
+        lblAqi.setCursor(new Cursor(Cursor.HAND_CURSOR));
+        lblAqi.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseClicked(MouseEvent e) {
+                openUrl(AQIAbout.AQI_PL_INFO);
+            }
+        });
+        lblAqi.setToolTipText("<html>" + AQIAbout.getHtmlTable() + "</html>");
+        panelMeasurements.add(lblAqi, "cell 8 2 3 1,alignx left");
                                                         
-        panelMain.add(chartPanel, "cell 0 2 3 1,grow");
+        panelMain.add(pmChartPanel, "cell 0 2 3 1,grow");
+        panelMain.add(hhtChartPanel, "cell 0 3 3 1,grow");
 
         JPanel panelStatus = new JPanel();
         panelStatus.setBorder(new BevelBorder(BevelBorder.LOWERED));
@@ -304,7 +362,7 @@ public class Station {
         panelStatus.add(labelStatus, BorderLayout.WEST);
 
         if (Config.instance().to().getBoolean(Config.Entry.WINDOW_THEME.key(), true)) {
-            setFancyBackgroundImage(frame, Arrays.asList(panelMain, panelMeasurements, panelStatus, chartPanel));
+            setFancyBackgroundImage(frame, Arrays.asList(panelMain, panelMeasurements, panelStatus, pmChartPanel));
         }
         frame.getContentPane().setLayout(new BorderLayout(0, 0));
         frame.getContentPane().add(panelMain);

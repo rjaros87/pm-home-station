@@ -90,10 +90,10 @@ public class NativeTrayIntegration {
                 public void update(ParticulateMatterSample sample) {
                     infoMenuItem.setLabel("PM1.0: " + sample.getPm1_0() + ", " +
                             "PM2.5: " + sample.getPm2_5() + ", " +
-                            "PM10: " + sample.getPm10() + " (" + Constants.UNITS + ")");
-                    menuBarIcon.setToolTip("PM1.0 : " + sample.getPm1_0() + Constants.UNITS + " \n" + // space before \n required for Linux/Gnome as they don't support line breaks 
-                            "PM2.5 : " + sample.getPm2_5() + Constants.UNITS + " \n" +
-                            "PM10  : " + sample.getPm10() + Constants.UNITS);
+                            "PM10: " + sample.getPm10() + " (" + Constants.PM_UNITS + ")");
+                    menuBarIcon.setToolTip("PM1.0 : " + sample.getPm1_0() + Constants.PM_UNITS + " \n" + // space before \n required for Linux/Gnome as they don't support line breaks 
+                            "PM2.5 : " + sample.getPm2_5() + Constants.PM_UNITS + " \n" +
+                            "PM10  : " + sample.getPm10() + Constants.PM_UNITS);
                     
                     setScaryIcon(menuBarIcon, AQI25Level.fromValue(sample.getPm2_5()), AQI10Level.fromValue(sample.getPm10()));
                 }

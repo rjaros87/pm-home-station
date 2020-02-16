@@ -22,7 +22,13 @@ public class Constants {
     public static final String GITHUB_LATEST_RELEASE = "https://api.github.com/repos/rjaros87/pm-home-station/releases/latest";
     
     
-    public static final String UNITS = "\u03BCg/m\u00B3";
+    public static final String PM_UNITS = "\u03BCg/m\u00B3";
+    public static final String HHCO_UNITS = "mg/m\u00B3";
+    public static final String HUMI_UNITS = "%";
+    public static final String TEMP_UNITS = "°C";
+    
+    public static final String HHT_UNITS = "\u03BCg/m\u00B3" + // for chart it is rescaled, i.e. mg -> HHCO * 1000 ug
+            ", " + HUMI_UNITS + ", " + TEMP_UNITS; 
     
     // preferred Window size
     public static final int WINDOW_WIDTH = 484;

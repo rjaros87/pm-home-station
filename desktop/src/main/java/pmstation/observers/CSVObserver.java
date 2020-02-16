@@ -22,35 +22,43 @@ public class CSVObserver implements IPlanTowerObserver {
     
     private static final Logger logger = LoggerFactory.getLogger(CSVObserver.class);
     
-    private static final String LINE_FORMAT = "%s,%s,%s,%s,%s" + System.lineSeparator();
+    private static final String LINE_FORMAT = "%s,%s,%s,%s,%s,%s,%s,%s" + System.lineSeparator();
 
     @Override
     public void update(ParticulateMatterSample sample) {
         if (sample == null) {
-            writeInfo(String.format(LINE_FORMAT, Constants.DATE_FORMAT.format(Calendar.getInstance().getTime()), "", "", "", "Device unavailable"));
+            writeInfo(String.format(LINE_FORMAT, Constants.DATE_FORMAT.format(Calendar.getInstance().getTime()),
+                    "", "", "", "", "", "", "Device unavailable"));
         } else {
-            writeInfo(String.format(LINE_FORMAT, Constants.DATE_FORMAT.format(sample.getDate()), sample.getPm1_0(), sample.getPm2_5(), sample.getPm10(), ""));
+            writeInfo(String.format(LINE_FORMAT, Constants.DATE_FORMAT.format(sample.getDate()),
+                    sample.getPm1_0(), sample.getPm2_5(), sample.getPm10(),
+                    sample.getHcho(), sample.getHumidity(), sample.getTemperature(),
+                    ""));
         }
     }
     
     @Override
     public void connecting() {
-        writeInfo(String.format(LINE_FORMAT, Constants.DATE_FORMAT.format(Calendar.getInstance().getTime()), "", "", "", "Connecting to sensor..."));
+        writeInfo(String.format(LINE_FORMAT, Constants.DATE_FORMAT.format(Calendar.getInstance().getTime()),
+                    "", "", "", "", "", "", "Connecting to sensor..."));
     }
     
     @Override
     public void connected() {
-        writeInfo(String.format(LINE_FORMAT, Constants.DATE_FORMAT.format(Calendar.getInstance().getTime()), "", "", "", "Sensor connected"));
+        writeInfo(String.format(LINE_FORMAT, Constants.DATE_FORMAT.format(Calendar.getInstance().getTime()),
+                    "", "", "", "", "", "", "Sensor connected"));
     }
     
     @Override
     public void disconnected() {
-        writeInfo(String.format(LINE_FORMAT, Constants.DATE_FORMAT.format(Calendar.getInstance().getTime()), "", "", "", "Sensor disconnected"));
+        writeInfo(String.format(LINE_FORMAT, Constants.DATE_FORMAT.format(Calendar.getInstance().getTime()),
+                    "", "", "", "", "", "", "Sensor disconnected"));
     }
     
     @Override
     public void disconnecting() {
-        writeInfo(String.format(LINE_FORMAT, Constants.DATE_FORMAT.format(Calendar.getInstance().getTime()), "", "", "", "Disconnecting from the sensor..."));
+        writeInfo(String.format(LINE_FORMAT, Constants.DATE_FORMAT.format(Calendar.getInstance().getTime()),
+                "", "", "", "", "", "", "Disconnecting from the sensor..."));
     }
     
     private void writeInfo(String info) {

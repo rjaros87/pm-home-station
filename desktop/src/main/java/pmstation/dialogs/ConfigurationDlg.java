@@ -456,7 +456,7 @@ public class ConfigurationDlg {
         textPM10MaxSafe.setBounds(471, 122, 78, 26);
         panelGeneral.add(textPM10MaxSafe);
         
-        JLabel labelCheckVersion = new JLabel("<html>Automatically check for new version on start:</html>");
+        JLabel labelCheckVersion = new JLabel("<html>Automatically check for a new version on start:</html>");
         labelCheckVersion.setBounds(6, 164, 386, 16); 
         panelGeneral.add(labelCheckVersion);
         

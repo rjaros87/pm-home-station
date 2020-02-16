@@ -17,6 +17,7 @@ import java.lang.ref.WeakReference;
 import pmstation.core.plantower.ParticulateMatterSample;
 import pmstation.core.plantower.PlanTowerDevice;
 
+// TODO Radek G, pls update this to use PlanTowerDevice in non-static way (take a look at PlanTowerSensor)
 public abstract class PlanTowerService extends Service {
     public static final int DATA_AVAILABLE = 0;
     private static final String TAG = PlanTowerService.class.getSimpleName();

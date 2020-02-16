@@ -95,10 +95,10 @@ public class Start {
     
     private static Options getOptions() {
         Options options = new Options();
-        options.addOption("h", "help", false, "print this message and exit");
+        options.addOption("h", "help", false, "prints this message and exits");
         options.addOption("c", "headless", false, "headless mode (cli mode) - autostarts measurements based on config");
-        options.addOption("s", "screenshot", true, "takes a screenshot of main window every measurment, the argument is filename where png will be (re)written");
-        options.addOption("v", "version", false, "print version information and exit");
+        options.addOption("s", "screenshot", true, "takes a screenshot of the main window every measurement, the argument is a filename where png will be (re)written");
+        options.addOption("v", "version", false, "prints version information and exits");
         return options;
     }
 }

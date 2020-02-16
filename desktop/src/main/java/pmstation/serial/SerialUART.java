@@ -18,7 +18,6 @@ import org.slf4j.LoggerFactory;
 import com.fazecast.jSerialComm.SerialPort;
 
 import pmstation.configuration.Config;
-import pmstation.core.plantower.PlanTowerDevice;
 import pmstation.core.serial.ISerialUART;
 import pmstation.core.serial.SerialUARTUtils;
 
@@ -73,10 +72,10 @@ public class SerialUART implements ISerialUART {
         if (availBytes < 0) {
             logger.info("Port is not open!");
         }
-        logger.trace("Available number of bytes (old data and garbage): {}", availBytes);
+        logger.trace("Available number of bytes (old data and garbage): {} /will skip them if any/", availBytes);
         int guard = 0;
         while ((availBytes = comPort.bytesAvailable()) > 0 && guard < 100) {
-            byte[] ignoredBuffer = new byte[PlanTowerDevice.DATA_LENGTH]; // TODO: sko? what is this?
+            byte[] ignoredBuffer = new byte[dataLength];
             comPort.readBytes(ignoredBuffer, Math.min(availBytes, ignoredBuffer.length));
             guard++;
         }
@@ -102,6 +101,7 @@ public class SerialUART implements ISerialUART {
     public String portDetails() {
         String details;
         if (comPort != null && comPort.isOpen()) {
+            // TODO no good we mix engine with the UI...
             details = String.format(
                     "<html><table><tr><td><b>%s</b></td><td>%s</td></tr>"
                     + "<tr><td><b>%s</b></td><td>%s</td></tr>"

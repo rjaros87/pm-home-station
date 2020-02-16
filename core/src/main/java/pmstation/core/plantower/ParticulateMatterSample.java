@@ -8,7 +8,7 @@ package pmstation.core.plantower;
 import java.io.Serializable;
 import java.util.Date;
 
-public class ParticulateMatterSample implements Serializable{
+public class ParticulateMatterSample implements Serializable {
 
     private static final long serialVersionUID = 3387284515078504042L;
 
@@ -23,12 +23,12 @@ public class ParticulateMatterSample implements Serializable{
 
     public ParticulateMatterSample(int pm1_0, int pm2_5, int pm10, int hcho, int humidity, int temperature) {
         date = new Date();
-        this.hcho = hcho == -1 ? -1 : (double) hcho / 1000.0; // mg/m^3 http://archiwum.ciop.pl/13999
-        this.humidity = humidity == -1 ? -1 : (double) humidity / 10.0; // %
+        this.hcho = hcho >= 0 ? (double) hcho / 1000.0 : -1; // mg/m^3, see: http://archiwum.ciop.pl/13999
+        this.humidity = humidity >= 0 ? (double) humidity / 10.0 : -1; // %
         this.pm1_0 = pm1_0; // ug/m^3
         this.pm2_5 = pm2_5; // ug/m^3
         this.pm10 = pm10; // ug/m^3
-        this.temperature = temperature == -1 ? -1 : (double) temperature / 10.0; // Celsius
+        this.temperature = temperature >= 0 ? (double) temperature / 10.0 : -1; // Celsius
     }
 
     public Date getDate() {

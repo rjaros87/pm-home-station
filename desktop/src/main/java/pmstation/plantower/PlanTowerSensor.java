@@ -25,13 +25,14 @@ public class PlanTowerSensor {
     private static final Logger logger = LoggerFactory.getLogger(PlanTowerSensor.class);
     
     private static final long DEFAULT_INTERVAL = 3000L;
+    private static final long MEASUREMENTS_INITIAL_DELAY = 2000L;
 
     private final List<IPlanTowerObserver> planTowerObserver;
     private final SerialUART serialUART;
     private final ScheduledExecutorService scheduledExecutor;
     private ScheduledFuture<?> scheduledMeasurements = null;
     private long interval = -1;
-    private int sizeOfPlanTowerBuffer= -1;
+    private PlanTowerDevice device = null;
 
     public PlanTowerSensor() {
         serialUART = new SerialUART();
@@ -86,7 +87,7 @@ public class PlanTowerSensor {
             }
         }
         logger.info("Scheduling measurements at interval: {}ms...", interval);
-        scheduledMeasurements = scheduledExecutor.scheduleAtFixedRate(getMeasurementsRunnable(), 2000, interval, TimeUnit.MILLISECONDS);
+        scheduledMeasurements = scheduledExecutor.scheduleAtFixedRate(getMeasurementsRunnable(), MEASUREMENTS_INITIAL_DELAY, interval, TimeUnit.MILLISECONDS);
         this.interval = interval;
     }
 
@@ -119,69 +120,54 @@ public class PlanTowerSensor {
         }
     }
 
-    private static int planToweBufferSize(byte[] sampleArray, byte[] needle) {
-        ArrayList<Integer> founds = new ArrayList<Integer>();
-
-        for (int i = 0; i < sampleArray.length - needle.length + 1; ++i) {
-            boolean found = true;
-            for (int j = 0; j < needle.length; ++j) {
-                if (sampleArray[i + j] != needle[j]) {
-                    found = false;
-                    break;
-                }
-            }
-
-            if (found) {
-                founds.add(i);
-                found = false;
-            }
-
-            if (founds.size() == 2) {
-                return founds.get(1) - founds.get(0);
-            }
-        }
-        return -1;
-    }
-
     private Runnable getMeasurementsRunnable() {
         return () -> {
             try {
                 if (serialUART.isConnected()) {
-                    if (sizeOfPlanTowerBuffer == -1) {
-                        byte[] planTowerBufferSize = serialUART.readBytes(60);
-                        if (planTowerBufferSize != null) {
-                            sizeOfPlanTowerBuffer = planToweBufferSize(planTowerBufferSize, PlanTowerDevice.START_CHARACTERS);
-                            logger.info("PlanTower buffer size: {}", sizeOfPlanTowerBuffer);
+                    if (device == null) {
+                        byte[] deviceSampleData = serialUART.readBytes(60);
+                        if (deviceSampleData != null) {
+                            device = new PlanTowerDevice(deviceSampleData);
+                            logger.info("PlanTower model: {}", device.model());
+                        } else {
+                            logger.info("Data from serial UART is null, going to re-try later.");
+                            return;
                         }
                     }
 
-                    if (sizeOfPlanTowerBuffer == -1) {
-                        logger.info("Unable to calculate buffer size from the sensor (a sudden device disconnection?)");
+                    if (!device.modelIdentified()) {
+                        logger.info("Unable to identify device model based on its data (a sudden device disconnection?)");
                         scheduledMeasurements.cancel(false);
                         notifyAboutDisconnection();
+                        device = null; // reset, retry another time
+                        return;
                     }
 
-                    byte[] readBuffer = serialUART.readBytes(sizeOfPlanTowerBuffer);
+                    byte[] readBuffer = serialUART.readBytes(device.model().dataLength());
                     if (readBuffer != null) {
-                        notify(PlanTowerDevice.parse(readBuffer, sizeOfPlanTowerBuffer));
+                        notify(device.parse(readBuffer));
                     } else {
                         logger.info("Unable to read bytes from the sensor (a sudden device disconnection?)");
                         scheduledMeasurements.cancel(false);
                         notifyAboutDisconnection();
+                        device = null;
                     }
                 } else {
                     logger.info("Sensor is disconnected");
                     scheduledMeasurements.cancel(false);
                     notifyAboutDisconnection();
+                    device = null;
                 }
             } catch (Exception e) {
                 logger.warn("Caught Exception in scheduled executor - assuming a sudden disconnection", e);
                 notifyAboutDisconnection();
                 scheduledMeasurements.cancel(true);
+                device = null;
             } catch (Throwable t) {
                 logger.warn("Caught Throwable in scheduled executor - no further measurements will take place unless manual reconnect", t);
                 notifyAboutDisconnection();
                 scheduledMeasurements.cancel(true);
+                device = null;
                 throw t;
             }
         };
