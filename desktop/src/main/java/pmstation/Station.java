@@ -296,6 +296,7 @@ public class Station {
         panelMeasurements.setLayout(new MigLayout("hidemode 3", "[:20px:40px][1px:1px:1px][80px:80px:100px,grow 60][1px:1px:3px][:20px:40px][1px:1px:1px][80px:80px:100px,grow 60][1px:1px:3px][:20px:40px][1px:1px:1px][80px:80px:100px,grow 60]", "[::20px][:5px:5px][::20px][10px:10px:10px]"));
         
         JLabel pm1_0Label = new JLabel("<html>PM<sub>1.0</sub></html>");
+        pm1_0Label.setToolTipText("<html>PM<sub>1.0</sub> reading</html>");
         panelMeasurements.add(pm1_0Label, "cell 0 0,alignx left,aligny top");
 
         JLabel pm1_0 = new JLabel();
@@ -304,6 +305,7 @@ public class Station {
         labelsCollector.add(LabelObserver.LabelsCollector.LABEL.PM1, pm1_0);
 
         JLabel pm2_5Label = new JLabel("<html>PM<sub>2.5</sub></html>");
+        pm2_5Label.setToolTipText("<html>PM<sub>2.5</sub> reading</html>");
         panelMeasurements.add(pm2_5Label, "cell 4 0,alignx left,aligny top");
 
         JLabel pm2_5 = new JLabel();
@@ -312,6 +314,7 @@ public class Station {
         labelsCollector.add(LabelObserver.LabelsCollector.LABEL.PM25, pm2_5);
 
         JLabel pm10Label = new JLabel("<html>PM<sub>10</sub></html>");
+        pm10Label.setToolTipText("<html>PM<sub>10</sub> reading</html>");
         panelMeasurements.add(pm10Label, "cell 8 0,alignx left,aligny top");
 
         JLabel pm10 = new JLabel();
@@ -320,7 +323,15 @@ public class Station {
         labelsCollector.add(LabelObserver.LabelsCollector.LABEL.PM10, pm10);
 
         JLabel hchoLabel = new JLabel("CH₂O");
+        hchoLabel.setCursor(new Cursor(Cursor.HAND_CURSOR));
+        hchoLabel.setToolTipText("<html>CH₂O <i>aka</i> H-CHO <i>aka</i> Formaldehyde concentration reading<br/>Click to open wikipedia to learn about safety levels</html>");
         hchoLabel.setVisible(false);
+        hchoLabel.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseClicked(MouseEvent e) {
+                openUrl("https://en.wikipedia.org/wiki/Formaldehyde#Safety");
+            }
+        });
         panelMeasurements.add(hchoLabel, "cell 0 2,alignx left,aligny bottom");
         labelsCollector.add(LabelObserver.LabelsCollector.LABEL.HCHO_LABEL, hchoLabel);
 
@@ -331,6 +342,7 @@ public class Station {
         labelsCollector.add(LabelObserver.LabelsCollector.LABEL.HCHO, hcho);
 
         JLabel humidityLabel = new JLabel("RH");
+        humidityLabel.setToolTipText("Relative humidity (RH) reading");
         humidityLabel.setVisible(false);
         panelMeasurements.add(humidityLabel, "cell 4 2,alignx left,aligny bottom");
         labelsCollector.add(LabelObserver.LabelsCollector.LABEL.HUMIDITY_LABEL, humidityLabel);
@@ -342,6 +354,7 @@ public class Station {
         labelsCollector.add(LabelObserver.LabelsCollector.LABEL.HUMIDITY, humidity);
 
         JLabel tempLabel = new JLabel("Temp.");
+        tempLabel.setToolTipText("Temperature reading");
         tempLabel.setVisible(false);
         panelMeasurements.add(tempLabel, "cell 8 2,alignx left,aligny bottom");
         labelsCollector.add(LabelObserver.LabelsCollector.LABEL.TEMP_LABEL, tempLabel);
