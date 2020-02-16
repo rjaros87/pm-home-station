@@ -13,7 +13,7 @@ import org.apache.commons.lang3.time.FastDateFormat;
 public class Constants {
     
     public static final String PROJECT_NAME = "pm-home-station";
-    public static final String VERSION = "1.2.1";
+    public static final String VERSION = "1.3.0.alpha";
     public static final String PROJECT_URL = "https://github.com/rjaros87/pm-home-station";
     public static final Locale DEFAULT_LOCALE = Locale.getDefault(); 
     public static final String DEFAULT_ICON = "app-icon.png";
@@ -28,8 +28,7 @@ public class Constants {
     public static final String HUMI_UNITS = "%";
     public static final String TEMP_UNITS = "°C";
     
-    public static final String HHT_UNITS = "\u03BCg/m\u00B3" + // for chart it is rescaled, i.e. mg -> HHCO * 1000 ug
-            ", " + HUMI_UNITS + ", " + TEMP_UNITS; 
+    public static final String HHT_UNITS = HHCO_UG_UNITS + ", " + HUMI_UNITS + ", " + TEMP_UNITS; 
     
     // preferred Window size
     public static final int WINDOW_WIDTH = 494;

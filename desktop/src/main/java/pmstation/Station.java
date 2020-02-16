@@ -144,7 +144,6 @@ public class Station {
         pmChart.getStyler().setChartBackgroundColor(new Color(0, 0, 0, 0.05f));
         pmChart.getStyler().setXAxisMin((double) 0);
         pmChart.getStyler().setXAxisMax((double) Constants.CHART_MAX_SAMPLES);
-        pmChart.getStyler().setYAxisMin((double) 0);
         pmChart.getStyler().setAxisTitleFont(new Font(Font.SANS_SERIF, Font.PLAIN, 11));
         pmChart.getStyler().setSeriesColors(new Color[] {Color.GRAY, Color.GREEN, Color.BLUE});
         
