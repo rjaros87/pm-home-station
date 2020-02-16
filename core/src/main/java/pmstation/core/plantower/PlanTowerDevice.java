@@ -113,13 +113,20 @@ public class PlanTowerDevice {
     private boolean frameVerified(byte[] data) {
         boolean result = false;
         if (indexOfArray(data, START_CHARACTERS) != 0 || data.length != model.dataLength()) {
+            System.err.println("------------- wrong start or data length"); // TODO temporary debug
             return result;
         }
 
         int checkSum = ((data[data.length - 2] & 0xFF) << 8) | (data[data.length - 1] & 0xFF);
         int calcdCheckSum = checksum(data, model.lastBytesToSkipForChecksum);
+        
+        if (data[37] != 0) {
+            System.err.println("------------- errcode reported by device " + data[37]); // TODO temporary debug
+        }
         if (checkSum == calcdCheckSum) {
             result = true;
+        } else {
+            System.err.println("------------- checksum mismatch! " + checkSum + "vs" + calcdCheckSum); // TODO temporary debug
         }
         return result;
     }

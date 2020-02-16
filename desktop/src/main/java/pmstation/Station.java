@@ -57,6 +57,10 @@ import org.knowm.xchart.XYChart;
 import org.knowm.xchart.XYChartBuilder;
 import org.knowm.xchart.style.Styler;
 import org.knowm.xchart.style.Styler.LegendLayout;
+import org.knowm.xchart.style.markers.Cross;
+import org.knowm.xchart.style.markers.Diamond;
+import org.knowm.xchart.style.markers.Marker;
+import org.knowm.xchart.style.markers.Plus;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -147,11 +151,12 @@ public class Station {
         pmChart.getStyler().setLegendFont(new Font(Font.SANS_SERIF, Font.PLAIN, 10));
         pmChart.getStyler().setLegendPosition(Styler.LegendPosition.InsideNW);
         pmChart.getStyler().setLegendBackgroundColor(new Color(255, 255, 255, 20)); // white with alpha
-        pmChart.getStyler().setMarkerSize(2);
+        pmChart.getStyler().setLegendLayout(LegendLayout.Vertical);
+        pmChart.getStyler().setMarkerSize(4);
+        pmChart.getStyler().setSeriesMarkers(new Marker[] { new Diamond(), new Cross(), new Plus()});
         pmChart.getStyler().setAntiAlias(true);
         pmChart.getStyler().setPlotTicksMarksVisible(true);
         pmChart.getStyler().setPlotGridVerticalLinesVisible(false);
-        pmChart.getStyler().setLegendLayout(LegendLayout.Horizontal);
         
         JPanel pmChartPanel = new XChartPanel<XYChart>(pmChart);
         pmChartPanel.addMouseListener(new MouseAdapter() {
@@ -170,18 +175,18 @@ public class Station {
         hhtChart.getStyler().setChartBackgroundColor(new Color(0, 0, 0, 0.05f));
         hhtChart.getStyler().setXAxisMin((double) 0);
         hhtChart.getStyler().setXAxisMax((double) Constants.CHART_MAX_SAMPLES);
-        hhtChart.getStyler().setYAxisMin((double) 0);
         hhtChart.getStyler().setAxisTitleFont(new Font(Font.SANS_SERIF, Font.PLAIN, 11));
         hhtChart.getStyler().setSeriesColors(new Color[] {Color.RED, Color.BLUE, Color.ORANGE});
         
         hhtChart.getStyler().setLegendFont(new Font(Font.SANS_SERIF, Font.PLAIN, 10));
         hhtChart.getStyler().setLegendPosition(Styler.LegendPosition.InsideNW);
+        hhtChart.getStyler().setLegendLayout(LegendLayout.Vertical);
         hhtChart.getStyler().setLegendBackgroundColor(new Color(255, 255, 255, 20)); // white with alpha
-        hhtChart.getStyler().setMarkerSize(2);
+        hhtChart.getStyler().setMarkerSize(4);
+        hhtChart.getStyler().setSeriesMarkers(new Marker[] { new Diamond(), new Cross(), new Plus()});
         hhtChart.getStyler().setAntiAlias(true);
         hhtChart.getStyler().setPlotTicksMarksVisible(true);
         hhtChart.getStyler().setPlotGridVerticalLinesVisible(false);
-        hhtChart.getStyler().setLegendLayout(LegendLayout.Horizontal);
         
         JPanel hhtChartPanel = new XChartPanel<XYChart>(hhtChart);
         hhtChartPanel.setVisible(false);

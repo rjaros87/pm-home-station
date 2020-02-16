@@ -130,7 +130,9 @@ public class PlanTowerSensor {
                             device = new PlanTowerDevice(deviceSampleData);
                             logger.info("PlanTower model: {}", device.model());
                         } else {
-                            logger.info("Data from serial UART is null, going to re-try later.");
+                            logger.info("Data from serial UART is null.");
+                            scheduledMeasurements.cancel(false);
+                            notifyAboutDisconnection();
                             return;
                         }
                     }
