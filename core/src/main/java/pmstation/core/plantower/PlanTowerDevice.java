@@ -87,9 +87,9 @@ public class PlanTowerDevice {
 
             if (model == PLANTOWER_MODEL.PMS5003ST && readBuffer.length >= headIndex + 34) {
                 hcho = ((readBuffer[28 + headIndex] & 0xFF) << 8) + (readBuffer[29 + headIndex] & 0xFF);
-                humidity = (short)((readBuffer[32 + headIndex] & 0xFF) << 8) | (readBuffer[33 + headIndex] & 0xFF);
+                humidity = ((readBuffer[32 + headIndex] & 0xFF) << 8) | (readBuffer[33 + headIndex] & 0xFF);
                 // value is signed (can be negative):
-                temperature = (readBuffer[30 + headIndex] << 8) + (readBuffer[31 + headIndex] & 0xFF);
+                temperature = (short) (readBuffer[30 + headIndex] << 8) + (readBuffer[31 + headIndex] & 0xFF);
             } else {    // left for debug pruposes... 
                 if (model == PLANTOWER_MODEL.PMS5003ST) {
                     System.out.println("**** buffer too small as head idx found != 0? - data length: " + readBuffer.length + ", headidx: " + headIndex);
