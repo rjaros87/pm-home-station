@@ -5,10 +5,7 @@
  */
 package pmstation.core.plantower;
 
-import java.util.ArrayList;
-
 public class PlanTowerDevice {
-    //TODO: read values from config file
     
     public enum PLANTOWER_MODEL {
         PMS7003(32),
@@ -41,7 +38,8 @@ public class PlanTowerDevice {
             return this.name() + ", data size: " + this.dataLength;
         }
     }
-
+    
+    //TODO: read values from config file
     public static final byte[] MODE_WAKEUP = {0x42, 0x4d, (byte) 0xe4, 0x00, 0x01, 0x01, 0x74};
     public static final byte[] MODE_SLEEP = {0x42, 0x4d, (byte) 0xe4, 0x00, 0x00, 0x01, 0x73};
     public static final byte[] MODE_ACTIVE = {0x42, 0x4d, (byte) 0xe1, 0x00, 0x01, 0x01, 0x71};
@@ -49,8 +47,10 @@ public class PlanTowerDevice {
     public static final byte[] START_CHARACTERS = {0x42, 0x4d};
     public static final byte[] CMD_READ_REQ = {0x42, 0x4d, (byte) 0xe2, 0x00, 0x00, 0x01, 0x71};
 
-    
-    private PLANTOWER_MODEL model = PLANTOWER_MODEL.PMS7003; // default
+    /**
+     * Identified PlanTower model.
+     */
+    private PLANTOWER_MODEL model = null;
     
     /**
      * Initializes PlanTower parser (based on sample data to distinguish the PM model).
@@ -89,6 +89,10 @@ public class PlanTowerDevice {
                 hcho = ((readBuffer[28 + headIndex] & 0xFF) << 8) + (readBuffer[29 + headIndex] & 0xFF);
                 temperature = ((readBuffer[30 + headIndex] & 0xFF) << 8) + (readBuffer[31 + headIndex] & 0xFF);
                 humidity = ((readBuffer[32 + headIndex] & 0xFF) << 8) + (readBuffer[33 + headIndex] & 0xFF);
+            } else {    // left for debug pruposes... 
+                if (model == PLANTOWER_MODEL.PMS5003ST) {
+                    System.out.println("**** buffer too small as head idx found != 0? - data length: " + readBuffer.length + ", headidx: " + headIndex);
+                }
             }
 
             result = new ParticulateMatterSample(pm1_0, pm2_5, pm10, hcho, humidity, temperature);
@@ -96,36 +100,28 @@ public class PlanTowerDevice {
         return result;
     }
     
-    // TODO identifyModel & indexOfArray - quite similar methods :)
     private PLANTOWER_MODEL identifyModel(byte[] sampleArray, byte[] needle) {
-        ArrayList<Integer> founds = new ArrayList<Integer>();
-        int result = -1;
-
-        for (int i = 0; i < sampleArray.length - needle.length + 1; ++i) {
-            boolean found = true;
-            for (int j = 0; j < needle.length; ++j) {
-                if (sampleArray[i + j] != needle[j]) {
-                    found = false;
-                    break;
-                }
-            }
-
-            if (found) {
-                founds.add(i);
-            }
-
-            if (founds.size() == 2) {
-                result = founds.get(1) - founds.get(0);
-                break;
+        PLANTOWER_MODEL result = PLANTOWER_MODEL.UNKNOWN;
+        
+        int firstIdx = indexOfArray(sampleArray, needle);
+        if (firstIdx >= 0 && sampleArray.length > firstIdx) {
+            int secondIdx = indexOfArray(sampleArray, firstIdx + 1, needle);
+            if (secondIdx >= 0) {
+                result = PLANTOWER_MODEL.identify(secondIdx - firstIdx);
             }
         }
-        return PLANTOWER_MODEL.identify(result);
+        return result;
     }
     
-    private static int indexOfArray(byte[] sampleArray, byte[] needle) {
+    private int indexOfArray(byte[] sampleArray, byte[] needle) {
+        return indexOfArray(sampleArray, 0, needle);
+    }
+    
+    private int indexOfArray(byte[] sampleArray, int startAt, byte[] needle) {
         int result = -1;
-        for (int i = 0; i < sampleArray.length - needle.length + 1; ++i) {
-            boolean found = true;
+        boolean found;
+        for (int i = startAt; i < sampleArray.length - needle.length + 1; ++i) {
+            found = true;
             for (int j = 0; j < needle.length; ++j) {
                 if (sampleArray[i + j] != needle[j]) {
                     found = false;

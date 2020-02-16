@@ -125,7 +125,7 @@ public class PlanTowerSensor {
             try {
                 if (serialUART.isConnected()) {
                     if (device == null) {
-                        byte[] deviceSampleData = serialUART.readBytes(60);
+                        byte[] deviceSampleData = serialUART.readBytes(150); // more than 3 times more than max of expected data length
                         if (deviceSampleData != null) {
                             device = new PlanTowerDevice(deviceSampleData);
                             logger.info("PlanTower model: {}", device.model());

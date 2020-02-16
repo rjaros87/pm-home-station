@@ -78,6 +78,9 @@ import pmstation.observers.LabelObserver;
 import pmstation.observers.PMChartObserver;
 import pmstation.plantower.PlanTowerSensor;
 
+/**
+ * Main UI Window of PM Station.
+ */
 public class Station {
     
     private static final Logger logger = LoggerFactory.getLogger(Station.class);
@@ -137,7 +140,11 @@ public class Station {
         pmChart.getStyler().setChartBackgroundColor(new Color(0, 0, 0, 0.05f));
         pmChart.getStyler().setXAxisMin((double) 0);
         pmChart.getStyler().setXAxisMax((double) Constants.CHART_MAX_SAMPLES);
-        pmChart.getStyler().setLegendFont(new Font(Font.SERIF, Font.PLAIN, 10));
+        pmChart.getStyler().setYAxisMin((double) 0);
+        pmChart.getStyler().setAxisTitleFont(new Font(Font.SANS_SERIF, Font.PLAIN, 11));
+        pmChart.getStyler().setSeriesColors(new Color[] {Color.GRAY, Color.GREEN, Color.BLUE});
+        
+        pmChart.getStyler().setLegendFont(new Font(Font.SANS_SERIF, Font.PLAIN, 10));
         pmChart.getStyler().setLegendPosition(Styler.LegendPosition.InsideNW);
         pmChart.getStyler().setLegendBackgroundColor(new Color(255, 255, 255, 20)); // white with alpha
         pmChart.getStyler().setMarkerSize(2);
@@ -163,7 +170,11 @@ public class Station {
         hhtChart.getStyler().setChartBackgroundColor(new Color(0, 0, 0, 0.05f));
         hhtChart.getStyler().setXAxisMin((double) 0);
         hhtChart.getStyler().setXAxisMax((double) Constants.CHART_MAX_SAMPLES);
-        hhtChart.getStyler().setLegendFont(new Font(Font.SERIF, Font.PLAIN, 10));
+        hhtChart.getStyler().setYAxisMin((double) 0);
+        hhtChart.getStyler().setAxisTitleFont(new Font(Font.SANS_SERIF, Font.PLAIN, 11));
+        hhtChart.getStyler().setSeriesColors(new Color[] {Color.RED, Color.BLUE, Color.ORANGE});
+        
+        hhtChart.getStyler().setLegendFont(new Font(Font.SANS_SERIF, Font.PLAIN, 10));
         hhtChart.getStyler().setLegendPosition(Styler.LegendPosition.InsideNW);
         hhtChart.getStyler().setLegendBackgroundColor(new Color(255, 255, 255, 20)); // white with alpha
         hhtChart.getStyler().setMarkerSize(2);
@@ -173,6 +184,7 @@ public class Station {
         hhtChart.getStyler().setLegendLayout(LegendLayout.Horizontal);
         
         JPanel hhtChartPanel = new XChartPanel<XYChart>(hhtChart);
+        hhtChartPanel.setVisible(false);
         hhtChartPanel.addMouseListener(new MouseAdapter() {
             @Override
             public void mouseEntered(MouseEvent e) {
@@ -225,7 +237,7 @@ public class Station {
         
         final JPanel panelMain = new JPanel();
         
-        panelMain.setLayout(new MigLayout("", "[50px][100px:120px,grow][150px]", "[:29px:29px][16px][338px,grow][338px,grow][16px]"));
+        panelMain.setLayout(new MigLayout("hidemode 3", "[50px][100px:120px,grow][150px]", "[:29px:29px][16px][338px,grow][:10px:10px]"));
         panelMain.add(btnConnect, "cell 0 0,alignx left,aligny center");
 
         JButton btnNewVersion = new JButton("");
@@ -276,10 +288,10 @@ public class Station {
         
         JPanel panelMeasurements = new JPanel();
         panelMeasurements.setBorder(new TitledBorder(null, "<html><b>Latest measurements</b></html>", TitledBorder.LEADING, TitledBorder.TOP, null, null));
-        panelMain.add(panelMeasurements, "cell 0 1 3 1,grow");
-        panelMeasurements.setLayout(new MigLayout("", "[:20px:40px][1px:1px:1px][60px:80px:80px,grow 60][1px:1px:3px][:20px:40px][1px:1px:1px][80px:80px:100px,grow][1px:1px:3px][:20px:40px][1px:1px:1px][80px:80px:100px,grow]", "[::20px][::20px][::15px]"));
+        panelMain.add(panelMeasurements, "hidemode 3, cell 0 1 3 1,grow");
+        panelMeasurements.setLayout(new MigLayout("hidemode 3", "[:20px:40px][1px:1px:1px][80px:80px:100px,grow 60][1px:1px:3px][:20px:40px][1px:1px:1px][80px:80px:100px,grow 60][1px:1px:3px][:20px:40px][1px:1px:1px][80px:80px:100px,grow 60]", "[::20px][:5px:5px][::20px][10px:10px:10px]"));
         
-        JLabel pm1_0Label = new JLabel("PM 1.0:");
+        JLabel pm1_0Label = new JLabel("<html>PM<sub>1.0</sub></html>");
         panelMeasurements.add(pm1_0Label, "cell 0 0,alignx left,aligny top");
 
         JLabel pm1_0 = new JLabel();
@@ -287,7 +299,7 @@ public class Station {
         pm1_0.setText("----");
         labelsCollector.add(LabelObserver.LabelsCollector.LABEL.PM1, pm1_0);
 
-        JLabel pm2_5Label = new JLabel("PM 2.5:");
+        JLabel pm2_5Label = new JLabel("<html>PM<sub>2.5</sub></html>");
         panelMeasurements.add(pm2_5Label, "cell 4 0,alignx left,aligny top");
 
         JLabel pm2_5 = new JLabel();
@@ -295,7 +307,7 @@ public class Station {
         pm2_5.setText("----");
         labelsCollector.add(LabelObserver.LabelsCollector.LABEL.PM25, pm2_5);
 
-        JLabel pm10Label = new JLabel("PM 10:");
+        JLabel pm10Label = new JLabel("<html>PM<sub>10</sub></html>");
         panelMeasurements.add(pm10Label, "cell 8 0,alignx left,aligny top");
 
         JLabel pm10 = new JLabel();
@@ -303,39 +315,45 @@ public class Station {
         pm10.setText("----");
         labelsCollector.add(LabelObserver.LabelsCollector.LABEL.PM10, pm10);
 
-        JLabel hchoLabel = new JLabel("CH₂O:");
-        panelMeasurements.add(hchoLabel, "cell 0 1,alignx left,aligny top");
+        JLabel hchoLabel = new JLabel("CH₂O");
+        hchoLabel.setVisible(false);
+        panelMeasurements.add(hchoLabel, "cell 0 2,alignx left,aligny bottom");
         labelsCollector.add(LabelObserver.LabelsCollector.LABEL.HCHO_LABEL, hchoLabel);
 
         JLabel hcho = new JLabel();
-        panelMeasurements.add(hcho, "flowy,cell 2 1,alignx leading,aligny top");
+        hcho.setVisible(false);
+        panelMeasurements.add(hcho, "flowy,cell 2 2,alignx leading,aligny bottom");
         hcho.setText("----");
         labelsCollector.add(LabelObserver.LabelsCollector.LABEL.HCHO, hcho);
 
-        JLabel humidityLabel = new JLabel("RH:");
-        panelMeasurements.add(humidityLabel, "cell 4 1,alignx left,aligny top");
+        JLabel humidityLabel = new JLabel("RH");
+        humidityLabel.setVisible(false);
+        panelMeasurements.add(humidityLabel, "cell 4 2,alignx left,aligny bottom");
         labelsCollector.add(LabelObserver.LabelsCollector.LABEL.HUMIDITY_LABEL, humidityLabel);
 
         JLabel humidity = new JLabel();
-        panelMeasurements.add(humidity, "flowx,cell 6 1,alignx leading,aligny top");
+        humidity.setVisible(false);
+        panelMeasurements.add(humidity, "flowx,cell 6 2,alignx leading,aligny bottom");
         humidity.setText("----");
         labelsCollector.add(LabelObserver.LabelsCollector.LABEL.HUMIDITY, humidity);
 
-        JLabel tempLabel = new JLabel("Temp:");
-        panelMeasurements.add(tempLabel, "cell 8 1,alignx left,aligny top");
+        JLabel tempLabel = new JLabel("Temp.");
+        tempLabel.setVisible(false);
+        panelMeasurements.add(tempLabel, "cell 8 2,alignx left,aligny bottom");
         labelsCollector.add(LabelObserver.LabelsCollector.LABEL.TEMP_LABEL, tempLabel);
 
         JLabel temp = new JLabel();
-        panelMeasurements.add(temp, "flowx,cell 10 1,alignx leading,aligny top");
+        temp.setVisible(false);
+        panelMeasurements.add(temp, "flowx,cell 10 2,alignx leading,aligny bottom");
         temp.setText("----");
         labelsCollector.add(LabelObserver.LabelsCollector.LABEL.TEMP, temp);
 
         
-        JLabel pmMeasurementTime_label = new JLabel("<html><small>Time: </small></html>");
-        panelMeasurements.add(pmMeasurementTime_label, "cell 0 2,alignx left,aligny top");
+        JLabel pmMeasurementTime_label = new JLabel("<html><small>@time</small></html>");
+        panelMeasurements.add(pmMeasurementTime_label, "cell 0 3 2 2,aligny bottom");
 
         JLabel pmMeasurementTime = new JLabel();
-        panelMeasurements.add(pmMeasurementTime, "cell 2 2 6 1,aligny top");
+        panelMeasurements.add(pmMeasurementTime, "cell 2 3 6 1,aligny bottom");
         labelsCollector.add(LabelObserver.LabelsCollector.LABEL.MEASURMENT_TIME, pmMeasurementTime);
 
         JLabel lblAqi = new JLabel("<html><small>*) AQI colors</small></html>");
@@ -347,10 +365,10 @@ public class Station {
             }
         });
         lblAqi.setToolTipText("<html>" + AQIAbout.getHtmlTable() + "</html>");
-        panelMeasurements.add(lblAqi, "cell 8 2 3 1,alignx left");
+        panelMeasurements.add(lblAqi, "cell 8 3 3 1,aligny bottom,alignx left");
                                                         
-        panelMain.add(pmChartPanel, "cell 0 2 3 1,grow");
-        panelMain.add(hhtChartPanel, "cell 0 3 3 1,grow");
+        panelMain.add(pmChartPanel, "cell 0 2 3 1,flowy,pushy");
+        panelMain.add(hhtChartPanel, "cell 0 2 3 1,flowy,pushy");
 
         JPanel panelStatus = new JPanel();
         panelStatus.setBorder(new BevelBorder(BevelBorder.LOWERED));
@@ -380,8 +398,8 @@ public class Station {
         appNameLink.setToolTipText("Visit: " + Constants.PROJECT_URL);
         appNameLink.setHorizontalAlignment(SwingConstants.RIGHT);
         labelStatus.setText("... .   .     .         .               .");
-        LabelObserver labelObserver = new LabelObserver(labelsCollector);
-        addObserver(labelObserver);
+
+        addObserver(new LabelObserver(labelsCollector));
         
         frame.pack();
         frame.revalidate();

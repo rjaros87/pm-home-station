@@ -66,7 +66,7 @@ public class LabelObserver implements IPlanTowerObserver {
     
     private JButton btnConnect, icon;
     private static final String PM_UNIT = " <small>" + Constants.PM_UNITS + "</small>";
-    private static final String HCHO_UNIT = " <small>" + Constants.HHCO_UNITS + "</small>";
+    private static final String HCHO_UG_UNIT = " <small>" + Constants.HHCO_UG_UNITS + "</small>";
     private static final String HUMI_UNIT = " <small>" + Constants.HUMI_UNITS + "</small>";
     private static final String TEMP_UNIT = " <small>" + Constants.TEMP_UNITS + "</small>";
     
@@ -130,7 +130,7 @@ public class LabelObserver implements IPlanTowerObserver {
             pm10.setToolTipText(color10.getDescription());
             
             if (sample.getHcho() >= 0 && sample.getHumidity() >= 0 && sample.getTemperature() >= 0) {
-                hcho.setText(PRE_HTML + "<<small>" + formatDouble("%.3f", sample.getHcho()) + "</small> "+ HCHO_UNIT + POST_HTML);
+                hcho.setText(PRE_HTML + sample.getHcho() + HCHO_UG_UNIT + POST_HTML);
                 humi.setText(PRE_HTML + formatDouble("%.1f", sample.getHumidity()) + HUMI_UNIT + POST_HTML);
                 temp.setText(PRE_HTML + formatDouble("%.1f", sample.getTemperature()) + TEMP_UNIT + POST_HTML);
                 additionalPanelVisible(true);

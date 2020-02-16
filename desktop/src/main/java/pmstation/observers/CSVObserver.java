@@ -32,7 +32,7 @@ public class CSVObserver implements IPlanTowerObserver {
         } else {
             writeInfo(String.format(LINE_FORMAT, Constants.DATE_FORMAT.format(sample.getDate()),
                     sample.getPm1_0(), sample.getPm2_5(), sample.getPm10(),
-                    sample.getHcho(), sample.getHumidity(), sample.getTemperature(),
+                    ((double)sample.getHcho()) / 1000, sample.getHumidity(), sample.getTemperature(),
                     ""));
         }
     }

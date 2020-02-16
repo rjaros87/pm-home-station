@@ -23,14 +23,14 @@ public class ConsoleObserver implements IPlanTowerObserver {
         if (sample == null) {
             logger.warn(Instant.now().toString() + " sensor not ready");
         } else {
-            logger.info("{} >>> PM1.0: {} [ug/m³], PM2.5: {} [ug/m³], PM10: {} [ug/m³], HCHO: {} [mg/m³], Humidity: {} [%], Temperature: {} [°C]",
+            logger.info("{} >>> PM1.0: {} [{}], PM2.5: {} [{}], PM10: {} [{}], HCHO: {} [{}], Humidity: {} [{}], Temperature: {} [{}]",
                     Constants.DATE_FORMAT.format(sample.getDate()),
-                    sample.getPm1_0(),
-                    sample.getPm2_5(),
-                    sample.getPm10(),
-                    formatOptional("%.3f", sample.getHcho()),
-                    formatOptional("%.1f", sample.getHumidity()),
-                    formatOptional("%.1f", sample.getTemperature())
+                    sample.getPm1_0(), Constants.PM_UNITS,
+                    sample.getPm2_5(), Constants.PM_UNITS,
+                    sample.getPm10(), Constants.PM_UNITS,
+                    formatOptional("%.3f", ((double)sample.getHcho())/1000), Constants.HHCO_MG_UNITS,
+                    formatOptional("%.1f", sample.getHumidity()), Constants.HUMI_UNITS,
+                    formatOptional("%.1f", sample.getTemperature()), Constants.TEMP_UNITS
             );
         }
     }

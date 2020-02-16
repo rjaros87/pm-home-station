@@ -12,7 +12,7 @@ public class ParticulateMatterSample implements Serializable {
 
     private static final long serialVersionUID = 3387284515078504042L;
 
-    private double hcho;
+    private int hcho;
     private double humidity;
     private int pm1_0;
     private int pm2_5;
@@ -23,7 +23,7 @@ public class ParticulateMatterSample implements Serializable {
 
     public ParticulateMatterSample(int pm1_0, int pm2_5, int pm10, int hcho, int humidity, int temperature) {
         date = new Date();
-        this.hcho = hcho >= 0 ? (double) hcho / 1000.0 : -1; // mg/m^3, see: http://archiwum.ciop.pl/13999
+        this.hcho = hcho; // ug/m^3, see levels in mg/m^3: http://archiwum.ciop.pl/13999
         this.humidity = humidity >= 0 ? (double) humidity / 10.0 : -1; // %
         this.pm1_0 = pm1_0; // ug/m^3
         this.pm2_5 = pm2_5; // ug/m^3
@@ -35,10 +35,18 @@ public class ParticulateMatterSample implements Serializable {
         return date;
     }
 
-    public double getHcho() {
+    /**
+     * Returns HCHO aka Formaldehyde concentration in ug/m^3
+     * @return a value, negative means no reading
+     */
+    public int getHcho() {
         return hcho;
     }
 
+    /**
+     * Returns RH level (%)
+     * @return a value, negative means no reading
+     */
     public double getHumidity() {
         return humidity;
     }
@@ -55,6 +63,10 @@ public class ParticulateMatterSample implements Serializable {
         return pm10;
     }
 
+    /**
+     * Returns temperatur readings ('C)
+     * @return a value, negative means no reading
+     */
     public double getTemperature() {
         return temperature;
     }
