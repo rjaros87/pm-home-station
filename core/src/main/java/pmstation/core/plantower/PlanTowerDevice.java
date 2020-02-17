@@ -5,11 +5,17 @@
  */
 package pmstation.core.plantower;
 
+/**
+ * A class to identify supported PlanTower devices and parse their data frames.
+ */
 public class PlanTowerDevice {
     
+    /**
+     * A list of supported PlanTower devices.
+     */
     public enum PLANTOWER_MODEL {
         PMS7003(32, 2),
-        PMS5003ST(40, 3),
+        PMS5003ST(40, 2),
         UNKNOWN(0, -1);
         
         private int dataLength;
@@ -41,7 +47,7 @@ public class PlanTowerDevice {
         
         @Override
         public String toString() {
-            return this.name() + ", data size: " + this.dataLength;
+            return this.name() + ", data frame size: " + this.dataLength;
         }
     }
     
@@ -60,10 +66,10 @@ public class PlanTowerDevice {
     
     /**
      * Initializes PlanTower parser (based on sample data to distinguish the PM model).
-     * @param sampleArray a sample data to work out the model
+     * @param sampleData a sample data to work out the model, sample data should be at least 2 times the max of expected data frame size
      */
-    public PlanTowerDevice(byte[] sampleArray) {
-        model = identifyModel(sampleArray, START_CHARACTERS);
+    public PlanTowerDevice(byte[] sampleData) {
+        model = identifyModel(sampleData, START_CHARACTERS);
     }
     
     public PLANTOWER_MODEL model() {
@@ -74,12 +80,12 @@ public class PlanTowerDevice {
         return model() != PLANTOWER_MODEL.UNKNOWN;
     }
 
-    public ParticulateMatterSample parse(byte[] readBuffer) {
+    public ParticulateMatterSample parse(byte[] dataFrame) {
         ParticulateMatterSample result = null;
         if (!modelIdentified()) {
             return result;
         }
-        if (!frameVerified(readBuffer)) {
+        if (!frameVerified(dataFrame)) {
             return result;
         }
 
@@ -87,9 +93,9 @@ public class PlanTowerDevice {
         // remark #1: << 8 is ~2 times faster than *0x100 - compiler does not optimize that, not even JIT in runtime
         // remark #2: it's necessary to ensure usigned bytes stays unsigned in java - either by using & 0xFF or Byte#toUnsignedInt (java 8)
 
-        int pm1_0 = ((readBuffer[10] & 0xFF) << 8) + (readBuffer[11] & 0xFF);
-        int pm2_5 = ((readBuffer[12] & 0xFF) << 8) + (readBuffer[13] & 0xFF);
-        int pm10 = ((readBuffer[14] & 0xFF) << 8) + (readBuffer[15] & 0xFF);
+        int pm1_0 = ((dataFrame[10] & 0xFF) << 8) + (dataFrame[11] & 0xFF);
+        int pm2_5 = ((dataFrame[12] & 0xFF) << 8) + (dataFrame[13] & 0xFF);
+        int pm10 = ((dataFrame[14] & 0xFF) << 8) + (dataFrame[15] & 0xFF);
 
         int hcho = -1;
         int temperature = -1;
@@ -98,12 +104,12 @@ public class PlanTowerDevice {
         byte errCode = 0;
         
         if (model == PLANTOWER_MODEL.PMS5003ST) {
-            hcho = ((readBuffer[28] & 0xFF) << 8) + (readBuffer[29] & 0xFF);
-            humidity = ((readBuffer[32] & 0xFF) << 8) | (readBuffer[33] & 0xFF);
+            hcho = ((dataFrame[28] & 0xFF) << 8) + (dataFrame[29] & 0xFF);
+            humidity = ((dataFrame[32] & 0xFF) << 8) | (dataFrame[33] & 0xFF);
             // value is signed (can be negative):
-            temperature = (short) (readBuffer[30] << 8) + (readBuffer[31] & 0xFF);
-            modelVersion = readBuffer[36];
-            errCode = readBuffer[37];
+            temperature = (short) (dataFrame[30] << 8) + (dataFrame[31] & 0xFF);
+            modelVersion = dataFrame[36];
+            errCode = dataFrame[37];
         }
         result = new ParticulateMatterSample(pm1_0, pm2_5, pm10, hcho, humidity, temperature, modelVersion, errCode);
 
@@ -117,7 +123,7 @@ public class PlanTowerDevice {
             return result;
         }
 
-        int checkSum = ((data[data.length - 2] & 0xFF) << 8) | (data[data.length - 1] & 0xFF);
+        int checkSum = checksumProvided(data);
         int calcdCheckSum = checksum(data, model.lastBytesToSkipForChecksum);
         
         if (data[37] != 0) {
@@ -131,42 +137,75 @@ public class PlanTowerDevice {
         return result;
     }
     
+    private int checksumProvided(byte[] data) {
+        return checksumProvided(data, 0, data.length - 2);
+    }
+    
+    private int checksumProvided(byte[] data, int startIdx, int checksumStartPos) {
+        return data.length >= startIdx + checksumStartPos + 1 ?
+                ((data[startIdx + checksumStartPos] & 0xFF) << 8) | (data[startIdx + checksumStartPos + 1] & 0xFF) : -1;
+    }
+    
     private int checksum(byte[] data, int lastBytesToSkip) {
+        return checksum(data, 0, data.length, lastBytesToSkip);
+    }
+    
+    private int checksum(byte[] data, int startIdx, int dataSize, int lastBytesToSkip) {
         int result = 0;
-        result += data[0] & 0xFF;
-        result += data[1] & 0xFF;
+        result += data[startIdx + 0] & 0xFF;    // start characters
+        result += data[startIdx + 1] & 0xFF;
+        result += data[startIdx + 2] & 0xFF;    // data size
+        result += data[startIdx + 3] & 0xFF;
         
-        int dataLength = ((data[2] & 0xFF) << 8) | (data[3] & 0xFF);
-        for (int i = 0; i <= dataLength - lastBytesToSkip; i++) {
-            result += data[3 + i] & 0xFF;
+        int checksumDataLength = ((data[startIdx + 2] & 0xFF) << 8) | (data[startIdx + 3] & 0xFF);
+        for (int i = 0; i < checksumDataLength - lastBytesToSkip; i++) {
+            result += data[startIdx + 4 + i] & 0xFF;
         }
         return result;
     }
     
-    private PLANTOWER_MODEL identifyModel(byte[] sampleArray, byte[] needle) {
+    private PLANTOWER_MODEL identifyModel(byte[] sampleData, byte[] needle) {
         PLANTOWER_MODEL result = PLANTOWER_MODEL.UNKNOWN;
         
-        int firstIdx = indexOfArray(sampleArray, needle);
-        if (firstIdx >= 0 && sampleArray.length > firstIdx) {
-            int secondIdx = indexOfArray(sampleArray, firstIdx + 1, needle);
-            if (secondIdx >= 0) {
-                result = PLANTOWER_MODEL.identify(secondIdx - firstIdx);
+        for (int searchStartContinue = 0; searchStartContinue < sampleData.length - needle.length;) {
+            int firstIdx = indexOfArray(sampleData, searchStartContinue, needle);
+            if (firstIdx >= 0 && sampleData.length > firstIdx) {
+                int secondIdx = indexOfArray(sampleData, searchStartContinue + 1, needle);
+                if (secondIdx >= 0) {
+                    result = PLANTOWER_MODEL.identify(secondIdx - firstIdx);
+                    // let's verify checksum
+                    int checksumProvided = checksumProvided(sampleData, firstIdx, result.dataLength() - 2);
+                    int checksumCalcd = checksum(sampleData, firstIdx, result.dataLength(), result.lastBytesToSkipForChecksum());
+                    if (checksumProvided == checksumCalcd) {
+                        // frame used for device identification has a correct checksum, good 
+                        break;
+                    } else {
+                        // let's continue starting from the second found needle
+                        searchStartContinue = secondIdx;
+                        System.err.println("------ during model identification found a frame with wrong checksum, lets continue");
+                    }
+                } else {
+                    // second needle not found, bail out
+                    break;
+                }
             }
         }
+        
+
         return result;
     }
     
-    private int indexOfArray(byte[] sampleArray, byte[] needle) {
-        return indexOfArray(sampleArray, 0, needle);
+    private int indexOfArray(byte[] data, byte[] needle) {
+        return indexOfArray(data, 0, needle);
     }
     
-    private int indexOfArray(byte[] sampleArray, int startAt, byte[] needle) {
+    private int indexOfArray(byte[] data, int startAt, byte[] needle) {
         int result = -1;
         boolean found;
-        for (int i = startAt; i < sampleArray.length - needle.length + 1; ++i) {
+        for (int i = startAt; i < data.length - needle.length + 1; ++i) {
             found = true;
             for (int j = 0; j < needle.length; ++j) {
-                if (sampleArray[i + j] != needle[j]) {
+                if (data[i + j] != needle[j]) {
                     found = false;
                     break;
                 }

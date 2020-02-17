@@ -121,9 +121,6 @@ public class SerialUART implements ISerialUART {
     public Set<String> listPorts() {
         Set<String> result = new HashSet<>();
         SerialPort[] ports = SerialPort.getCommPorts();
-        if (ports.length == 0) {
-            return result;
-        }
         for (int i = 0; i < ports.length; i++) {
             result.add(ports[i].getSystemPortName());
         }

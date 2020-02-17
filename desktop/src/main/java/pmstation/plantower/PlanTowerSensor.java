@@ -124,17 +124,22 @@ public class PlanTowerSensor {
         return () -> {
             try {
                 if (serialUART.isConnected()) {
-                    if (device == null) {
-                        byte[] deviceSampleData = serialUART.readBytes(150); // more than 3 times more than max of expected data length
-                        if (deviceSampleData != null) {
-                            device = new PlanTowerDevice(deviceSampleData);
-                            logger.info("PlanTower model: {}", device.model());
+                    for (int i = 0; i < 3 && device == null; i++) {
+                        byte[] sampleData = serialUART.readBytes(150); // more than 3 times more than max of expected data length
+                        if (sampleData != null) {
+                            device = new PlanTowerDevice(sampleData);
+                            if (device.modelIdentified()) {
+                                logger.info("PlanTower model: {}", device.model());
+                                break;
+                            } else {
+                                logger.info("PlanTower model not identified...");
+                            }
                         } else {
                             logger.info("Data from serial UART is null.");
                             scheduledMeasurements.cancel(false);
                             notifyAboutDisconnection();
                             return;
-                        }
+                        }                            
                     }
 
                     if (!device.modelIdentified()) {
@@ -145,9 +150,9 @@ public class PlanTowerSensor {
                         return;
                     }
 
-                    byte[] readBuffer = serialUART.readBytes(device.model().dataLength());
-                    if (readBuffer != null) {
-                        notify(device.parse(readBuffer));
+                    byte[] dataFrame = serialUART.readBytes(device.model().dataLength());
+                    if (dataFrame != null) {
+                        notify(device.parse(dataFrame));
                     } else {
                         logger.info("Unable to read bytes from the sensor (a sudden device disconnection?)");
                         scheduledMeasurements.cancel(false);
@@ -211,7 +216,7 @@ public class PlanTowerSensor {
         try {
             Thread.sleep(100);
         } catch (InterruptedException e) {
-            // ignore
+            Thread.currentThread().interrupt();
         }
     }
 }
