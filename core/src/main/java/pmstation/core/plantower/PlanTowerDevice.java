@@ -169,7 +169,7 @@ public class PlanTowerDevice {
         
         for (int searchStartContinue = 0; searchStartContinue < sampleData.length - needle.length;) {
             int firstIdx = indexOfArray(sampleData, searchStartContinue, needle);
-            if (firstIdx >= 0 && sampleData.length > firstIdx) {
+            if (firstIdx >= 0) {
                 int secondIdx = indexOfArray(sampleData, searchStartContinue + 1, needle);
                 if (secondIdx >= 0) {
                     result = PLANTOWER_MODEL.identify(secondIdx - firstIdx);
@@ -185,9 +185,12 @@ public class PlanTowerDevice {
                         System.err.println("------ during model identification found a frame with wrong checksum, lets continue");
                     }
                 } else {
-                    // second needle not found, bail out
+                    // second needle not found, bailing out
                     break;
                 }
+            } else {
+                // even first needle not found, bailing out
+                break;
             }
         }
         
