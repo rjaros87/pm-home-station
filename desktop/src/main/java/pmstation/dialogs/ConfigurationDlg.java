@@ -416,7 +416,7 @@ public class ConfigurationDlg {
         textInterval.setBounds(471, 58, 78, 26);
         panelGeneral.add(textInterval);
         
-        JLabel lblPM25MaxSafe = new JLabel("<html>PM 2.5 maximum allowed concentration level:</html>");
+        JLabel lblPM25MaxSafe = new JLabel("<html>PM 2.5 maximum concentration level considered <i>safe</i>:</html>");
         lblPM25MaxSafe.setHorizontalAlignment(SwingConstants.LEFT);
         lblPM25MaxSafe.setBounds(6, 99, 363, 16);
         panelGeneral.add(lblPM25MaxSafe);
@@ -436,7 +436,7 @@ public class ConfigurationDlg {
         textPM25MaxSafe.setBounds(471, 89, 78, 26);
         panelGeneral.add(textPM25MaxSafe);
         
-        JLabel lblPM10MaxSafe = new JLabel("<html>PM 10 maximum allowed concentration level:</html>");
+        JLabel lblPM10MaxSafe = new JLabel("<html>PM 10 maximum concentration level considered <i>safe</i>:</html>");
         lblPM10MaxSafe.setHorizontalAlignment(SwingConstants.LEFT);
         lblPM10MaxSafe.setBounds(6, 127, 363, 16);
         panelGeneral.add(lblPM10MaxSafe);
@@ -521,7 +521,7 @@ public class ConfigurationDlg {
         frame = null;
     }
 
-    // OMG! all these boiler code just for user input verification which still is creepy ... not copy-paste resilient
+    // OMG! all these boiler code just for user input verification which still is crappy ... not copy-paste resilient
     // that's why I used to use SWT in the past.... 10 years later and Swing still inherits its crappiness, hoping JavaFX is gonna be better
     private KeyListener onlyDigitsKeyListener() {
         return new KeyListener() {
