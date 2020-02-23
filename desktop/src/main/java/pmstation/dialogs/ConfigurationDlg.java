@@ -58,6 +58,9 @@ import org.slf4j.LoggerFactory;
 import pmstation.configuration.Config;
 import pmstation.configuration.Constants;
 import pmstation.serial.SerialUART;
+import java.awt.Font;
+import org.eclipse.wb.swing.FocusTraversalOnArray;
+import java.awt.Component;
 
 public class ConfigurationDlg {
 
@@ -118,7 +121,7 @@ public class ConfigurationDlg {
                 lblWarnUserOSX.setEnabled(SystemUtils.IS_OS_MAC_OSX);
                 
                 JCheckBox chbxWarnOSX = new JCheckBox("");
-                chbxWarnOSX.setBounds(512, 22, 37, 23);
+                chbxWarnOSX.setBounds(510, 22, 30, 23);
                 panelDevice.add(chbxWarnOSX);
                 chbxWarnOSX.setEnabled(SystemUtils.IS_OS_MAC_OSX);
                 chbxWarnOSX.setSelected(!SystemUtils.IS_OS_MAC_OSX || Config.instance().to().getBoolean(Config.Entry.WARN_ON_OSX_TO_DETACH.key(), SystemUtils.IS_OS_MAC_OSX));
@@ -137,13 +140,13 @@ public class ConfigurationDlg {
                 JScrollPane listPreferredDevicesScroller = new JScrollPane();
                 listPreferredDevicesScroller.setViewportView(listPreferredDevices);
                 listPreferredDevicesScroller.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
-                listPreferredDevicesScroller.setBounds(6, 81, 502, 80);
+                listPreferredDevicesScroller.setBounds(6, 81, 495, 80);
                 listPreferredDevices.setModel(getPreferredDevices());
                 panelDevice.add(listPreferredDevicesScroller);
                 
-                JButton btnPriorityUp = new JButton("↑");
-                btnPriorityUp.setToolTipText("Up");
-                btnPriorityUp.setBounds(507, 81, 42, 29);
+                JButton btnPriorityUp = new JButton("⇑");
+                btnPriorityUp.setToolTipText("Increase priority");
+                btnPriorityUp.setBounds(503, 81, 45, 30);
                 btnPriorityUp.addMouseListener(new MouseAdapter() {
                     @Override
                     public void mouseClicked(MouseEvent e) {
@@ -158,7 +161,7 @@ public class ConfigurationDlg {
                 });
                 panelDevice.add(btnPriorityUp);
                 
-                JButton btwPriorityRemove = new JButton("✂");
+                JButton btwPriorityRemove = new JButton("⌫");
                 btwPriorityRemove.addMouseListener(new MouseAdapter() {
                     @Override
                     public void mouseClicked(MouseEvent e) {
@@ -174,11 +177,11 @@ public class ConfigurationDlg {
                         }
                     }
                 });
-                btwPriorityRemove.setToolTipText("Remove");
-                btwPriorityRemove.setBounds(507, 106, 42, 29);
+                btwPriorityRemove.setToolTipText("Remove from the list");
+                btwPriorityRemove.setBounds(503, 106, 45, 30);
                 panelDevice.add(btwPriorityRemove);
                 
-                JButton btnPriorityDown = new JButton("↓");
+                JButton btnPriorityDown = new JButton("⇓");
                 btnPriorityDown.addMouseListener(new MouseAdapter() {
                     @Override
                     public void mouseClicked(MouseEvent e) {
@@ -192,8 +195,8 @@ public class ConfigurationDlg {
                         listPreferredDevices.updateUI();
                     }
                 });
-                btnPriorityDown.setToolTipText("Down");
-                btnPriorityDown.setBounds(507, 132, 42, 29);
+                btnPriorityDown.setToolTipText("Decrease priority");
+                btnPriorityDown.setBounds(503, 132, 45, 30);
                 panelDevice.add(btnPriorityDown);
                 
                 JLabel lblAddPreferredDevice = new JLabel("Add preferred device:");
@@ -266,11 +269,14 @@ public class ConfigurationDlg {
                 JScrollPane listAvailableDevicesScroller = new JScrollPane();
                 listAvailableDevicesScroller.setViewportView(listAvailableDevices);
                 listAvailableDevicesScroller.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
-                listAvailableDevicesScroller.setBounds(6, 237, 502, 112);
+                listAvailableDevicesScroller.setBounds(6, 237, 495, 112);
                 panelDevice.add(listAvailableDevicesScroller);
                 listAvailableDevices.setModel(getAvailableDevices());
                 
                 JButton btnReloadAvailable = new JButton("↻");
+                btnReloadAvailable.setFont(new Font("Lucida Grande", Font.PLAIN, 14));
+                btnReloadAvailable.setAutoscrolls(true);
+                btnReloadAvailable.setHorizontalTextPosition(SwingConstants.CENTER);
                 btnReloadAvailable.addMouseListener(new MouseAdapter() {
                     @Override
                     public void mouseClicked(MouseEvent e) {
@@ -279,8 +285,9 @@ public class ConfigurationDlg {
                     }
                 });
                 btnReloadAvailable.setToolTipText("Refresh");
-                btnReloadAvailable.setBounds(507, 237, 42, 29);
+                btnReloadAvailable.setBounds(503, 237, 45, 30);
                 panelDevice.add(btnReloadAvailable);
+                panelDevice.setFocusTraversalPolicy(new FocusTraversalOnArray(new Component[]{lblWarnUserOSX, chbxWarnOSX, lblPreferredDevices, listPreferredDevicesScroller, listPreferredDevices, btnPriorityUp, btwPriorityRemove, btnPriorityDown, lblAddPreferredDevice, btnAddDevice, textAddDevice, lblAddPreferredDeviceContd, labelAvailableDevices, listAvailableDevicesScroller, listAvailableDevices, btnReloadAvailable}));
 
         GroupLayout groupLayout = new GroupLayout(mainCfg);
         groupLayout.setHorizontalGroup(
@@ -511,6 +518,7 @@ public class ConfigurationDlg {
         btnChooseCSVFilePath.setToolTipText("Choose filepath to write meaurements in CSV format");
         btnChooseCSVFilePath.setBounds(508, 204, 28, 21);
         panelGeneral.add(btnChooseCSVFilePath);
+        tabbedPane.setFocusTraversalPolicy(new FocusTraversalOnArray(new Component[]{panelGeneral, lblAutostart, chkbxAutostart, lblInterval, textInterval, lblPM25MaxSafe, textPM25MaxSafe, lblPM10MaxSafe, textPM10MaxSafe, labelCheckVersion, chkbxCheckVersion, lblCSVLog, chkbxCSVLog, btnChooseCSVFilePath, panelUI, labelAlwaysOnTop, chbxAlwaysOnTop, lblSystemTray, chbxSystemTray, lblHideMainWindow, chbxHideMainWindow, labelTheme, chbxTheme, panelDevice, lblWarnUserOSX, chbxWarnOSX, lblPreferredDevices, listPreferredDevicesScroller, listPreferredDevices, btnPriorityUp, btwPriorityRemove, btnPriorityDown, lblAddPreferredDevice, btnAddDevice, textAddDevice, lblAddPreferredDeviceContd, labelAvailableDevices, listAvailableDevicesScroller, listAvailableDevices, btnReloadAvailable}));
         
         
 
