@@ -125,9 +125,12 @@ public class PlanTowerDevice {
 
         int checkSum = checksumProvided(data);
         int calcdCheckSum = checksum(data, model.lastBytesToSkipForChecksum);
-        
-        if (data[37] != 0) {
-            System.err.println("------------- errcode reported by device " + data[37]); // TODO temporary debug
+
+        // temporary debug - data[length - 1] should contain error bits  
+        if (model == PLANTOWER_MODEL.PMS5003ST) {
+            if (data[data.length - 3] != 0) {
+                System.err.println("------------- errcode reported by device " + data[data.length - 3]); // TODO temporary debug
+            }            
         }
         if (checkSum == calcdCheckSum) {
             result = true;
