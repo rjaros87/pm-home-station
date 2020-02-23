@@ -61,6 +61,8 @@ import pmstation.serial.SerialUART;
 import java.awt.Font;
 import org.eclipse.wb.swing.FocusTraversalOnArray;
 import java.awt.Component;
+import javax.swing.border.BevelBorder;
+import javax.swing.border.SoftBevelBorder;
 
 public class ConfigurationDlg {
 
@@ -115,6 +117,7 @@ public class ConfigurationDlg {
                 panelDevice.setLayout(null);
         
                 JList<String> listAvailableDevices = new JList<String>();
+                listAvailableDevices.setToolTipText("The list of available devices found in the system");
                 JLabel lblWarnUserOSX = new JLabel("<html>Warn before close / disconnect if device is not detached:<br><small><i>- a workaround for macOS and faulty PL2303 drivers</i></small></html>");
                 lblWarnUserOSX.setBounds(6, 22, 358, 29);
                 panelDevice.add(lblWarnUserOSX);
@@ -133,20 +136,23 @@ public class ConfigurationDlg {
                 });
                 
                 JLabel lblPreferredDevices = new JLabel("<html>Preferred devices <small>(priority top -> down)</small>:</html>");
-                lblPreferredDevices.setBounds(6, 63, 260, 16);
+                lblPreferredDevices.setBounds(6, 55, 260, 16);
                 panelDevice.add(lblPreferredDevices);
                 
                 JList<String> listPreferredDevices = new JList<String>();
+                listPreferredDevices.setToolTipText("The list of preferred devices");
                 JScrollPane listPreferredDevicesScroller = new JScrollPane();
                 listPreferredDevicesScroller.setViewportView(listPreferredDevices);
                 listPreferredDevicesScroller.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
-                listPreferredDevicesScroller.setBounds(6, 81, 495, 80);
+                listPreferredDevicesScroller.setBounds(6, 75, 490, 90);
                 listPreferredDevices.setModel(getPreferredDevices());
                 panelDevice.add(listPreferredDevicesScroller);
                 
                 JButton btnPriorityUp = new JButton("⇑");
+                btnPriorityUp.setHorizontalTextPosition(SwingConstants.CENTER);
+                btnPriorityUp.setAlignmentY(0.0f);
                 btnPriorityUp.setToolTipText("Increase priority");
-                btnPriorityUp.setBounds(503, 81, 45, 30);
+                btnPriorityUp.setBounds(500, 72, 50, 33);
                 btnPriorityUp.addMouseListener(new MouseAdapter() {
                     @Override
                     public void mouseClicked(MouseEvent e) {
@@ -162,6 +168,7 @@ public class ConfigurationDlg {
                 panelDevice.add(btnPriorityUp);
                 
                 JButton btwPriorityRemove = new JButton("⌫");
+                btwPriorityRemove.setAlignmentY(0.0f);
                 btwPriorityRemove.addMouseListener(new MouseAdapter() {
                     @Override
                     public void mouseClicked(MouseEvent e) {
@@ -178,10 +185,12 @@ public class ConfigurationDlg {
                     }
                 });
                 btwPriorityRemove.setToolTipText("Remove from the list");
-                btwPriorityRemove.setBounds(503, 106, 45, 30);
+                btwPriorityRemove.setBounds(500, 103, 50, 33);
                 panelDevice.add(btwPriorityRemove);
                 
                 JButton btnPriorityDown = new JButton("⇓");
+                btnPriorityDown.setHorizontalTextPosition(SwingConstants.CENTER);
+                btnPriorityDown.setAlignmentY(0.0f);
                 btnPriorityDown.addMouseListener(new MouseAdapter() {
                     @Override
                     public void mouseClicked(MouseEvent e) {
@@ -196,7 +205,7 @@ public class ConfigurationDlg {
                     }
                 });
                 btnPriorityDown.setToolTipText("Decrease priority");
-                btnPriorityDown.setBounds(503, 132, 45, 30);
+                btnPriorityDown.setBounds(500, 134, 50, 33);
                 panelDevice.add(btnPriorityDown);
                 
                 JLabel lblAddPreferredDevice = new JLabel("Add preferred device:");
@@ -211,7 +220,7 @@ public class ConfigurationDlg {
                         listPreferredDevices.setModel(getPreferredDevices()); // refresh
                     }
                 });
-                btnAddDevice.setBounds(438, 168, 70, 29);
+                btnAddDevice.setBounds(425, 167, 70, 29);
                 btnAddDevice.setEnabled(false);
                 panelDevice.add(btnAddDevice);
                 
@@ -244,7 +253,7 @@ public class ConfigurationDlg {
                         btnAddDevice.setEnabled(isOK);
                     }
                   });
-                textAddDevice.setBounds(145, 168, 293, 26);
+                textAddDevice.setBounds(145, 168, 280, 26);
                 panelDevice.add(textAddDevice);
                 textAddDevice.setColumns(10);
 
@@ -269,7 +278,7 @@ public class ConfigurationDlg {
                 JScrollPane listAvailableDevicesScroller = new JScrollPane();
                 listAvailableDevicesScroller.setViewportView(listAvailableDevices);
                 listAvailableDevicesScroller.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
-                listAvailableDevicesScroller.setBounds(6, 237, 495, 112);
+                listAvailableDevicesScroller.setBounds(6, 237, 490, 112);
                 panelDevice.add(listAvailableDevicesScroller);
                 listAvailableDevices.setModel(getAvailableDevices());
                 
@@ -285,7 +294,7 @@ public class ConfigurationDlg {
                     }
                 });
                 btnReloadAvailable.setToolTipText("Refresh");
-                btnReloadAvailable.setBounds(503, 237, 45, 30);
+                btnReloadAvailable.setBounds(500, 235, 50, 33);
                 panelDevice.add(btnReloadAvailable);
                 panelDevice.setFocusTraversalPolicy(new FocusTraversalOnArray(new Component[]{lblWarnUserOSX, chbxWarnOSX, lblPreferredDevices, listPreferredDevicesScroller, listPreferredDevices, btnPriorityUp, btwPriorityRemove, btnPriorityDown, lblAddPreferredDevice, btnAddDevice, textAddDevice, lblAddPreferredDeviceContd, labelAvailableDevices, listAvailableDevicesScroller, listAvailableDevices, btnReloadAvailable}));
 

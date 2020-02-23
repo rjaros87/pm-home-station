@@ -1,5 +1,5 @@
 group 'pmstation'
-version '1.2.1'
+version '1.3.0.alpha'
 
 apply plugin: 'java'
 apply plugin: 'application'
