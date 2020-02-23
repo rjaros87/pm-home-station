@@ -5,7 +5,6 @@
  */
 package pmstation.dialogs;
 
-import java.awt.Component;
 import java.awt.Container;
 import java.awt.Dialog.ModalityType;
 import java.awt.Font;
@@ -54,7 +53,6 @@ import javax.swing.event.DocumentListener;
 import javax.swing.filechooser.FileNameExtensionFilter;
 
 import org.apache.commons.lang3.SystemUtils;
-import org.eclipse.wb.swing.FocusTraversalOnArray;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -304,11 +302,6 @@ public class ConfigurationDlg {
         btnReloadAvailable.setToolTipText("Refresh");
         btnReloadAvailable.setBounds(500, 235, 50, 33);
         panelDevice.add(btnReloadAvailable);
-        panelDevice.setFocusTraversalPolicy(new FocusTraversalOnArray(
-                new Component[] { lblWarnUserOSX, chbxWarnOSX, lblPreferredDevices, listPreferredDevicesScroller,
-                        listPreferredDevices, btnPriorityUp, btwPriorityRemove, btnPriorityDown, lblAddPreferredDevice,
-                        btnAddDevice, textAddDevice, lblAddPreferredDeviceContd, labelAvailableDevices,
-                        listAvailableDevicesScroller, listAvailableDevices, btnReloadAvailable }));
 
         GroupLayout groupLayout = new GroupLayout(mainCfg);
         groupLayout.setHorizontalGroup(groupLayout.createParallelGroup(Alignment.TRAILING).addGroup(groupLayout
@@ -538,15 +531,6 @@ public class ConfigurationDlg {
         btnChooseCSVFilePath.setToolTipText("Choose filepath to write meaurements in CSV format");
         btnChooseCSVFilePath.setBounds(508, 204, 28, 21);
         panelGeneral.add(btnChooseCSVFilePath);
-        tabbedPane.setFocusTraversalPolicy(new FocusTraversalOnArray(
-                new Component[] { panelGeneral, lblAutostart, chkbxAutostart, lblInterval, textInterval, lblPM25MaxSafe,
-                        textPM25MaxSafe, lblPM10MaxSafe, textPM10MaxSafe, labelCheckVersion, chkbxCheckVersion,
-                        lblCSVLog, chkbxCSVLog, btnChooseCSVFilePath, panelUI, labelAlwaysOnTop, chbxAlwaysOnTop,
-                        lblSystemTray, chbxSystemTray, lblHideMainWindow, chbxHideMainWindow, labelTheme, chbxTheme,
-                        panelDevice, lblWarnUserOSX, chbxWarnOSX, lblPreferredDevices, listPreferredDevicesScroller,
-                        listPreferredDevices, btnPriorityUp, btwPriorityRemove, btnPriorityDown, lblAddPreferredDevice,
-                        btnAddDevice, textAddDevice, lblAddPreferredDeviceContd, labelAvailableDevices,
-                        listAvailableDevicesScroller, listAvailableDevices, btnReloadAvailable }));
 
         frame.getContentPane().setLayout(groupLayout);
         frame.toFront();
