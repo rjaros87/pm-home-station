@@ -5,6 +5,8 @@
  */
 package pmstation.core.plantower;
 
+import java.util.Arrays;
+
 /**
  * A class to identify supported PlanTower devices and parse their data frames.
  */
@@ -118,18 +120,21 @@ public class PlanTowerDevice {
     
     private boolean frameVerified(byte[] data) {
         boolean result = false;
-        if (indexOfArray(data, START_CHARACTERS) != 0 || data.length != model.dataLength()) {
+        int headIndex = indexOfArray(data, START_CHARACTERS);
+        if (headIndex == -1 || data.length < model.dataLength()) {
             System.err.println("------------- wrong start or data length"); // TODO temporary debug
             return result;
         }
 
-        int checkSum = checksumProvided(data);
-        int calcdCheckSum = checksum(data, model.lastBytesToSkipForChecksum);
+        byte[] sanitizedData = Arrays.copyOfRange(data, headIndex, headIndex + model.dataLength());
+
+        int checkSum = checksumProvided(sanitizedData);
+        int calcdCheckSum = checksum(sanitizedData, model.lastBytesToSkipForChecksum);
 
         // temporary debug - data[length - 1] should contain error bits  
         if (model == PLANTOWER_MODEL.PMS5003ST) {
-            if (data[data.length - 3] != 0) {
-                System.err.println("------------- errcode reported by device " + data[data.length - 3]); // TODO temporary debug
+            if (sanitizedData[sanitizedData.length - 3] != 0) {
+                System.err.println("------------- errcode reported by device " + sanitizedData[sanitizedData.length - 3]); // TODO temporary debug
             }            
         }
         if (checkSum == calcdCheckSum) {

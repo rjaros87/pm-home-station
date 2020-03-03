@@ -69,7 +69,7 @@ public class BluetoothLeService extends PlanTowerService {
         @Override
         public void onServicesDiscovered(BluetoothGatt gatt, int status) {
             if (status == BluetoothGatt.GATT_SUCCESS) {
-                findSerialChatacteristic(getSupportedGattServices());
+                findSerialCharacteristic(getSupportedGattServices());
             } else {
                 Log.w(TAG, "onServicesDiscovered received: " + status);
             }
@@ -252,7 +252,7 @@ public class BluetoothLeService extends PlanTowerService {
         return bluetoothGatt.getServices();
     }
 
-    private void findSerialChatacteristic(List<BluetoothGattService> gattServices) {
+    private void findSerialCharacteristic(List<BluetoothGattService> gattServices) {
         if (gattServices == null) {
             return;
         }
