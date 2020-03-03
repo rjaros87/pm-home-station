@@ -26,7 +26,7 @@ public class Constants {
     public static final String HHCO_MG_UNITS = "mg/m\u00B3";
     public static final String HHCO_UG_UNITS = "\u03BCg/m\u00B3";
     public static final String HUMI_UNITS = "%";
-    public static final String TEMP_UNITS = "°C";
+    public static final String TEMP_UNITS = "\u2103";
     
     public static final String HHT_UNITS = HHCO_UG_UNITS + ", " + HUMI_UNITS + ", " + TEMP_UNITS; 
     

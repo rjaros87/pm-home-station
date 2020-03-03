@@ -98,7 +98,7 @@ public class NativeTrayIntegration {
                     
                     if (sample.getHcho() >= 0 && sample.getHumidity() >= 0 && sample.getTemperature() != Double.NaN) {
                         toolTip += " \n" +
-                                     "CH₂O  : " + ((double)sample.getHcho())/1000 + Constants.HHCO_MG_UNITS + " \n" + 
+                                     "CH\u2082O  : " + ((double)sample.getHcho())/1000 + Constants.HHCO_MG_UNITS + " \n" + 
                                      "RH      : " + sample.getHumidity() + Constants.HUMI_UNITS + " \n" + // add'l spaces for macOS (non monospace fonts :/)
                                      "Temp  : " + sample.getTemperature() + Constants.TEMP_UNITS;
                     }
