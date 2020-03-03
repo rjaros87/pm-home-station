@@ -38,11 +38,11 @@ public class HHTChartObserver implements IPlanTowerObserver {
             humi.add(sample.getHumidity() >= 0 ? sample.getHumidity() : 0);
             temp.add(sample.getTemperature() != Double.NaN ? sample.getTemperature() : 0);
             if (chart.getSeriesMap().isEmpty()) {
-                chart.addSeries("CH₂O", null, Arrays.asList(hcho.toArray(new Integer[0])));
+                chart.addSeries("CH\u2082O", null, Arrays.asList(hcho.toArray(new Integer[0])));
                 chart.addSeries("RH", null, Arrays.asList(humi.toArray(new Double[0])));
                 chart.addSeries("Temp", null, Arrays.asList(temp.toArray(new Double[0])));
             } else {
-                chart.updateXYSeries("CH₂O", null, Arrays.asList(hcho.toArray(new Integer[0])), null);
+                chart.updateXYSeries("CH\u2082O", null, Arrays.asList(hcho.toArray(new Integer[0])), null);
                 chart.updateXYSeries("RH", null, Arrays.asList(humi.toArray(new Double[0])), null);
                 chart.updateXYSeries("Temp", null, Arrays.asList(temp.toArray(new Double[0])), null);
             }

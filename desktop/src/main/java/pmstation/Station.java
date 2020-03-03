@@ -347,9 +347,9 @@ public class Station {
         pm10.setText("----");
         labelsCollector.add(LabelObserver.LabelsCollector.LABEL.PM10, pm10);
 
-        JLabel hchoLabel = new JLabel("CH₂O");
+        JLabel hchoLabel = new JLabel("CH\u2082O");
         hchoLabel.setCursor(new Cursor(Cursor.HAND_CURSOR));
-        hchoLabel.setToolTipText("<html>CH₂O <i>aka</i> H-CHO <i>aka</i> Formaldehyde concentration reading<br/>Click to open wikipedia to learn about safety levels</html>");
+        hchoLabel.setToolTipText("<html>CH\u2082O <i>aka</i> H-CHO <i>aka</i> Formaldehyde concentration reading<br/>Click to open wikipedia to learn about safety levels</html>");
         hchoLabel.setVisible(false);
         hchoLabel.addMouseListener(new MouseAdapter() {
             @Override
