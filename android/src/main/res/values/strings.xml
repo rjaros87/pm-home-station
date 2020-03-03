@@ -45,4 +45,6 @@
     <string name="main_value_summary">Value displayed as the bigger number on main screen</string>
     <string name="policy">Privacy Policy</string>
     <string name="policy_desc">The app privacy policy can be found on the&#160;<font color='#008295'><u>project\'s page</u></font></string>
+    <string name="device_identified">PlanTower model recognized: %1$s</string>
+    <string name="device_unidentified">PlanTower model not recognized</string>
 </resources>

@@ -30,6 +30,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.WindowManager;
 import android.widget.ImageView;
+import android.widget.Toast;
 
 import com.crashlytics.android.Crashlytics;
 
@@ -248,9 +249,6 @@ public class MainActivity extends AppCompatActivity implements IPlanTowerObserve
             fm.beginTransaction().add(R.id.chart_dual, chartFragment, CHART_FRAGMENT).commit();
         }
 
-//        handlerThread = new HandlerThread("bluetoothHandler");
-//        handlerThread.start();
-
         deviceAddress = PreferenceManager.getDefaultSharedPreferences(this).getString("bt_mac", "00:25:83:00:62:E7");
         startService(BluetoothLeService.class, btConnection);
     }
@@ -460,6 +458,24 @@ public class MainActivity extends AppCompatActivity implements IPlanTowerObserve
                     MainActivity mainActivity = activity.get();
                     if (mainActivity != null) {
                         mainActivity.notifyAllObservers(sample);
+                    }
+                    break;
+                case PlanTowerService.MODEL_IDENTIFIED:
+                    String model = (String) msg.obj;
+                    mainActivity = activity.get();
+                    if (mainActivity != null) {
+                        Toast.makeText(mainActivity,
+                                       mainActivity.getResources()
+                                                   .getString(R.string.device_identified, model),
+                                       Toast.LENGTH_SHORT).show();
+                    }
+                    break;
+                case PlanTowerService.MODEL_UNIDENTIFIED:
+                    mainActivity = activity.get();
+                    if (mainActivity != null) {
+                        Toast.makeText(mainActivity,
+                                       mainActivity.getResources().getString(R.string.device_unidentified),
+                                       Toast.LENGTH_SHORT).show();
                     }
                     break;
             }
