@@ -3,15 +3,19 @@
     <string name="pm1" translatable="false">PM1.0</string>
     <string name="pm25" translatable="false">PM2.5</string>
     <string name="pm10" translatable="false">PM10</string>
+    <string name="temp" translatable="false">Temp.</string>
+    <string name="rh" translatable="false">RH</string>
+    <string name="hcho" translatable="false">HCHO</string>
     <string name="time">Time</string>
     <string name="unit" translatable="false">µg/m³</string>
+    <string name="temp_unit" translatable="false">℃</string>
     <string name="percent" translatable="false">%</string>
     <string name="status_connected">connected</string>
     <string name="status_disconnected">disconnected</string>
     <string name="status_permission_denied">permission denied</string>
     <string name="settings">Settings</string>
     <string name="pref_general">General</string>
-    <string name="pref_sampling_interval_default" translatable="false">1000</string>
+    <string name="pref_sampling_interval_default" translatable="false">1500</string>
     <string name="pref_main_value_default" translatable="false">1</string>
     <string name="pref_sampling_interval">Sampling interval</string>
     <string name="pref_main_value">Main value</string>

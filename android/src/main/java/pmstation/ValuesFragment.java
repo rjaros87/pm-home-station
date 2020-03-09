@@ -44,6 +44,15 @@ public class ValuesFragment extends Fragment implements IPlanTowerObserver {
     private TextView pm10Unit;
     private TextView pm10SecondaryUnit;
 
+    private CardView tempCard;
+    private CardView rhCard;
+    private CardView hchoCard;
+    private TextView temp;
+    private TextView rh;
+    private TextView rhUnit;
+    private TextView hcho;
+    private TextView hchoUnit;
+
     private TextView time;
     private ParticulateMatterSample currentValue;
     private SharedPreferences preferences;
@@ -84,6 +93,22 @@ public class ValuesFragment extends Fragment implements IPlanTowerObserver {
         ((TextView) pm25Card.findViewById(R.id.pm_label)).setText(R.string.pm25);
         ((TextView) pm10Card.findViewById(R.id.pm_label)).setText(R.string.pm10);
 
+        tempCard = view.findViewById(R.id.temp_card);
+        rhCard = view.findViewById(R.id.rh_card);
+        hchoCard = view.findViewById(R.id.hcho_card);
+        temp = tempCard.findViewById(R.id.pm_main_value);
+        rh = rhCard.findViewById(R.id.pm_main_value);
+        rhUnit = rhCard.findViewById(R.id.pm_main_unit);
+        hcho = hchoCard.findViewById(R.id.pm_main_value);
+        hchoUnit = hchoCard.findViewById(R.id.pm_main_unit);
+
+        rhUnit.setText(R.string.percent);
+        hchoUnit.setText(R.string.unit);
+
+        ((TextView) tempCard.findViewById(R.id.pm_label)).setText(R.string.temp);
+        ((TextView) rhCard.findViewById(R.id.pm_label)).setText(R.string.rh);
+        ((TextView) hchoCard.findViewById(R.id.pm_label)).setText(R.string.hcho);
+
         time = view.findViewById(R.id.time);
 
         if (savedInstanceState != null) {
@@ -123,7 +148,7 @@ public class ValuesFragment extends Fragment implements IPlanTowerObserver {
     public void update(final ParticulateMatterSample sample) {
         FragmentActivity activity = getActivity();
         currentValue = sample;
-        if (activity == null || sample == null) {
+        if (activity == null || sample == null || sample.getErrCode() != 0) {
             return;
         }
         activity.runOnUiThread(() -> {
@@ -143,6 +168,11 @@ public class ValuesFragment extends Fragment implements IPlanTowerObserver {
             pm10Card.setCardBackgroundColor(
                     ColorUtils.setAlphaComponent(AQIColor.fromPM10Level(sample.getPm10()).getColor(), 136));
             time.setText(Settings.dateFormat.format(sample.getDate()));
+
+            temp.setText(String.format(Locale.getDefault(), "%.1f", sample.getTemperature()));
+            rh.setText(String.format(Locale.getDefault(), "%.1f", sample.getHumidity()));
+            hcho.setText(String.format(Locale.getDefault(), "%.3f", ((double)sample.getHcho())/1000));
+
         });
     }
 

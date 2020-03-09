@@ -150,6 +150,7 @@ public class PlanTowerDevice {
     }
     
     private int checksumProvided(byte[] data, int startIdx, int checksumStartPos) {
+        System.out.println("startIdx: " + startIdx + ", checksumStartPos: " + checksumStartPos);
         return data.length >= startIdx + checksumStartPos + 1 ?
                 ((data[startIdx + checksumStartPos] & 0xFF) << 8) | (data[startIdx + checksumStartPos + 1] & 0xFF) : -1;
     }
@@ -180,7 +181,10 @@ public class PlanTowerDevice {
             if (firstIdx >= 0) {
                 int secondIdx = indexOfArray(sampleData, searchStartContinue + 1, needle);
                 if (secondIdx >= 0) {
+                    System.out.println(secondIdx);
+                    System.out.println(firstIdx);
                     result = PLANTOWER_MODEL.identify(secondIdx - firstIdx);
+                    System.out.println(result);
                     // let's verify checksum
                     int checksumProvided = checksumProvided(sampleData, firstIdx, result.dataLength() - 2);
                     int checksumCalcd = checksum(sampleData, firstIdx, result.dataLength(), result.lastBytesToSkipForChecksum());

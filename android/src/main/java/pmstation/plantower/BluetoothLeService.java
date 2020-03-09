@@ -22,6 +22,8 @@ import android.util.Log;
 
 import java.util.List;
 
+import pmstation.core.plantower.PlanTowerDevice;
+
 /**
  * Service for managing connection and data communication with a GATT server hosted on a
  * given Bluetooth LE device.
@@ -39,6 +41,8 @@ public class BluetoothLeService extends PlanTowerService {
     private BluetoothManager bluetoothManager;
     private BluetoothAdapter bluetoothAdapter;
     private BluetoothGattCharacteristic notifyCharacteristic;
+    private byte[] internalBuffer = new byte[150];
+    private int internalBufferIndex = 0;
 
     private String bluetoothDeviceAddress;
     private BluetoothGatt bluetoothGatt;
@@ -96,6 +100,34 @@ public class BluetoothLeService extends PlanTowerService {
         if (data != null && data.length > 0) {
             parseData(data);
         }
+    }
+
+    @Override
+    protected void parseData(byte[] bytes) {
+        Log.d(TAG, "parseData: bytes length " + bytes.length);
+        int newBufferIndex = internalBufferIndex + bytes.length;
+        int length = bytes.length;
+        if (newBufferIndex > internalBuffer.length) {
+            newBufferIndex = 0;
+            length = internalBuffer.length - internalBufferIndex;
+        }
+        System.arraycopy(bytes,
+                         0,
+                         internalBuffer,
+                         internalBufferIndex,
+                         length);
+
+        Log.d(TAG, "parseData: internalBufferIndex " + internalBufferIndex);
+        internalBufferIndex = newBufferIndex;
+        if (newBufferIndex == 0) {
+            Log.d(TAG, "parseData: newBufferIndex == 0");
+            super.parseData(internalBuffer);
+        }
+    }
+
+    @Override
+    protected void deviceDetected(PlanTowerDevice device) {
+        internalBuffer = new byte[device.model().dataLength() * 2];
     }
 
     private void broadcastUpdate(final String action) {
