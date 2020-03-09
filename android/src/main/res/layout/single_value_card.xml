@@ -2,14 +2,14 @@
 <android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="wrap_content"
+    android:layout_width="match_parent"
     android:layout_height="112dp"
     tools:showIn="@layout/fragment_values">
     <TextView
         android:id="@+id/pm_main_value"
-        android:layout_width="144dp"
+        android:layout_width="wrap_content"
         android:layout_height="86dp"
-        android:layout_marginEnd="8dp"
+        android:layout_marginEnd="4dp"
         android:shadowColor="#ffffff"
         android:shadowRadius="5"
         android:textAlignment="viewEnd"
@@ -17,9 +17,9 @@
         android:textColor="@android:color/black"
         android:textSize="64sp"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toStartOf="@id/guideline"
+        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        tools:text="112" />
+        tools:text="23.1" />
     <TextView
         android:id="@+id/pm_main_unit"
         android:layout_width="wrap_content"
@@ -28,11 +28,12 @@
         android:layout_marginTop="4dp"
         android:shadowColor="#ffffff"
         android:shadowRadius="5"
-        android:text="@string/unit"
+        android:text="@string/temp_unit"
         android:textAppearance="@style/TextAppearance.AppCompat.Medium"
         android:textColor="@android:color/black"
+        app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintVertical_chainStyle="packed" />
     <TextView
         android:id="@+id/pm_label"
         android:layout_width="wrap_content"
@@ -41,41 +42,9 @@
         android:layout_marginTop="4dp"
         android:shadowColor="#ffffff"
         android:shadowRadius="5"
-        android:text="@string/pm10"
+        android:text="@string/temp"
         android:textAppearance="@style/TextAppearance.AppCompat.Medium"
         android:textColor="@android:color/black"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
-    <TextView
-        android:id="@+id/pm_secondary_value"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="8dp"
-        android:shadowColor="#ffffff"
-        android:shadowRadius="5"
-        android:textAppearance="@style/TextAppearance.AppCompat.Display1"
-        android:textColor="@android:color/black"
-        app:layout_constraintBottom_toBottomOf="@+id/pm_main_value"
-        app:layout_constraintStart_toEndOf="@+id/pm_main_value"
-        app:layout_constraintTop_toBottomOf="@+id/pm_main_unit"
-        tools:text="1340" />
-    <TextView
-        android:id="@+id/pm_secondary_unit"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginEnd="4dp"
-        android:layout_marginBottom="4dp"
-        android:shadowColor="#ffffff"
-        android:shadowRadius="5"
-        android:text="@string/percent"
-        android:textAppearance="@style/TextAppearance.AppCompat.Medium"
-        android:textColor="@android:color/black"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintBottom_toBottomOf="parent" />
-    <android.support.constraint.Guideline
-        android:id="@+id/guideline"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:orientation="vertical"
-        app:layout_constraintGuide_end="78dp" />
 </android.support.constraint.ConstraintLayout>

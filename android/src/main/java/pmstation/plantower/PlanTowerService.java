@@ -28,7 +28,7 @@ public abstract class PlanTowerService extends Service {
     private Thread fakeDataThread;
     private int sampleCounter = 0;
     private SharedPreferences preferences;
-    private PlanTowerDevice device = null;
+    protected PlanTowerDevice device = null;
 
     private Handler handler;
 
@@ -45,6 +45,7 @@ public abstract class PlanTowerService extends Service {
             device = new PlanTowerDevice(bytes);
             if (device.modelIdentified()) {
                 notifyActivity(MODEL_IDENTIFIED, device.model().name());
+                deviceDetected(device);
             } else {
                 notifyActivity(MODEL_UNIDENTIFIED, null);
             }
@@ -58,37 +59,35 @@ public abstract class PlanTowerService extends Service {
             final ParticulateMatterSample sample = device.parse(bytes);
             if (sample != null) {
                 notifyActivity(sample);
-            } else if (bytes.length == 12) {
-                // BT notifies about the data in two turns - 20bytes (which we parse) and 12
-                // skip the 12 not to sleep twice
-                return;
             }
         }
 
-//        try {
-//            sampleCounter = ++sampleCounter % 10;
-//            String intervalPref = preferences.getString("sampling_interval", "1000");
-//            int interval = Integer.parseInt(intervalPref);
-//            if (interval > 3000) {
-//                if (sampleCounter == 0) {
-//                    sleep();
-//                    Thread.sleep(interval);
-//                    wakeUp();
-//                } else {
-//                    Thread.sleep(1000);
-//                }
-//            } else {
-//                Thread.sleep(interval);
-//            }
-//        } catch (InterruptedException e) {
-//            Log.d(TAG, "ConnectionThread sleep interrupted, most likely the sampling interval changed");
-//            wakeUp();
-//        }
+        try {
+            sampleCounter = ++sampleCounter % 10;
+            String intervalPref = preferences.getString("sampling_interval", "1500");
+            int interval = Integer.parseInt(intervalPref);
+            if (interval > 3000) {
+                if (sampleCounter == 0) {
+                    sleep();
+                    Thread.sleep(interval);
+                    wakeUp();
+                } else {
+                    Thread.sleep(3000);
+                }
+            } else if (!(this instanceof BluetoothLeService)){
+                Thread.sleep(interval);
+            }
+        } catch (InterruptedException e) {
+            Log.d(TAG, "ConnectionThread sleep interrupted, most likely the sampling interval changed");
+            wakeUp();
+        }
     }
 
     protected abstract boolean wakeUp();
 
     protected abstract boolean sleep();
+
+    protected void deviceDetected(PlanTowerDevice device) {}
 
     public void wakeWorkerThread() {
         if (workerThread == null) {
@@ -110,9 +109,9 @@ public abstract class PlanTowerService extends Service {
                 i = (i + 1) % 14;
                 try {
                     notifyActivity(new ParticulateMatterSample(20, i * 10, 100));
-                    String intervalPref = preferences.getString("sampling_interval", "1000");
+                    String intervalPref = preferences.getString("sampling_interval", "1500");
                     int interval = Integer.parseInt(intervalPref);
-                    Thread.sleep(sampleCounter == 0 ? interval : 1000);
+                    Thread.sleep(sampleCounter == 0 ? interval : 1500);
                 } catch (InterruptedException e) {
                     Log.d(TAG, "Thread interrupted");
                     Thread.currentThread().interrupt();

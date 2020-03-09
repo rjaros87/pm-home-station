@@ -154,6 +154,9 @@ public class ChartFragment extends Fragment implements IPlanTowerObserver {
         if (!ready) {
             return;
         }
+        if (sample == null || sample.getErrCode() != 0) {
+            return;
+        }
         LineData data = chart.getData();
 
         addEntry(pm1Label, sample.getPm1_0());

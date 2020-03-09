@@ -396,6 +396,9 @@ public class MainActivity extends AppCompatActivity implements IPlanTowerObserve
 
     @Override
     public void update(ParticulateMatterSample sample) {
+        if (sample.getErrCode() != 0) {
+            return;
+        }
         values.add(sample);
         AQIColor pm25Color = AQIColor.fromPM25Level(sample.getPm2_5());
         runOnUiThread(() -> smog.animate().alpha(pm25Color.getAlpha()));
@@ -464,17 +467,22 @@ public class MainActivity extends AppCompatActivity implements IPlanTowerObserve
                     String model = (String) msg.obj;
                     mainActivity = activity.get();
                     if (mainActivity != null) {
+                        String text = mainActivity.getResources()
+                                                    .getString(R.string.device_identified, model);
+                        Log.d(TAG, text);
                         Toast.makeText(mainActivity,
-                                       mainActivity.getResources()
-                                                   .getString(R.string.device_identified, model),
+                                       text,
                                        Toast.LENGTH_SHORT).show();
                     }
                     break;
                 case PlanTowerService.MODEL_UNIDENTIFIED:
                     mainActivity = activity.get();
                     if (mainActivity != null) {
+                        String text = mainActivity.getResources()
+                                                  .getString(R.string.device_unidentified);
+                        Log.d(TAG, text);
                         Toast.makeText(mainActivity,
-                                       mainActivity.getResources().getString(R.string.device_unidentified),
+                                       text,
                                        Toast.LENGTH_SHORT).show();
                     }
                     break;
