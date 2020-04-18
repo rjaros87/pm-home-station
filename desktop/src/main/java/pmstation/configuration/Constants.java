@@ -34,7 +34,7 @@ public class Constants {
     public static final int WINDOW_WIDTH = 494;
     public static final int WINDOW_HEIGHT = 480;
     // min Window size
-    public static final int MIN_WINDOW_WIDTH = 494;
+    public static final int MIN_WINDOW_WIDTH = 470;
     public static final int MIN_WINDOW_HEIGHT = 180;
     
     public static final String MAIN_BG_IMG = "bg.jpg";

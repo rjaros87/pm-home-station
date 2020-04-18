@@ -21,6 +21,7 @@ import java.awt.Point;
 import java.awt.Rectangle;
 import java.awt.SystemTray;
 import java.awt.Window.Type;
+import java.awt.event.KeyEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.WindowAdapter;
@@ -45,6 +46,7 @@ import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
+import javax.swing.KeyStroke;
 import javax.swing.SwingConstants;
 import javax.swing.SwingUtilities;
 import javax.swing.ToolTipManager;
@@ -87,32 +89,42 @@ import pmstation.plantower.PlanTowerSensor;
  */
 public class Station {
     
+    public enum DisplayMode {
+        NORMAL,
+        FULLSCREEN,
+        KIOSK
+    }
+    
     private static final Logger logger = LoggerFactory.getLogger(Station.class);
 
     private final PlanTowerSensor planTowerSensor;
+    private DisplayMode displayMode;
+
     private JFrame frame = null;
     private ConfigurationDlg configDlg = null;
     private AboutDlg aboutDlg = null;
-    private NativeTrayIntegration nativeTray = null;
+    private NativeTrayIntegration nativeTray = null;    
     
-    public Station(PlanTowerSensor planTowerSensor) {
+    public Station(PlanTowerSensor planTowerSensor, DisplayMode displayMode) {
         this.planTowerSensor = planTowerSensor;
+        this.displayMode = displayMode;
     }
-
     
     /**
      * @wbp.parser.entryPoint
      */
     public void showUI() {
         frame = new JFrame(Constants.MAIN_WINDOW_TITLE);
-        frame.setAlwaysOnTop(Config.instance().to().getBoolean(Config.Entry.ALWAYS_ON_TOP.key(), false));
+        frame.setAlwaysOnTop(displayMode == DisplayMode.NORMAL
+                && Config.instance().to().getBoolean(Config.Entry.ALWAYS_ON_TOP.key(), false));
         frame.setModalExclusionType(ModalExclusionType.NO_EXCLUDE);
         SwingUtilities.updateComponentTreeUI(frame);
         ToolTipManager.sharedInstance().setDismissDelay(Integer.MAX_VALUE);
         setIcon(frame);
 
         // Windows 10 strange behaviour on multiscreen and multidisplay
-        if (SystemUtils.IS_OS_MAC_OSX && Config.instance().to().getBoolean(Config.Entry.SYSTEM_TRAY.key(), false)) {
+        if (displayMode == DisplayMode.NORMAL &&
+                SystemUtils.IS_OS_MAC_OSX && Config.instance().to().getBoolean(Config.Entry.SYSTEM_TRAY.key(), false)) {
             frame.setType(Type.UTILITY);
         }
 
@@ -241,7 +253,7 @@ public class Station {
         
         final JPanel panelMain = new JPanel();
         
-        panelMain.setLayout(new MigLayout("hidemode 3", "[50px][100px:120px,grow][150px]", "[:29px:29px][16px][338px,grow][:10px:10px]"));
+        panelMain.setLayout(new MigLayout("hidemode 3", "[50px][10px:30px,grow][150px]", "[:29px:29px][16px][338px,grow][:10px:10px]"));
         panelMain.add(btnConnect, "cell 0 0,alignx left,aligny center");
 
         JButton btnNewVersion = new JButton("");
@@ -292,8 +304,8 @@ public class Station {
         
         JPanel panelMeasurements = new JPanel();
         panelMeasurements.setBorder(new TitledBorder(null, "<html><b>Latest measurements</b></html>", TitledBorder.LEADING, TitledBorder.TOP, null, null));
-        panelMain.add(panelMeasurements, "hidemode 3, cell 0 1 3 1,grow");
-        panelMeasurements.setLayout(new MigLayout("hidemode 3", "[:20px:40px][1px:1px:1px][80px:80px:100px,grow 60][1px:1px:3px][:20px:40px][1px:1px:1px][80px:80px:100px,grow 60][1px:1px:3px][:20px:40px][1px:1px:1px][80px:80px:100px,grow 60]", "[::20px][:5px:5px][::20px][10px:10px:10px]"));
+        panelMain.add(panelMeasurements, "hidemode 3,cell 0 1 3 1,grow");
+        panelMeasurements.setLayout(new MigLayout("hidemode 3", "[:20px:40px][1px:1px:1px][60px:80px:100px,grow 60][1px:1px:3px][:20px:40px][1px:1px:1px][60px:80px:100px,grow 60][1px:1px:3px][:20px:40px][1px:1px:1px][60px:80px:100px,grow 60]", "[::20px][:5px:5px][::20px][10px:10px:10px]"));
         
         JLabel pm1_0Label = new JLabel("<html>PM<sub>1.0</sub></html>");
         pm1_0Label.setToolTipText("<html>PM<sub>1.0</sub> reading</html>");
@@ -386,8 +398,8 @@ public class Station {
         lblAqi.setToolTipText("<html>" + AQIAbout.getHtmlTable() + "</html>");
         panelMeasurements.add(lblAqi, "cell 8 3 3 1,aligny bottom,alignx left");
                                                         
-        panelMain.add(pmChartPanel, "cell 0 2 3 1,flowy,pushy");
-        panelMain.add(hhtChartPanel, "cell 0 2 3 1,flowy,pushy");
+        panelMain.add(pmChartPanel, "flowy,cell 0 2 3 1,pushy ,growx");
+        panelMain.add(hhtChartPanel, "flowy,cell 0 2 3 1,pushy ,growx");
 
         JPanel panelStatus = new JPanel();
         panelStatus.setBorder(new BevelBorder(BevelBorder.LOWERED));
@@ -419,12 +431,47 @@ public class Station {
         labelStatus.setText("... .   .     .         .               .");
 
         addObserver(new LabelObserver(labelsCollector));
+
+        if (displayMode != DisplayMode.NORMAL) {
+            logger.info("Going to enter {} mode...", displayMode);
+            frame.setUndecorated(true);
+        }
         
         frame.pack();
         frame.revalidate();
         frame.repaint();
-        setScreenAndDimensions(frame);  // must be after frame.pack()
-        frame.setVisible(!Config.instance().to().getBoolean(Config.Entry.HIDE_MAIN_WINDOW.key(), Constants.HIDE_MAIN_WINDOW));
+        
+        if (displayMode == DisplayMode.NORMAL) {
+            setScreenAndDimensions(frame);  // must be after frame.pack()
+        } else {
+            frame.setExtendedState(JFrame.MAXIMIZED_BOTH); 
+            if (displayMode == DisplayMode.KIOSK) {
+                GraphicsDevice device = frame.getGraphicsConfiguration().getDevice();
+                if (device.isFullScreenSupported()) {
+                    logger.info("...entering Kiosk mode (exclusive fullscreen)!");
+                    device.setFullScreenWindow(frame);
+                    frame.addMouseListener(new MouseAdapter(){
+                        @Override
+                        public void mouseClicked(MouseEvent e){
+                            if (e.getClickCount() == 2) {   // double click - TODO should be done better
+                                exitFullScreenMode(frame, device);
+                            }
+                        }
+                    });
+                    frame.getRootPane().registerKeyboardAction(e -> {
+                        exitFullScreenMode(frame, device);
+                    }, KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0), JComponent.WHEN_IN_FOCUSED_WINDOW);
+                } else {
+                    logger.warn("...Kiosk mode (exclusive fullscreen) not supported by OS");
+                    displayMode = DisplayMode.FULLSCREEN;
+                }
+
+            }
+        }
+        
+        frame.setVisible(displayMode != DisplayMode.NORMAL ||
+                !Config.instance().to().getBoolean(Config.Entry.SYSTEM_TRAY.key(), Constants.SYSTEM_TRAY) ||
+                !Config.instance().to().getBoolean(Config.Entry.HIDE_MAIN_WINDOW.key(), Constants.HIDE_MAIN_WINDOW));
         integrateNativeOS(frame);
 
         // register dialogs (they can be opened from SystemTray and OSX menubar)
@@ -433,7 +480,6 @@ public class Station {
 
         handleAutostart(labelStatus, btnConnect);
         btnConnect.setEnabled(true);
-
         
         if (Config.instance().to().getBoolean(Config.Entry.CHECK_LATEST_VERSION.key(), true)) {
             versionCheck(btnNewVersion, labelStatus, nativeTray);
@@ -552,7 +598,7 @@ public class Station {
     }
 
     private void saveScreenAndDimensions(JFrame frame) {
-        if (!frame.isVisible()) {
+        if (!frame.isVisible() || displayMode != DisplayMode.NORMAL) {
             return;
         }
 
@@ -581,6 +627,13 @@ public class Station {
             logger.info("Saved window dimensions to config file (multi screen found)");
         }
         
+    }
+    
+    private void exitFullScreenMode(JFrame frame, GraphicsDevice device) {
+        device.setFullScreenWindow(null);
+        frame.dispose();
+        frame.setUndecorated(false);
+        frame.setVisible(true);   
     }
     
     private void setDimensions(JFrame frame, int x, int y, int width, int height) {
@@ -646,19 +699,21 @@ public class Station {
                 SwingUtilities.invokeLater(() -> {
                     String newVerInfo = "A newer version (" + lr.getVersion() + ") is available!";
                     String newVerTitle = "New version available!";
-                    btnNewVersion.addMouseListener(new MouseAdapter() {
-                        @Override
-                        public void mouseClicked(MouseEvent e) {
-                            int response = JOptionPane.showConfirmDialog(frame,
-                                    "<html>" + newVerInfo + "<br/>" +
-                                    "Release date: " + lr.getDateString() + "<br/><br/>" +
-                                    "Do you want to open browser to visit download page?</html>",
-                                    newVerTitle, JOptionPane.YES_NO_OPTION);
-                            if (response == JOptionPane.YES_OPTION) {
-                                openUrl(lr.getUrl());
+                    if (displayMode != DisplayMode.KIOSK) {
+                        btnNewVersion.addMouseListener(new MouseAdapter() {
+                            @Override
+                            public void mouseClicked(MouseEvent e) {
+                                int response = JOptionPane.showConfirmDialog(frame,
+                                        "<html>" + newVerInfo + "<br/>" +
+                                        "Release date: " + lr.getDateString() + "<br/><br/>" +
+                                        "Do you want to open browser to visit download page?</html>",
+                                        newVerTitle, JOptionPane.YES_NO_OPTION);
+                                if (response == JOptionPane.YES_OPTION) {
+                                    openUrl(lr.getUrl());
+                                }
                             }
-                        }
-                    });
+                        });                        
+                    }
                     btnNewVersion.setVisible(true);
                     labelStatus.setText(newVerInfo);
                     // turned off - I think it is too annoying
@@ -674,7 +729,7 @@ public class Station {
 
     private void diaplayWarnForDetach(JFrame parent) {
         if (Config.instance().to().getBoolean(Config.Entry.WARN_ON_OSX_TO_DETACH.key(), SystemUtils.IS_OS_MAC_OSX)) {
-            if (planTowerSensor.isConnected()) {
+            if (planTowerSensor.isConnected() && displayMode != DisplayMode.KIOSK) {
                 JOptionPane.showMessageDialog(parent,
                         "<html>The sensor is still attached.<br><br>" +
                         "This instance or the next start of the application may <b>hang</b><br>" +

@@ -20,6 +20,7 @@ import org.apache.commons.lang3.SystemUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import pmstation.Station.DisplayMode;
 import pmstation.configuration.Config;
 import pmstation.configuration.Constants;
 import pmstation.observers.CSVObserver;
@@ -61,7 +62,13 @@ public class Start {
                 logger.info("Starting pm-home-station, v.{} ({})...", Constants.VERSION, Constants.PROJECT_URL);
                 setLookAndFeel();
                 PlanTowerSensor planTowerSensor = new PlanTowerSensor();
-                Station station = new Station(planTowerSensor);
+                DisplayMode displayMode = DisplayMode.NORMAL;
+                if (line.hasOption("kiosk")) {
+                    displayMode = DisplayMode.KIOSK;
+                } else if (line.hasOption("fullscreen")) {
+                    displayMode = DisplayMode.FULLSCREEN;
+                }
+                Station station = new Station(planTowerSensor, displayMode);
                 SwingUtilities.invokeLater(() -> { 
                     station.showUI();
                     if (line.hasOption("screenshot")) {
@@ -98,6 +105,8 @@ public class Start {
         options.addOption("h", "help", false, "prints this message and exits");
         options.addOption("c", "headless", false, "headless mode (cli mode) - autostarts measurements based on config");
         options.addOption("s", "screenshot", true, "takes a screenshot of the main window every measurement, the argument is a filename where png will be (re)written");
+        options.addOption("f", "fullscreen", false, "opens the main window in fullscreen mode");
+        options.addOption("k", "kiosk", false, "opens the main window in Kiosk mode if supported by OS (falls back to fullscreen mode otherwise)");
         options.addOption("v", "version", false, "prints version information and exits");
         return options;
     }
