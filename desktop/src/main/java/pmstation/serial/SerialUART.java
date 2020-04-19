@@ -205,9 +205,10 @@ public class SerialUART implements ISerialUART {
         return (SystemUtils.IS_OS_MAC_OSX && portName.startsWith("cu") && portName.contains("usbserial") ||
                 SystemUtils.IS_OS_MAC_OSX && portName.startsWith("cu.hc-0") ||  // Bluetooth uart on Mac
                 SystemUtils.IS_OS_WINDOWS && portDesc.contains("serial") ||
-                SystemUtils.IS_OS_WINDOWS && portDesc.contains("hc-0") || // Bluetooth uart on Win
+                SystemUtils.IS_OS_WINDOWS && portDesc.contains("hc-0") ||       // Bluetooth uart on Win
                 SystemUtils.IS_OS_LINUX && portDesc.contains("usb") && portDesc.contains("serial") || 
-                SystemUtils.IS_OS_LINUX && portDesc.contains("hc-0") || // Bluetooth uart on Linux?
+                SystemUtils.IS_OS_LINUX && portDesc.contains("hc-0") ||         // Bluetooth uart on Linux?
+                SystemUtils.IS_OS_LINUX && portDesc.contains("ttyS0") ||        // RPi built-in UART
                 portDesc.contains("pmsensor")
         );
     }
