@@ -50,6 +50,7 @@ import javax.swing.KeyStroke;
 import javax.swing.SwingConstants;
 import javax.swing.SwingUtilities;
 import javax.swing.ToolTipManager;
+import javax.swing.UIManager;
 import javax.swing.border.BevelBorder;
 import javax.swing.border.TitledBorder;
 
@@ -153,7 +154,10 @@ public class Station {
         LabelObserver.LabelsCollector labelsCollector = new LabelObserver.LabelsCollector();
         
         XYChart pmChart = new XYChartBuilder().xAxisTitle("samples").yAxisTitle(Constants.PM_UNITS).build();
-        pmChart.getStyler().setChartBackgroundColor(new Color(0, 0, 0, 0.05f));
+        pmChart.getStyler().setPlotBackgroundColor(new Color(1.0f, 1.0f, 1.0f, 0.1f));
+        pmChart.getStyler().setChartBackgroundColor(new Color(0, 0, 0, 0.0f));
+        pmChart.getStyler().setChartFontColor(UIManager.getColor("windowText"));        // for dark-mode (use overridden text color)
+        pmChart.getStyler().setAxisTickLabelsColor(UIManager.getColor("windowText"));   // for dark-mode (use overridden text color)
         pmChart.getStyler().setXAxisMin((double) 0);
         pmChart.getStyler().setXAxisMax((double) Constants.CHART_MAX_SAMPLES);
         pmChart.getStyler().setAxisTitleFont(new Font(Font.SANS_SERIF, Font.PLAIN, 11));
@@ -183,7 +187,10 @@ public class Station {
         pmChartPanel.setMinimumSize(new Dimension(50, 50));
         
         XYChart hhtChart = new XYChartBuilder().xAxisTitle("samples").yAxisTitle(Constants.HHT_UNITS).build();
-        hhtChart.getStyler().setChartBackgroundColor(new Color(0, 0, 0, 0.05f));
+        hhtChart.getStyler().setPlotBackgroundColor(new Color(1.0f, 1.0f, 1.0f, 0.1f));
+        hhtChart.getStyler().setChartBackgroundColor(new Color(0, 0, 0, 0.0f));
+        hhtChart.getStyler().setChartFontColor(UIManager.getColor("windowText"));       // for dark-mode (use overridden text color)
+        hhtChart.getStyler().setAxisTickLabelsColor(UIManager.getColor("windowText"));   // for dark-mode (use overridden text color)
         hhtChart.getStyler().setXAxisMin((double) 0);
         hhtChart.getStyler().setXAxisMax((double) Constants.CHART_MAX_SAMPLES);
         hhtChart.getStyler().setAxisTitleFont(new Font(Font.SANS_SERIF, Font.PLAIN, 11));
@@ -404,7 +411,7 @@ public class Station {
         lblAqi.setToolTipText("<html>" + AQIAbout.getHtmlTable() + "</html>");
         panelMeasurements.add(lblAqi, "cell 8 3 3 1,aligny bottom,alignx left");
 
-        if (displayMode == DisplayMode.KIOSK) { // TODO use config or other means to decide whether to display 2 charts horizontally side by side, or vertically
+        if (Config.instance().to().getBoolean(Config.Entry.HORIZONTAL_CHARTS.key(), Constants.HORIZONTAL_CHARTS)) { // TODO would be nice to automatically stack them horizontally if windows is too small vertically
             panelMain.add(pmChartPanel, "flowx,cell 0 2,pushy ,growx");
             panelMain.add(hhtChartPanel, "flowx,cell 0 2,pushy ,growx");
         } else {
@@ -422,7 +429,7 @@ public class Station {
         panelStatus.add(labelStatus, BorderLayout.WEST);
 
         if (Config.instance().to().getBoolean(Config.Entry.WINDOW_THEME.key(), true)) {
-            setFancyBackgroundImage(frame, Arrays.asList(panelMain, panelControl, panelMeasurements, panelStatus, pmChartPanel));
+            setFancyBackgroundImage(frame, Arrays.asList(panelMain, panelControl, panelMeasurements, panelStatus, pmChartPanel, hhtChartPanel));
         }
         frame.getContentPane().setLayout(new BorderLayout(0, 0));
         frame.getContentPane().add(panelMain);
@@ -742,13 +749,13 @@ public class Station {
         if (Config.instance().to().getBoolean(Config.Entry.WARN_ON_OSX_TO_DETACH.key(), SystemUtils.IS_OS_MAC_OSX)) {
             if (planTowerSensor.isConnected() && displayMode != DisplayMode.KIOSK) {
                 JOptionPane.showMessageDialog(parent,
-                        "<html>The sensor is still attached.<br><br>" +
-                        "This instance or the next start of the application may <b>hang</b><br>" +
-                        "when the device is still attached while app or port is being closed.<br>" +
-                        "<b>In such a case only reboot helps.</b><br><br>" +
-                        "This behavior is being observed when using some cheap PL2303<br>" +
-                        "uart-to-usb and their drivers.<br><br>" +
-                        "You can now forcibly detach the device now.<br><br>" +
+                        "<html>The sensor is still attached.<br/><br/>" +
+                        "This instance or the next start of the application may <b>hang</b><br/>" +
+                        "when the device is still attached while app or port is being closed.<br/>" +
+                        "<b>In such a case only reboot helps.</b><br/><br/>" +
+                        "This behavior is being observed when using some cheap PL2303<br/>" +
+                        "uart-to-usb and their drivers.<br/><br/>" +
+                        "You can now forcibly detach the device now.<br/><br/>" +
                         "Press OK to continue closing.</html>",
                         "Warning", JOptionPane.WARNING_MESSAGE);
             }
@@ -758,7 +765,10 @@ public class Station {
     
     private void setFancyBackgroundImage(JFrame frame, List<JPanel> translucentPanels) {
         try {
-            BufferedImage bgImage = ResourceHelper.getImage(Constants.MAIN_BG_IMG);
+            
+            BufferedImage bgImage = ResourceHelper.getImage(
+                    Config.instance().to().getBoolean(Config.Entry.DARK_MODE.key(), Constants.DARK_MODE) ? 
+                            Constants.MAIN_BG_IMG_DARK_MODE : Constants.MAIN_BG_IMG);
             JComponent bgComponent = new JPanel() {
                 private static final long serialVersionUID = -656821255790619499L;
 

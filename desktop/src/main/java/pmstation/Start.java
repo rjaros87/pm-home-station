@@ -6,6 +6,10 @@
 
 package pmstation;
 
+import java.awt.Color;
+import java.util.Map.Entry;
+import java.util.Set;
+
 import javax.swing.SwingUtilities;
 import javax.swing.UIManager;
 import javax.swing.UnsupportedLookAndFeelException;
@@ -77,7 +81,7 @@ public class Start {
                 });
             }
         } catch (ParseException e) {
-            logger.error("Ooops", e);
+            logger.error("Ooops, wrong argument(s): {}", e.getMessage());
             return;
         }
     }
@@ -94,10 +98,38 @@ public class Start {
         }
         try {
             UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
+            logger.info("Setting L&F: {}", UIManager.getLookAndFeel().getName());
+            if (Config.instance().to().getBoolean(Config.Entry.DARK_MODE.key(), Constants.DARK_MODE)) {
+                // naive way to set dark-mode by inverting all the colors from L&F...
+                Set<Entry<Object, Object>> entries = UIManager.getLookAndFeelDefaults().entrySet();
+                for (Entry<Object, Object> entry : entries) {
+                    if (entry.getValue() instanceof Color) {
+                        Color color = (Color) entry.getValue();
+                        Color colorInv = new Color(
+                                invColor(color.getRed()), invColor(color.getGreen()), invColor(color.getBlue()), color.getAlpha());
+                        entry.setValue(colorInv);
+                    }
+                }
+                UIManager.put("Button.foreground", Color.BLACK);
+                UIManager.put("Panel.background", Color.DARK_GRAY);
+            }            
         } catch (ClassNotFoundException | InstantiationException | IllegalAccessException
                 | UnsupportedLookAndFeelException e) {
             logger.error("Ooops, problem setting system L&F", e);
         }
+    }
+    
+    /**
+     * Naive method to inverse color for dark-mode
+     * @param color a color to invert
+     * @return an inverted color
+     */
+    private static int invColor(int color) {
+        int result = 255 - color;
+        if (color > 100 && color < 150) {   // treat "middle" value color a lil' bit differently :)
+            result = color >> 1;
+        }
+        return result;
     }
     
     private static Options getOptions() {

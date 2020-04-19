@@ -31,6 +31,8 @@ public class Config {
         ALWAYS_ON_TOP("always.on.top"),
         SYSTEM_TRAY("system.tray"),
         HIDE_MAIN_WINDOW("hide.main.window"),
+        DARK_MODE("dark.mode"),
+        HORIZONTAL_CHARTS("horizontal.charts"),
         POS_X("pos.x"),
         POS_Y("pos.y"),
         POS_WIDTH("pos.width"),

@@ -118,7 +118,7 @@ public class ConfigurationDlg {
         JList<String> listAvailableDevices = new JList<String>();
         listAvailableDevices.setToolTipText("The list of available devices found in the system");
         JLabel lblWarnUserOSX = new JLabel(
-                "<html>Warn before close / disconnect if device is not detached:<br><small><i>- a workaround for macOS and faulty PL2303 drivers</i></small></html>");
+                "<html>Warn before close / disconnect if device is not detached:<br/><small><i>- a workaround for macOS and faulty PL2303 drivers</i></small></html>");
         lblWarnUserOSX.setBounds(6, 22, 358, 29);
         panelDevice.add(lblWarnUserOSX);
         lblWarnUserOSX.setEnabled(SystemUtils.IS_OS_MAC_OSX);
@@ -344,7 +344,7 @@ public class ConfigurationDlg {
         panelUI.add(chbxAlwaysOnTop);
 
         JLabel lblSystemTray = new JLabel(
-                "<html>Show app icon in the System Tray:<br><small><i>- only on selected operating systems<br>- requires app restart</i></small></html>");
+                "<html>Show app icon in the System Tray:<br/><small><i>- only on selected operating systems<br/>- requires app restart</i></small></html>");
         lblSystemTray.setBounds(6, 66, 386, 60);
         lblSystemTray.setEnabled(SystemTray.isSupported());
         panelUI.add(lblSystemTray);
@@ -375,7 +375,7 @@ public class ConfigurationDlg {
         panelUI.add(chbxHideMainWindow);
 
         JLabel labelTheme = new JLabel(
-                "<html>Decorate the main window with theme:<br><small><i>- requires app restart</i></small></html>");
+                "<html>Decorate the main window with theme:<br/><small><i>- requires app restart</i></small></html>");
         labelTheme.setBounds(6, 170, 386, 29);
         panelUI.add(labelTheme);
 
@@ -389,7 +389,37 @@ public class ConfigurationDlg {
         chbxTheme.setEnabled(true);
         chbxTheme.setBounds(494, 168, 55, 23);
         panelUI.add(chbxTheme);
+        
+        JLabel labelDarkMode = new JLabel("<html>Use dark mode:<br/><small><i>- experimental feature!<br/>- requires app restart</i></small></html>");
+        labelDarkMode.setBounds(6, 215, 386, 45);
+        panelUI.add(labelDarkMode);
+        
+        JCheckBox chbxDarkMode = new JCheckBox("");
+        chbxDarkMode.setSelected(Config.instance().to().getBoolean(Config.Entry.DARK_MODE.key(), false));
+        chbxDarkMode.addItemListener(new ItemListener() {
+            public void itemStateChanged(ItemEvent e) {
+                Config.instance().to().setProperty(Config.Entry.DARK_MODE.key(), chbxDarkMode.isSelected());
+            }
+        });
+        chbxDarkMode.setEnabled(true);
+        chbxDarkMode.setBounds(494, 215, 55, 23);
+        panelUI.add(chbxDarkMode);
 
+        JLabel labelHCharts = new JLabel("<html>Arrange charts horizontally<br/><small><i>- only useful for PMS5003ST<br/>- can be useful for small displays<br/>- requires app restart</i></small></html>");
+        labelHCharts.setBounds(6, 268, 386, 65);
+        panelUI.add(labelHCharts);
+        
+        JCheckBox chbxHCharts = new JCheckBox("");
+        chbxHCharts.setSelected(Config.instance().to().getBoolean(Config.Entry.HORIZONTAL_CHARTS.key(), false));
+        chbxHCharts.addItemListener(new ItemListener() {
+            public void itemStateChanged(ItemEvent e) {
+                Config.instance().to().setProperty(Config.Entry.HORIZONTAL_CHARTS.key(), chbxHCharts.isSelected());
+            }
+        });
+        chbxHCharts.setEnabled(true);
+        chbxHCharts.setBounds(494, 268, 55, 23);
+        panelUI.add(chbxHCharts);
+        
         panelGeneral.setLayout(null);
 
         chbxSystemTray.addItemListener(new ItemListener() {

@@ -38,9 +38,12 @@ public class Constants {
     public static final int MIN_WINDOW_HEIGHT = 180;
     
     public static final String MAIN_BG_IMG = "bg.jpg";
+    public static final String MAIN_BG_IMG_DARK_MODE = "bg-dark.jpg";
 
     public static final boolean HIDE_MAIN_WINDOW = false;
     public static final boolean SYSTEM_TRAY = true;
+    public static final boolean DARK_MODE = false;
+    public static final boolean HORIZONTAL_CHARTS = false;
     
     public static final int CHART_MAX_SAMPLES = 60;
     

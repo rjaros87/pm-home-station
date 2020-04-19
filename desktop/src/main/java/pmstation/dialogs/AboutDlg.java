@@ -125,10 +125,13 @@ public class AboutDlg {
         
         if (stylesheet != null) {
             try {
+                logger.info("Going to apply CSS stylesheet...");
                 kit.getStyleSheet().loadRules(new StringReader(load(stylesheet)), null);
             } catch (Exception e) {
                 logger.error("Error reading stylesheets: {}", stylesheet, e);
             }
+        } else {
+            logger.warn("No CSS stylesheet provided");
         }
         jEditorPane.addHyperlinkListener(new HyperlinkListener() {
             @Override
@@ -150,7 +153,7 @@ public class AboutDlg {
         panel.setLayout(new BorderLayout(0, 0));
         panel.add(scrollPane);
         
-        // ensure html is displayed from the beginning...
+        // ensure html is displayed from the start...
         SwingUtilities.invokeLater(new Runnable() {
             public void run() { 
                 scrollPane.getVerticalScrollBar().setValue(0);
