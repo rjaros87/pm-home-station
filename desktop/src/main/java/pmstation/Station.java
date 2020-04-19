@@ -122,7 +122,7 @@ public class Station {
         ToolTipManager.sharedInstance().setDismissDelay(Integer.MAX_VALUE);
         setIcon(frame);
 
-        // Windows 10 strange behaviour on multiscreen and multidisplay
+        // Windows 10 strange behavior on multiscreen and multidisplay
         if (displayMode == DisplayMode.NORMAL &&
                 SystemUtils.IS_OS_MAC_OSX && Config.instance().to().getBoolean(Config.Entry.SYSTEM_TRAY.key(), false)) {
             frame.setType(Type.UTILITY);
@@ -221,6 +221,14 @@ public class Station {
         JLabel labelStatus = new JLabel("Status...");
         labelsCollector.add(LabelObserver.LabelsCollector.LABEL.DEVICE_STATUS, labelStatus);
         
+        final JPanel panelMain = new JPanel();
+        panelMain.setLayout(new MigLayout("insets 0, hidemode 3", "[grow,fill]", "[fill][16px][338px,grow][:10px:10px]"));
+
+        JPanel panelControl = new JPanel();
+        panelControl.setBorder(null);
+        panelControl.setLayout(new MigLayout("insets 0, hidemode 3", "[5px:5px:5px][50px][10px:30px,grow][150px][5px:5px:5px]", "[5px:5px:5px][fill][2px:2px:2px]"));
+        panelControl.setVisible(displayMode != DisplayMode.KIOSK);
+
         JButton btnConnect = new JButton("Connect");
         btnConnect.setFocusable(true);
         btnConnect.grabFocus();
@@ -250,18 +258,14 @@ public class Station {
             btnConnect.setEnabled(true);
         });
         labelsCollector.add(LabelObserver.LabelsCollector.LABEL.CONNECT, btnConnect);
-        
-        final JPanel panelMain = new JPanel();
-        
-        panelMain.setLayout(new MigLayout("hidemode 3", "[50px][10px:30px,grow][150px]", "[:29px:29px][16px][338px,grow][:10px:10px]"));
-        panelMain.add(btnConnect, "cell 0 0,alignx left,aligny center");
+        panelControl.add(btnConnect, "cell 1 1,alignx center,aligny baseline");
 
         JButton btnNewVersion = new JButton("");
         btnNewVersion.setVisible(false); // invisible unless new version is available
         btnNewVersion.setToolTipText("New version available! Click to get more details!");
         btnNewVersion.setIcon(ResourceHelper.getIcon("btn_new_version.png"));
         btnNewVersion.setMaximumSize(new Dimension(btnNewVersion.getIcon().getIconWidth()+12, btnNewVersion.getIcon().getIconHeight()+12));
-        panelMain.add(btnNewVersion, "flowx,cell 2 0,alignx right,aligny center");
+        panelControl.add(btnNewVersion, "flowx,cell 3 1,alignx right,aligny center");
         
         try {
             JButton btnState = new JButton("");
@@ -270,7 +274,7 @@ public class Station {
             btnState.setIcon(new ImageIcon(ResourceHelper.getAppIcon("app-icon-disconnected.png").getScaledInstance(referenceIcon.getIconWidth(), -1, Image.SCALE_SMOOTH)));
             btnState.setMaximumSize(new Dimension(btnState.getIcon().getIconWidth()+12, btnState.getIcon().getIconHeight()+12));
             
-            panelMain.add(btnState, "cell 2 0,alignx right,aligny center");
+            panelControl.add(btnState, "cell 3 1,alignx right,aligny center");
             labelsCollector.add(LabelObserver.LabelsCollector.LABEL.ICON, btnState);
         } catch (IOException e) {
             logger.warn("Ugh, there was an error loading an icon", e);
@@ -286,7 +290,7 @@ public class Station {
         btnCfg.setToolTipText("Configuration");
         btnCfg.setIcon(ResourceHelper.getIcon("btn_config.png"));
         btnCfg.setMaximumSize(new Dimension(btnCfg.getIcon().getIconWidth()+12, btnCfg.getIcon().getIconHeight()+12));
-        panelMain.add(btnCfg, "cell 2 0,alignx right,aligny center");
+        panelControl.add(btnCfg, "cell 3 1,alignx right,aligny center");
         
         JButton btnAbout = new JButton("");
         btnAbout.addMouseListener(new MouseAdapter() {
@@ -300,11 +304,13 @@ public class Station {
         btnAbout.setMaximumSize(new Dimension(btnAbout.getIcon().getIconWidth()+12, btnAbout.getIcon().getIconHeight()+12));
         btnAbout.setToolTipText("About...");
         
-        panelMain.add(btnAbout, "cell 2 0,alignx right,aligny center");
+        panelControl.add(btnAbout, "cell 3 1,alignx right,aligny center");
+
+        panelMain.add(panelControl, "hidemode 3,cell 0 0,growx,aligny top");
         
         JPanel panelMeasurements = new JPanel();
-        panelMeasurements.setBorder(new TitledBorder(null, "<html><b>Latest measurements</b></html>", TitledBorder.LEADING, TitledBorder.TOP, null, null));
-        panelMain.add(panelMeasurements, "hidemode 3,cell 0 1 3 1,grow");
+        panelMeasurements.setBorder(new TitledBorder(null, "<html><b>Recent readings</b></html>", TitledBorder.LEADING, TitledBorder.TOP, null, null));
+        panelMain.add(panelMeasurements, "hidemode 3,cell 0 1,grow");
         panelMeasurements.setLayout(new MigLayout("hidemode 3", "[:20px:40px][1px:1px:1px][60px:80px:100px,grow 60][1px:1px:3px][:20px:40px][1px:1px:1px][60px:80px:100px,grow 60][1px:1px:3px][:20px:40px][1px:1px:1px][60px:80px:100px,grow 60]", "[::20px][:5px:5px][::20px][10px:10px:10px]"));
         
         JLabel pm1_0Label = new JLabel("<html>PM<sub>1.0</sub></html>");
@@ -397,9 +403,14 @@ public class Station {
         });
         lblAqi.setToolTipText("<html>" + AQIAbout.getHtmlTable() + "</html>");
         panelMeasurements.add(lblAqi, "cell 8 3 3 1,aligny bottom,alignx left");
-                                                        
-        panelMain.add(pmChartPanel, "flowy,cell 0 2 3 1,pushy ,growx");
-        panelMain.add(hhtChartPanel, "flowy,cell 0 2 3 1,pushy ,growx");
+
+        if (displayMode == DisplayMode.KIOSK) { // TODO use config or other means to decide whether to display 2 charts horizontally side by side, or vertically
+            panelMain.add(pmChartPanel, "flowx,cell 0 2,pushy ,growx");
+            panelMain.add(hhtChartPanel, "flowx,cell 0 2,pushy ,growx");
+        } else {
+            panelMain.add(pmChartPanel, "flowy,cell 0 2,pushy ,growx");
+            panelMain.add(hhtChartPanel, "flowy,cell 0 2,pushy ,growx");
+        }
 
         JPanel panelStatus = new JPanel();
         panelStatus.setBorder(new BevelBorder(BevelBorder.LOWERED));
@@ -411,7 +422,7 @@ public class Station {
         panelStatus.add(labelStatus, BorderLayout.WEST);
 
         if (Config.instance().to().getBoolean(Config.Entry.WINDOW_THEME.key(), true)) {
-            setFancyBackgroundImage(frame, Arrays.asList(panelMain, panelMeasurements, panelStatus, pmChartPanel));
+            setFancyBackgroundImage(frame, Arrays.asList(panelMain, panelControl, panelMeasurements, panelStatus, pmChartPanel));
         }
         frame.getContentPane().setLayout(new BorderLayout(0, 0));
         frame.getContentPane().add(panelMain);
