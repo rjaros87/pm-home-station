@@ -1,7 +1,7 @@
 matrix:
   include:
     - language: android
-      jdk: oraclejdk8
+      jdk: openjdk8
       android:
         components:
           - tools
@@ -15,7 +15,7 @@ matrix:
         - ./gradlew android:build
 
     - language: java
-      jdk: oraclejdk8
+      jdk: openjdk8
       script:
         - ./gradlew shadowJar createExe
 
