@@ -472,12 +472,21 @@ public class Station {
                         @Override
                         public void mouseClicked(MouseEvent e){
                             if (e.getClickCount() == 2) {   // double click - TODO should be done better
-                                exitFullScreenMode(frame, device);
+                                if (device.getFullScreenWindow() == frame) {
+                                    exitFullScreenMode(frame, device, panelControl);
+                                } else {
+                                    device.setFullScreenWindow(frame);
+                                    panelControl.setVisible(false);
+                                }
                             }
                         }
                     });
                     frame.getRootPane().registerKeyboardAction(e -> {
-                        exitFullScreenMode(frame, device);
+                        if (device.getFullScreenWindow() == frame) {
+                            exitFullScreenMode(frame, device, panelControl);
+                        } else {
+                            device.setFullScreenWindow(frame);
+                        }
                     }, KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0), JComponent.WHEN_IN_FOCUSED_WINDOW);
                 } else {
                     logger.warn("...Kiosk mode (exclusive fullscreen) not supported by OS");
@@ -647,9 +656,12 @@ public class Station {
         
     }
     
-    private void exitFullScreenMode(JFrame frame, GraphicsDevice device) {
+    private void exitFullScreenMode(JFrame frame, GraphicsDevice device, JPanel... panelsToShow) {
         device.setFullScreenWindow(null);
         frame.dispose();
+        for (JPanel panel : panelsToShow) {
+            panel.setVisible(true);
+        }
         frame.setUndecorated(false);
         frame.setVisible(true);   
     }
