@@ -20,6 +20,7 @@ import java.awt.Image;
 import java.awt.Point;
 import java.awt.Rectangle;
 import java.awt.SystemTray;
+import java.awt.Toolkit;
 import java.awt.Window.Type;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseAdapter;
@@ -49,6 +50,7 @@ import javax.swing.JPanel;
 import javax.swing.KeyStroke;
 import javax.swing.SwingConstants;
 import javax.swing.SwingUtilities;
+import javax.swing.Timer;
 import javax.swing.ToolTipManager;
 import javax.swing.UIManager;
 import javax.swing.border.BevelBorder;
@@ -229,7 +231,7 @@ public class Station {
         labelsCollector.add(LabelObserver.LabelsCollector.LABEL.DEVICE_STATUS, labelStatus);
         
         final JPanel panelMain = new JPanel();
-        panelMain.setLayout(new MigLayout("insets 0, hidemode 3", "[grow,fill]", "[fill][16px][338px,grow][:10px:10px]"));
+        panelMain.setLayout(new MigLayout("insets 0, hidemode 3", "[grow,fill]", "[fill][16px][338px,grow]"));
 
         JPanel panelControl = new JPanel();
         panelControl.setBorder(null);
@@ -411,12 +413,17 @@ public class Station {
         lblAqi.setToolTipText("<html>" + AQIAbout.getHtmlTable() + "</html>");
         panelMeasurements.add(lblAqi, "cell 8 3 3 1,aligny bottom,alignx left");
 
-        if (Config.instance().to().getBoolean(Config.Entry.HORIZONTAL_CHARTS.key(), Constants.HORIZONTAL_CHARTS)) { // TODO would be nice to automatically stack them horizontally if windows is too small vertically
+        panelMain.add(pmChartPanel, "flowy,cell 0 2,pushy ,growx");
+        panelMain.add(hhtChartPanel, "flowy,cell 0 2,pushy ,growx");
+
+        // TODO would be nice to automatically stack them horizontally if windows is too small vertically
+        if (Config.instance().to().getBoolean(Config.Entry.HORIZONTAL_CHARTS.key(), Constants.HORIZONTAL_CHARTS)) {
+            // removing components with vertical alignment constraints and re-adding with horizontal ones
+            // (done this way to make Eclipse's Window Builder happy)
+            panelMain.remove(pmChartPanel);
+            panelMain.remove(hhtChartPanel);
             panelMain.add(pmChartPanel, "flowx,cell 0 2,pushy ,growx");
             panelMain.add(hhtChartPanel, "flowx,cell 0 2,pushy ,growx");
-        } else {
-            panelMain.add(pmChartPanel, "flowy,cell 0 2,pushy ,growx");
-            panelMain.add(hhtChartPanel, "flowy,cell 0 2,pushy ,growx");
         }
 
         JPanel panelStatus = new JPanel();
@@ -459,43 +466,7 @@ public class Station {
         frame.revalidate();
         frame.repaint();
         
-        if (displayMode == DisplayMode.NORMAL) {
-            setScreenAndDimensions(frame);  // must be after frame.pack()
-        } else {
-            frame.setExtendedState(JFrame.MAXIMIZED_BOTH); 
-            if (displayMode == DisplayMode.KIOSK) {
-                GraphicsDevice device = frame.getGraphicsConfiguration().getDevice();
-                if (device.isFullScreenSupported()) {
-                    logger.info("...entering Kiosk mode (exclusive fullscreen)!");
-                    device.setFullScreenWindow(frame);
-                    frame.addMouseListener(new MouseAdapter(){
-                        @Override
-                        public void mouseClicked(MouseEvent e){
-                            if (e.getClickCount() == 2) {   // double click - TODO should be done better
-                                if (device.getFullScreenWindow() == frame) {
-                                    exitFullScreenMode(frame, device, panelControl);
-                                } else {
-                                    device.setFullScreenWindow(frame);
-                                    panelControl.setVisible(false);
-                                }
-                            }
-                        }
-                    });
-                    frame.getRootPane().registerKeyboardAction(e -> {
-                        if (device.getFullScreenWindow() == frame) {
-                            exitFullScreenMode(frame, device, panelControl);
-                        } else {
-                            device.setFullScreenWindow(frame);
-                        }
-                    }, KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0), JComponent.WHEN_IN_FOCUSED_WINDOW);
-                } else {
-                    logger.warn("...Kiosk mode (exclusive fullscreen) not supported by OS");
-                    displayMode = DisplayMode.FULLSCREEN;
-                }
-
-            }
-        }
-        
+        setWindowMode(panelControl);
         frame.setVisible(displayMode != DisplayMode.NORMAL ||
                 !Config.instance().to().getBoolean(Config.Entry.SYSTEM_TRAY.key(), Constants.SYSTEM_TRAY) ||
                 !Config.instance().to().getBoolean(Config.Entry.HIDE_MAIN_WINDOW.key(), Constants.HIDE_MAIN_WINDOW));
@@ -512,7 +483,6 @@ public class Station {
             versionCheck(btnNewVersion, labelStatus, nativeTray);
         }
     }
-    
 
     public void addObserver(IPlanTowerObserver observer) {
         planTowerSensor.addObserver(observer);
@@ -656,7 +626,14 @@ public class Station {
         
     }
     
-    private void exitFullScreenMode(JFrame frame, GraphicsDevice device, JPanel... panelsToShow) {
+    /**
+     * Exits Kiosk mode
+     *
+     * @param frame
+     * @param device
+     * @param panelsToShow
+     */
+    private void exitKioskMode(JFrame frame, GraphicsDevice device, JPanel... panelsToShow) {
         device.setFullScreenWindow(null);
         frame.dispose();
         for (JPanel panel : panelsToShow) {
@@ -666,6 +643,75 @@ public class Station {
         frame.setVisible(true);   
     }
     
+    /**
+     * Cycles between Kiosk and FullScreen modes
+     * @param device
+     * @param mouseHider
+     * @param hideablePanels
+     */
+    private void cycleKioskAndFullScreen(GraphicsDevice device, Timer mouseHider, JPanel... hideablePanels) {
+        if (device.getFullScreenWindow() == frame) {
+            mouseHider.stop();
+            exitKioskMode(frame, device, hideablePanels);
+        } else {
+            mouseHider.restart();
+            device.setFullScreenWindow(frame);
+            for (JPanel panel : hideablePanels) {
+                panel.setVisible(false);
+            }
+        }
+    }
+
+    /**
+     * Set the requested window mode - i.e. normal vs FullScreen vs Kiosk (Exclusive FullScreen)
+     * @param panelsToHideForKiosk the list of panels to hide for Kiosk mode
+     */
+    private void setWindowMode(JPanel... panelsToHideForKiosk) {
+        if (displayMode == DisplayMode.NORMAL) {
+            setScreenAndDimensions(frame);  // must be after frame.pack()
+        } else {
+            frame.setExtendedState(JFrame.MAXIMIZED_BOTH);
+            if (displayMode == DisplayMode.KIOSK) {
+                GraphicsDevice device = frame.getGraphicsConfiguration().getDevice();
+                if (device.isFullScreenSupported()) {
+                    Toolkit toolkit = Toolkit.getDefaultToolkit();
+                    BufferedImage cursorImage = new BufferedImage(1, 1, BufferedImage.TRANSLUCENT);
+                    Cursor invisibleCursor = toolkit.createCustomCursor(cursorImage, new Point(0,0), "HiddenCursor");
+
+                    logger.info("...entering Kiosk mode (exclusive fullscreen)! Don't panic - you can exit this mode by pressing ESC or by double-cliking the window...");
+                    device.setFullScreenWindow(frame);
+
+                    // hide mouse periodically
+                    Timer hideMouse = new Timer(5000, actionEvent -> frame.setCursor(invisibleCursor));
+                    hideMouse.start();
+
+                    MouseAdapter mouseHandler = new MouseAdapter() {
+                        @Override
+                        public void mouseClicked(MouseEvent e) {
+                            if (e.getClickCount() == 2) {   // double click - TODO should be done better
+                                cycleKioskAndFullScreen(device, hideMouse, panelsToHideForKiosk);
+                            }
+                        }
+                        @Override
+                        public void mouseMoved(MouseEvent e) {
+                            frame.setCursor(Cursor.getDefaultCursor()); // show mouse when moved
+                        }
+                    };
+                    frame.addMouseListener(mouseHandler);
+                    frame.addMouseMotionListener(mouseHandler); // that's crazy :)
+
+                    frame.getRootPane().registerKeyboardAction(e -> {
+                        cycleKioskAndFullScreen(device, hideMouse, panelsToHideForKiosk);
+                    }, KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0), JComponent.WHEN_IN_FOCUSED_WINDOW);
+                } else {
+                    logger.warn("...Kiosk mode (exclusive fullscreen) not supported by OS");
+                    displayMode = DisplayMode.FULLSCREEN;
+                }
+
+            }
+        }
+    }
+
     private void setDimensions(JFrame frame, int x, int y, int width, int height) {
         if (width > 0 && height > 0) {
             frame.setLocation(x, y);
