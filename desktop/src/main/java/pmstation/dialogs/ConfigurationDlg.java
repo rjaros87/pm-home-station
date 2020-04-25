@@ -345,7 +345,7 @@ public class ConfigurationDlg {
 
         JLabel lblSystemTray = new JLabel(
                 "<html>Show app icon in the System Tray:<br/><small><i>- only on selected operating systems<br/>- requires app restart</i></small></html>");
-        lblSystemTray.setBounds(6, 66, 386, 60);
+        lblSystemTray.setBounds(6, 59, 386, 52);
         lblSystemTray.setEnabled(SystemTray.isSupported());
         panelUI.add(lblSystemTray);
 
@@ -353,13 +353,13 @@ public class ConfigurationDlg {
 
         chbxSystemTray.setSelected(
                 SystemTray.isSupported() && Config.instance().to().getBoolean(Config.Entry.SYSTEM_TRAY.key(), false));
-        chbxSystemTray.setBounds(494, 74, 55, 23);
+        chbxSystemTray.setBounds(494, 59, 55, 23);
         chbxSystemTray.setEnabled(SystemTray.isSupported());
         panelUI.add(chbxSystemTray);
 
         JLabel lblHideMainWindow = new JLabel("Hide the main window on start:");
         lblHideMainWindow.setEnabled(chbxSystemTray.isSelected() && chbxSystemTray.isEnabled());
-        lblHideMainWindow.setBounds(6, 140, 386, 16);
+        lblHideMainWindow.setBounds(6, 116, 386, 16);
         panelUI.add(lblHideMainWindow);
 
         JCheckBox chbxHideMainWindow = new JCheckBox("");
@@ -371,12 +371,12 @@ public class ConfigurationDlg {
             }
         });
         chbxHideMainWindow.setSelected(Config.instance().to().getBoolean(Config.Entry.HIDE_MAIN_WINDOW.key(), false));
-        chbxHideMainWindow.setBounds(494, 133, 55, 23);
+        chbxHideMainWindow.setBounds(494, 116, 55, 23);
         panelUI.add(chbxHideMainWindow);
 
         JLabel labelTheme = new JLabel(
                 "<html>Decorate the main window with theme:<br/><small><i>- requires app restart</i></small></html>");
-        labelTheme.setBounds(6, 170, 386, 29);
+        labelTheme.setBounds(6, 144, 386, 29);
         panelUI.add(labelTheme);
 
         JCheckBox chbxTheme = new JCheckBox("");
@@ -387,11 +387,11 @@ public class ConfigurationDlg {
             }
         });
         chbxTheme.setEnabled(true);
-        chbxTheme.setBounds(494, 168, 55, 23);
+        chbxTheme.setBounds(494, 144, 55, 23);
         panelUI.add(chbxTheme);
         
         JLabel labelDarkMode = new JLabel("<html>Use dark mode:<br/><small><i>- experimental feature!<br/>- requires app restart</i></small></html>");
-        labelDarkMode.setBounds(6, 215, 386, 45);
+        labelDarkMode.setBounds(6, 179, 386, 45);
         panelUI.add(labelDarkMode);
         
         JCheckBox chbxDarkMode = new JCheckBox("");
@@ -402,24 +402,39 @@ public class ConfigurationDlg {
             }
         });
         chbxDarkMode.setEnabled(true);
-        chbxDarkMode.setBounds(494, 215, 55, 23);
+        chbxDarkMode.setBounds(494, 179, 55, 23);
         panelUI.add(chbxDarkMode);
 
-        JLabel labelHCharts = new JLabel("<html>Arrange charts horizontally<br/><small><i>- only useful for PMS5003ST<br/>- can be useful for small displays<br/>- requires app restart</i></small></html>");
-        labelHCharts.setBounds(6, 268, 386, 65);
+        JLabel labelHCharts = new JLabel("<html>Arrange charts horizontally<br/><small><i>- only useful for PMS5003ST<br/>- can be useful for tiny displays in fullscreen mode (like Raspbery Pi)<br/>- requires app restart</i></small></html>");
+        labelHCharts.setBounds(6, 224, 386, 65);
         panelUI.add(labelHCharts);
         
         JCheckBox chbxHCharts = new JCheckBox("");
-        chbxHCharts.setSelected(Config.instance().to().getBoolean(Config.Entry.HORIZONTAL_CHARTS.key(), false));
+        chbxHCharts.setSelected(Config.instance().to().getBoolean(Config.Entry.CHARTS_HORIZONTAL.key(), false));
         chbxHCharts.addItemListener(new ItemListener() {
             public void itemStateChanged(ItemEvent e) {
-                Config.instance().to().setProperty(Config.Entry.HORIZONTAL_CHARTS.key(), chbxHCharts.isSelected());
+                Config.instance().to().setProperty(Config.Entry.CHARTS_HORIZONTAL.key(), chbxHCharts.isSelected());
             }
         });
         chbxHCharts.setEnabled(true);
-        chbxHCharts.setBounds(494, 268, 55, 23);
+        chbxHCharts.setBounds(494, 224, 55, 23);
         panelUI.add(chbxHCharts);
+
+        JLabel labelChartsArea = new JLabel("<html>Plot charts in Area mode<br/><small><i>- requires app restart</i></small></html>");
+        labelChartsArea.setBounds(6, 284, 386, 37);
+        panelUI.add(labelChartsArea);
         
+        JCheckBox chbxChartsArea = new JCheckBox("");
+        chbxChartsArea.setSelected(Config.instance().to().getBoolean(Config.Entry.CHARTS_MODE_AREA.key(), false));
+        chbxChartsArea.addItemListener(new ItemListener() {
+            public void itemStateChanged(ItemEvent e) {
+                Config.instance().to().setProperty(Config.Entry.CHARTS_MODE_AREA.key(), chbxChartsArea.isSelected());
+            }
+        });
+        chbxChartsArea.setEnabled(true);
+        chbxChartsArea.setBounds(494, 284, 55, 23);
+        panelUI.add(chbxChartsArea);
+
         panelGeneral.setLayout(null);
 
         chbxSystemTray.addItemListener(new ItemListener() {

@@ -60,7 +60,9 @@ import org.apache.commons.lang3.SystemUtils;
 import org.knowm.xchart.XChartPanel;
 import org.knowm.xchart.XYChart;
 import org.knowm.xchart.XYChartBuilder;
+import org.knowm.xchart.XYSeries.XYSeriesRenderStyle;
 import org.knowm.xchart.style.Styler;
+import org.knowm.xchart.style.Styler.ChartTheme;
 import org.knowm.xchart.style.Styler.LegendLayout;
 import org.knowm.xchart.style.markers.Cross;
 import org.knowm.xchart.style.markers.Diamond;
@@ -143,7 +145,7 @@ public class Station {
             public void windowClosing(WindowEvent windowEvent) {
 
                 if (frame.getDefaultCloseOperation() == JFrame.EXIT_ON_CLOSE) {
-                    diaplayWarnForDetach(frame);
+                    displayWarnForDetach(frame);
                     logger.info("Closing the application...");
                     logger.info("Disconnecting device...");
                     planTowerSensor.disconnectDevice();
@@ -152,19 +154,24 @@ public class Station {
                 super.windowClosing(windowEvent);
             }
         });
-
-        LabelObserver.LabelsCollector labelsCollector = new LabelObserver.LabelsCollector();
         
-        XYChart pmChart = new XYChartBuilder().xAxisTitle("samples").yAxisTitle(Constants.PM_UNITS).build();
+        LabelObserver.LabelsCollector labelsCollector = new LabelObserver.LabelsCollector();
+        XYChart pmChart = new XYChartBuilder().xAxisTitle("samples").yAxisTitle(Constants.PM_UNITS).theme(ChartTheme.XChart).build();
+        boolean plotArea = Config.instance().to().getBoolean(Config.Entry.CHARTS_MODE_AREA.key(), Constants.CHARTS_MODE_AREA);
+
+        pmChart.getStyler().setDefaultSeriesRenderStyle(plotArea ? XYSeriesRenderStyle.Area : XYSeriesRenderStyle.Line);
         pmChart.getStyler().setPlotBackgroundColor(new Color(1.0f, 1.0f, 1.0f, 0.1f));
         pmChart.getStyler().setChartBackgroundColor(new Color(0, 0, 0, 0.0f));
         pmChart.getStyler().setChartFontColor(UIManager.getColor("windowText"));        // for dark-mode (use overridden text color)
         pmChart.getStyler().setAxisTickLabelsColor(UIManager.getColor("windowText"));   // for dark-mode (use overridden text color)
-        pmChart.getStyler().setXAxisTitleVisible(false);
+        pmChart.getStyler().setXAxisTitleVisible(false);    // no need to say 'samples' I guess
+        pmChart.getStyler().setYAxisTicksVisible(false);    // will show it when any data arrives
+        pmChart.getStyler().setPlotContentSize(1.0);        // to start X Axis precisely at 0
         pmChart.getStyler().setXAxisMin((double) 1);
         pmChart.getStyler().setXAxisMax((double) Constants.CHART_MAX_SAMPLES);
         pmChart.getStyler().setAxisTitleFont(new Font(Font.SANS_SERIF, Font.PLAIN, 11));
-        pmChart.getStyler().setSeriesColors(new Color[] {Color.GRAY, Color.GREEN, Color.BLUE});
+        pmChart.getStyler().setSeriesColors(new Color[] { addAlpha(Color.YELLOW, plotArea ? 127 : 255),
+                addAlpha(Color.GREEN, plotArea ? 127 : 255), addAlpha(Color.BLUE, plotArea ? 127 : 255) });
         pmChart.getStyler().setLegendFont(new Font(Font.SANS_SERIF, Font.PLAIN, 10));
         pmChart.getStyler().setLegendPosition(Styler.LegendPosition.InsideNW);
         pmChart.getStyler().setLegendBackgroundColor(new Color(255, 255, 255, 20)); // white with alpha
@@ -179,16 +186,20 @@ public class Station {
         pmChartPanel.addMouseListener(hideLegendOnMouseOver());
         pmChartPanel.setMinimumSize(new Dimension(50, 50));
         
-        XYChart hhtChart = new XYChartBuilder().xAxisTitle("samples").yAxisTitle(Constants.HHT_UNITS).build();
+        XYChart hhtChart = new XYChartBuilder().xAxisTitle("samples").yAxisTitle(Constants.HHT_UNITS).theme(ChartTheme.XChart).build();
+        hhtChart.getStyler().setDefaultSeriesRenderStyle(plotArea ? XYSeriesRenderStyle.Area : XYSeriesRenderStyle.Line);
         hhtChart.getStyler().setPlotBackgroundColor(new Color(1.0f, 1.0f, 1.0f, 0.1f));
         hhtChart.getStyler().setChartBackgroundColor(new Color(0, 0, 0, 0.0f));
         hhtChart.getStyler().setChartFontColor(UIManager.getColor("windowText"));       // for dark-mode (use overridden text color)
         hhtChart.getStyler().setAxisTickLabelsColor(UIManager.getColor("windowText"));   // for dark-mode (use overridden text color)
-        hhtChart.getStyler().setXAxisTitleVisible(false);
+        hhtChart.getStyler().setXAxisTitleVisible(false);    // no need to say 'samples' I guess
+        hhtChart.getStyler().setYAxisTicksVisible(false);    // will show it when any data arrives
+        hhtChart.getStyler().setPlotContentSize(1.0);        // to start X Axis precisely at 0
         hhtChart.getStyler().setXAxisMin((double) 1);
         hhtChart.getStyler().setXAxisMax((double) Constants.CHART_MAX_SAMPLES);
         hhtChart.getStyler().setAxisTitleFont(new Font(Font.SANS_SERIF, Font.PLAIN, 11));
-        hhtChart.getStyler().setSeriesColors(new Color[] {Color.RED, Color.BLUE, Color.ORANGE});
+        hhtChart.getStyler().setSeriesColors(new Color[] { addAlpha(Color.RED, plotArea ? 127 : 255),
+                addAlpha(Color.BLUE, plotArea ? 127 : 255), addAlpha(Color.ORANGE, plotArea ? 127 : 255) });
         hhtChart.getStyler().setLegendFont(new Font(Font.SANS_SERIF, Font.PLAIN, 10));
         hhtChart.getStyler().setLegendPosition(Styler.LegendPosition.InsideNW);
         hhtChart.getStyler().setLegendLayout(LegendLayout.Vertical);
@@ -229,21 +240,24 @@ public class Station {
             switch (btnConnect.getText()) { // TODO do this better thru label observer...
             case "Connect":
                 labelStatus.setText("Status: Connecting...");
-                btnConnect.setEnabled(false);
+                frame.setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
                 SwingUtilities.invokeLater(() -> {
                     if (planTowerSensor.connectDevice()) {
                         btnConnect.setText("Disconnect"); // TODO move this to label observer...
                         btnConnect.setToolTipText(planTowerSensor.portDetails());
                         scheduleMeasurements();
                     }
+                    frame.setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
                     btnConnect.setEnabled(true);
                 });
                 break;
             case "Disconnect":
-                diaplayWarnForDetach(frame);
+                displayWarnForDetach(frame);
+                frame.setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
                 planTowerSensor.disconnectDevice();
                 btnConnect.setText("Connect");
                 btnConnect.setToolTipText(planTowerSensor.portDetails());
+                frame.setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
                 break;
             }
             btnConnect.setEnabled(true);
@@ -399,7 +413,7 @@ public class Station {
         panelMain.add(hhtChartPanel, "flowy,cell 0 2,pushy ,growx");
 
         // TODO would be nice to automatically stack them horizontally if windows is too small vertically
-        if (Config.instance().to().getBoolean(Config.Entry.HORIZONTAL_CHARTS.key(), Constants.HORIZONTAL_CHARTS)) {
+        if (Config.instance().to().getBoolean(Config.Entry.CHARTS_HORIZONTAL.key(), Constants.CHARTS_HORIZONTAL)) {
             // removing components with vertical alignment constraints and re-adding with horizontal ones
             // (done this way to make Eclipse's Window Builder happy)
             panelMain.remove(pmChartPanel);
@@ -521,6 +535,7 @@ public class Station {
     
     private void startMeasurements(JLabel labelStatus, JButton connectionBtn) {
         labelStatus.setText("Status: Autoconnecting...");
+        frame.setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
         connectionBtn.setEnabled(false);
         SwingUtilities.invokeLater(() -> {
             if (planTowerSensor.connectDevice()) {
@@ -533,6 +548,7 @@ public class Station {
             }
             connectionBtn.setToolTipText(planTowerSensor.portDetails());
             connectionBtn.setEnabled(true);
+            frame.setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
         });
     }
     
@@ -785,7 +801,7 @@ public class Station {
         executor.schedule(task, 5, TimeUnit.SECONDS);
     }
 
-    private void diaplayWarnForDetach(JFrame parent) {
+    private void displayWarnForDetach(JFrame parent) {
         if (Config.instance().to().getBoolean(Config.Entry.WARN_ON_OSX_TO_DETACH.key(), SystemUtils.IS_OS_MAC_OSX)) {
             if (planTowerSensor.isConnected() && displayMode != DisplayMode.KIOSK) {
                 JOptionPane.showMessageDialog(parent,
@@ -868,6 +884,10 @@ public class Station {
         } catch (URISyntaxException | IOException ex) {
             logger.warn("Failed to parse URI", ex);
         }        
+    }
+    
+    private Color addAlpha(Color color, int alpha) {
+        return new Color(color.getRed(), color.getGreen(), color.getBlue(), alpha);
     }
 
 }

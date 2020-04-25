@@ -46,6 +46,9 @@ public class PMChartObserver implements IPlanTowerObserver {
                 chart.updateXYSeries("PM 2.5", null, Arrays.asList(pm2_5.toArray(new Integer[0])), null);
                 chart.updateXYSeries("PM 10", null, Arrays.asList(pm10.toArray(new Integer[0])), null);
             }
+            if (!chart.getStyler().isYAxisTicksVisible()) {
+                chart.getStyler().setYAxisTicksVisible(true);
+            }
             
             chartPanel.revalidate();
             chartPanel.repaint();

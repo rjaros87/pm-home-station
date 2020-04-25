@@ -43,7 +43,8 @@ public class Constants {
     public static final boolean HIDE_MAIN_WINDOW = false;
     public static final boolean SYSTEM_TRAY = true;
     public static final boolean DARK_MODE = false;
-    public static final boolean HORIZONTAL_CHARTS = false;
+    public static final boolean CHARTS_HORIZONTAL = false;
+    public static final boolean CHARTS_MODE_AREA = false;
     
     public static final int CHART_MAX_SAMPLES = 60;
     
