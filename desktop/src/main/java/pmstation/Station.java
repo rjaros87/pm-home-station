@@ -160,11 +160,11 @@ public class Station {
         pmChart.getStyler().setChartBackgroundColor(new Color(0, 0, 0, 0.0f));
         pmChart.getStyler().setChartFontColor(UIManager.getColor("windowText"));        // for dark-mode (use overridden text color)
         pmChart.getStyler().setAxisTickLabelsColor(UIManager.getColor("windowText"));   // for dark-mode (use overridden text color)
-        pmChart.getStyler().setXAxisMin((double) 0);
+        pmChart.getStyler().setXAxisTitleVisible(false);
+        pmChart.getStyler().setXAxisMin((double) 1);
         pmChart.getStyler().setXAxisMax((double) Constants.CHART_MAX_SAMPLES);
         pmChart.getStyler().setAxisTitleFont(new Font(Font.SANS_SERIF, Font.PLAIN, 11));
         pmChart.getStyler().setSeriesColors(new Color[] {Color.GRAY, Color.GREEN, Color.BLUE});
-        
         pmChart.getStyler().setLegendFont(new Font(Font.SANS_SERIF, Font.PLAIN, 10));
         pmChart.getStyler().setLegendPosition(Styler.LegendPosition.InsideNW);
         pmChart.getStyler().setLegendBackgroundColor(new Color(255, 255, 255, 20)); // white with alpha
@@ -176,16 +176,7 @@ public class Station {
         pmChart.getStyler().setPlotGridVerticalLinesVisible(false);
         
         JPanel pmChartPanel = new XChartPanel<XYChart>(pmChart);
-        pmChartPanel.addMouseListener(new MouseAdapter() {
-            @Override
-            public void mouseEntered(MouseEvent e) {
-                pmChart.getStyler().setLegendVisible(false);
-            }
-            @Override
-            public void mouseExited(MouseEvent e) {
-                pmChart.getStyler().setLegendVisible(true);
-            }
-        });
+        pmChartPanel.addMouseListener(hideLegendOnMouseOver());
         pmChartPanel.setMinimumSize(new Dimension(50, 50));
         
         XYChart hhtChart = new XYChartBuilder().xAxisTitle("samples").yAxisTitle(Constants.HHT_UNITS).build();
@@ -193,11 +184,11 @@ public class Station {
         hhtChart.getStyler().setChartBackgroundColor(new Color(0, 0, 0, 0.0f));
         hhtChart.getStyler().setChartFontColor(UIManager.getColor("windowText"));       // for dark-mode (use overridden text color)
         hhtChart.getStyler().setAxisTickLabelsColor(UIManager.getColor("windowText"));   // for dark-mode (use overridden text color)
-        hhtChart.getStyler().setXAxisMin((double) 0);
+        hhtChart.getStyler().setXAxisTitleVisible(false);
+        hhtChart.getStyler().setXAxisMin((double) 1);
         hhtChart.getStyler().setXAxisMax((double) Constants.CHART_MAX_SAMPLES);
         hhtChart.getStyler().setAxisTitleFont(new Font(Font.SANS_SERIF, Font.PLAIN, 11));
         hhtChart.getStyler().setSeriesColors(new Color[] {Color.RED, Color.BLUE, Color.ORANGE});
-        
         hhtChart.getStyler().setLegendFont(new Font(Font.SANS_SERIF, Font.PLAIN, 10));
         hhtChart.getStyler().setLegendPosition(Styler.LegendPosition.InsideNW);
         hhtChart.getStyler().setLegendLayout(LegendLayout.Vertical);
@@ -210,16 +201,7 @@ public class Station {
         
         JPanel hhtChartPanel = new XChartPanel<XYChart>(hhtChart);
         hhtChartPanel.setVisible(false);
-        hhtChartPanel.addMouseListener(new MouseAdapter() {
-            @Override
-            public void mouseEntered(MouseEvent e) {
-                hhtChart.getStyler().setLegendVisible(false);
-            }
-            @Override
-            public void mouseExited(MouseEvent e) {
-                hhtChart.getStyler().setLegendVisible(true);
-            }
-        });
+        hhtChartPanel.addMouseListener(hideLegendOnMouseOver());
         hhtChartPanel.setMinimumSize(new Dimension(50, 50));
         
         addObserver(new PMChartObserver(pmChart, pmChartPanel));
@@ -818,9 +800,25 @@ public class Station {
                         "Warning", JOptionPane.WARNING_MESSAGE);
             }
         }
-        
     }
-    
+
+    private MouseAdapter hideLegendOnMouseOver() {
+        return new MouseAdapter() {
+            @SuppressWarnings("unchecked")
+            @Override
+            public void mouseEntered(MouseEvent e) {
+                ((XChartPanel<XYChart>)e.getComponent()).getChart().getStyler().setLegendVisible(false);
+                e.getComponent().repaint();
+            }
+            @SuppressWarnings("unchecked")
+            @Override
+            public void mouseExited(MouseEvent e) {
+                ((XChartPanel<XYChart>)e.getComponent()).getChart().getStyler().setLegendVisible(true);
+                e.getComponent().repaint();
+            }
+        };
+    }
+
     private void setFancyBackgroundImage(JFrame frame, List<JPanel> translucentPanels) {
         try {
             
