@@ -170,8 +170,8 @@ public class Station {
         pmChart.getStyler().setXAxisMin((double) 1);
         pmChart.getStyler().setXAxisMax((double) Constants.CHART_MAX_SAMPLES);
         pmChart.getStyler().setAxisTitleFont(new Font(Font.SANS_SERIF, Font.PLAIN, 11));
-        pmChart.getStyler().setSeriesColors(new Color[] { addAlpha(Color.YELLOW, plotArea ? 127 : 255),
-                addAlpha(Color.GREEN, plotArea ? 127 : 255), addAlpha(Color.BLUE, plotArea ? 127 : 255) });
+        pmChart.getStyler().setSeriesColors(new Color[] { addAlpha(Color.MAGENTA, plotArea ? 200 : 255),
+                addAlpha(Color.GREEN, plotArea ? 160 : 255), addAlpha(Color.BLUE, plotArea ? 90 : 255) });
         pmChart.getStyler().setLegendFont(new Font(Font.SANS_SERIF, Font.PLAIN, 10));
         pmChart.getStyler().setLegendPosition(Styler.LegendPosition.InsideNW);
         pmChart.getStyler().setLegendBackgroundColor(new Color(255, 255, 255, 20)); // white with alpha
@@ -198,8 +198,8 @@ public class Station {
         hhtChart.getStyler().setXAxisMin((double) 1);
         hhtChart.getStyler().setXAxisMax((double) Constants.CHART_MAX_SAMPLES);
         hhtChart.getStyler().setAxisTitleFont(new Font(Font.SANS_SERIF, Font.PLAIN, 11));
-        hhtChart.getStyler().setSeriesColors(new Color[] { addAlpha(Color.RED, plotArea ? 127 : 255),
-                addAlpha(Color.BLUE, plotArea ? 127 : 255), addAlpha(Color.ORANGE, plotArea ? 127 : 255) });
+        hhtChart.getStyler().setSeriesColors(new Color[] { addAlpha(Color.RED, plotArea ? 200 : 255),
+                addAlpha(Color.BLUE, plotArea ? 160 : 255), addAlpha(Color.ORANGE, plotArea ? 90 : 255) });
         hhtChart.getStyler().setLegendFont(new Font(Font.SANS_SERIF, Font.PLAIN, 10));
         hhtChart.getStyler().setLegendPosition(Styler.LegendPosition.InsideNW);
         hhtChart.getStyler().setLegendLayout(LegendLayout.Vertical);
