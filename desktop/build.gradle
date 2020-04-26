@@ -1,5 +1,5 @@
 group 'pmstation'
-version '1.2.1'
+version '1.3.0.alpha'
 
 apply plugin: 'java'
 apply plugin: 'application'
@@ -69,18 +69,18 @@ macAppBundle {
 }
 
 dependencies {
-    extraLibs group: 'org.knowm.xchart', name: 'xchart', version: '3.5.0'
-    extraLibs group: 'com.fazecast', name: 'jSerialComm', version: '1.3.11'
+    extraLibs group: 'org.knowm.xchart', name: 'xchart', version: '3.6.1'
+    extraLibs group: 'com.fazecast', name: 'jSerialComm', version: '2.5.3'
     extraLibs group: 'ch.qos.logback', name: 'logback-classic', version: '1.2.3'
-    extraLibs group: 'com.miglayout', name: 'miglayout-swing', version: '5.0'
-    extraLibs group: 'org.apache.commons', name: 'commons-lang3', version: '3.7'
-    extraLibs group: 'org.apache.commons', name: 'commons-configuration2', version: '2.2'
-    extraLibs group: 'commons-io', name: 'commons-io', version: '2.5'
-    extraLibs group: 'commons-beanutils', name: 'commons-beanutils', version: '1.9.3'
+    extraLibs group: 'com.miglayout', name: 'miglayout-swing', version: '5.2'
+    extraLibs group: 'org.apache.commons', name: 'commons-lang3', version: '3.9'
+    extraLibs group: 'org.apache.commons', name: 'commons-configuration2', version: '2.6'
+    extraLibs group: 'commons-io', name: 'commons-io', version: '2.6'
+    extraLibs group: 'commons-beanutils', name: 'commons-beanutils', version: '1.9.4'
     extraLibs group: 'commons-cli', name: 'commons-cli', version: '1.4'
-    extraLibs group: 'com.google.guava', name: 'guava', version: '23.5-jre'
-    extraLibs group: 'javax.json', name: 'javax.json-api', version: '1.1.2'
-    extraLibs group: 'org.glassfish', name: 'javax.json', version: '1.1.2'
+    extraLibs group: 'com.google.guava', name: 'guava', version: '28.2-jre'
+    extraLibs group: 'javax.json', name: 'javax.json-api', version: '1.1.4'
+    extraLibs group: 'org.glassfish', name: 'javax.json', version: '1.1.4'
 
     extraLibs project(':core')
     configurations.compile.extendsFrom(configurations.extraLibs)

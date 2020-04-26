@@ -36,7 +36,11 @@ public class LabelObserver implements IPlanTowerObserver {
     public static class LabelsCollector {
         
         public static enum LABEL {
-            DEVICE_STATUS, MEASURMENT_TIME, PM1, PM25, PM10, CONNECT, ICON; 
+            DEVICE_STATUS, TIME_LABEL, MEASURMENT_TIME,
+            PM1, PM25, PM10,
+            HCHO, HUMIDITY, TEMP,
+            HCHO_LABEL, HUMIDITY_LABEL, TEMP_LABEL,
+            CONNECT, ICON; 
         }
         
         private Map<LABEL, JComponent> labelsToBeUpdated = new HashMap<>();
@@ -55,9 +59,18 @@ public class LabelObserver implements IPlanTowerObserver {
         }
     }
 
-    private JLabel deviceStatus, measurementTime, pm1_0, pm2_5, pm10;
+    private JLabel deviceStatus, measurementTime, timeLabel;
+    private JLabel pm1_0, pm2_5, pm10;
+    private JLabel hcho, humi, temp;
+    private JLabel hchoLabel, humiLabel, tempLabel;
+    
     private JButton btnConnect, icon;
-    private static final String UNIT = " <small>\u03BCg/m\u00B3</small>";
+    private static final String PM_UNIT = " <small>" + Constants.PM_UNITS + "</small>";
+    private static final String HCHO_UG_UNIT = " <small>" + Constants.HHCO_UG_UNITS + "</small>";
+    private static final String HUMI_UNIT = " <small>" + Constants.HUMI_UNITS + "</small>";
+    private static final String TEMP_UNIT = " <small>" + Constants.TEMP_UNITS + "</small>";
+    
+    
     private static final String PRE_HTML = "<html><b>";
     private static final String POST_HTML = "</b></html>";
     private static final String APP_ICON_FORMAT = "app-icon-%s.png";
@@ -71,9 +84,20 @@ public class LabelObserver implements IPlanTowerObserver {
 
         deviceStatus = (JLabel)collected.get(LabelsCollector.LABEL.DEVICE_STATUS);
         measurementTime = (JLabel)collected.get(LabelsCollector.LABEL.MEASURMENT_TIME);
+        timeLabel = (JLabel)collected.get(LabelsCollector.LABEL.TIME_LABEL);
+         
         pm1_0 = (JLabel)collected.get(LabelsCollector.LABEL.PM1);
         pm2_5 = (JLabel)collected.get(LabelsCollector.LABEL.PM25);
         pm10 = (JLabel)collected.get(LabelsCollector.LABEL.PM10);
+        
+        hcho = (JLabel)collected.get(LabelsCollector.LABEL.HCHO);
+        humi = (JLabel)collected.get(LabelsCollector.LABEL.HUMIDITY);
+        temp = (JLabel)collected.get(LabelsCollector.LABEL.TEMP);
+        
+        hchoLabel = (JLabel)collected.get(LabelsCollector.LABEL.HCHO_LABEL);
+        humiLabel = (JLabel)collected.get(LabelsCollector.LABEL.HUMIDITY_LABEL);
+        tempLabel = (JLabel)collected.get(LabelsCollector.LABEL.TEMP_LABEL);
+        
         btnConnect = (JButton)collected.get(LabelsCollector.LABEL.CONNECT);
         icon = (JButton)collected.get(LabelsCollector.LABEL.ICON);
     }
@@ -95,17 +119,27 @@ public class LabelObserver implements IPlanTowerObserver {
             int pm10percent = Math.round(sample.getPm10() * 1f / pm10maxSafe * 100);
 
             measurementTime.setText("<html><small>" + Constants.DATE_FORMAT.format(sample.getDate()) + "</small></html>");
-            pm1_0.setText(PRE_HTML + String.valueOf(sample.getPm1_0()) + UNIT  + POST_HTML);
+            timeLabel.setVisible(true);
+            pm1_0.setText(PRE_HTML + String.valueOf(sample.getPm1_0()) + PM_UNIT  + POST_HTML);
             
-            pm2_5.setText(PRE_HTML + String.valueOf(sample.getPm2_5()) + UNIT + "<br/>(" + pm25percent + "%)" + POST_HTML);
+            pm2_5.setText(PRE_HTML + String.valueOf(sample.getPm2_5()) + PM_UNIT + "<br/>(" + pm25percent + "%)" + POST_HTML);
             AQI25Level color2_5 = AQI25Level.fromValue(sample.getPm2_5());
             pm2_5.setForeground(AQIColor.fromLevel(color2_5).getColor());            
             pm2_5.setToolTipText(color2_5.getDescription());
             
             AQI10Level color10 = AQI10Level.fromValue(sample.getPm10());
-            pm10.setText(PRE_HTML + String.valueOf(sample.getPm10()) + UNIT + "<br/>(" + pm10percent + "%)" + POST_HTML);
+            pm10.setText(PRE_HTML + String.valueOf(sample.getPm10()) + PM_UNIT + "<br/>(" + pm10percent + "%)" + POST_HTML);
             pm10.setForeground(AQIColor.fromLevel(color10).getColor());
             pm10.setToolTipText(color10.getDescription());
+            
+            if (sample.getHcho() >= 0 && sample.getHumidity() >= 0 && sample.getTemperature() != Double.NaN) {
+                hcho.setText(PRE_HTML + sample.getHcho() + HCHO_UG_UNIT + POST_HTML);
+                humi.setText(PRE_HTML + formatDouble("%.1f", sample.getHumidity()) + HUMI_UNIT + POST_HTML);
+                temp.setText(PRE_HTML + formatDouble("%.1f", sample.getTemperature()) + TEMP_UNIT + POST_HTML);
+                additionalPanelVisible(true);
+            } else {
+                additionalPanelVisible(false);
+            }
             
             if (icon != null) {
                 setScaryIcon(icon, color2_5, color10);
@@ -160,4 +194,16 @@ public class LabelObserver implements IPlanTowerObserver {
         }
     }
 
+    private void additionalPanelVisible(boolean visible) {
+        hcho.setVisible(visible);
+        hchoLabel.setVisible(visible);
+        humi.setVisible(visible);
+        humiLabel.setVisible(visible);
+        temp.setVisible(visible);
+        tempLabel.setVisible(visible);
+    }
+    
+    private String formatDouble(String doubleFormat, double value) {
+        return String.format(doubleFormat, value);
+    }
 }

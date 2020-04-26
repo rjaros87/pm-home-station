@@ -35,3 +35,10 @@ bg.jpg:
 
 http://www.myfreetextures.com/brushed-steel-aluminium-metal-background-texture-5
 Creative Commons Attribution licence
+
+bg-dark.jpg:
+
+Derivative work (color inversed, flipped horizontally & vertically) of:
+http://www.myfreetextures.com/brushed-steel-aluminium-metal-background-texture-5
+Creative Commons Attribution licence
+

@@ -6,6 +6,10 @@
 
 package pmstation;
 
+import java.awt.Color;
+import java.util.Map.Entry;
+import java.util.Set;
+
 import javax.swing.SwingUtilities;
 import javax.swing.UIManager;
 import javax.swing.UnsupportedLookAndFeelException;
@@ -20,6 +24,7 @@ import org.apache.commons.lang3.SystemUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import pmstation.Station.DisplayMode;
 import pmstation.configuration.Config;
 import pmstation.configuration.Constants;
 import pmstation.observers.CSVObserver;
@@ -61,7 +66,13 @@ public class Start {
                 logger.info("Starting pm-home-station, v.{} ({})...", Constants.VERSION, Constants.PROJECT_URL);
                 setLookAndFeel();
                 PlanTowerSensor planTowerSensor = new PlanTowerSensor();
-                Station station = new Station(planTowerSensor);
+                DisplayMode displayMode = DisplayMode.NORMAL;
+                if (line.hasOption("kiosk")) {
+                    displayMode = DisplayMode.KIOSK;
+                } else if (line.hasOption("fullscreen")) {
+                    displayMode = DisplayMode.FULLSCREEN;
+                }
+                Station station = new Station(planTowerSensor, displayMode);
                 SwingUtilities.invokeLater(() -> { 
                     station.showUI();
                     if (line.hasOption("screenshot")) {
@@ -70,7 +81,7 @@ public class Start {
                 });
             }
         } catch (ParseException e) {
-            logger.error("Ooops", e);
+            logger.error("Ooops, wrong argument(s): {}", e.getMessage());
             return;
         }
     }
@@ -87,18 +98,48 @@ public class Start {
         }
         try {
             UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
+            logger.info("Setting L&F: {}", UIManager.getLookAndFeel().getName());
+            if (Config.instance().to().getBoolean(Config.Entry.DARK_MODE.key(), Constants.DARK_MODE)) {
+                // naive way to set dark-mode by inverting all the colors from L&F...
+                Set<Entry<Object, Object>> entries = UIManager.getLookAndFeelDefaults().entrySet();
+                for (Entry<Object, Object> entry : entries) {
+                    if (entry.getValue() instanceof Color) {
+                        Color color = (Color) entry.getValue();
+                        Color colorInv = new Color(
+                                invColor(color.getRed()), invColor(color.getGreen()), invColor(color.getBlue()), color.getAlpha());
+                        entry.setValue(colorInv);
+                    }
+                }
+                UIManager.put("Button.foreground", Color.BLACK);
+                UIManager.put("Panel.background", Color.DARK_GRAY);
+            }            
         } catch (ClassNotFoundException | InstantiationException | IllegalAccessException
                 | UnsupportedLookAndFeelException e) {
             logger.error("Ooops, problem setting system L&F", e);
         }
     }
     
+    /**
+     * Naive method to inverse color for dark-mode
+     * @param color a color to invert
+     * @return an inverted color
+     */
+    private static int invColor(int color) {
+        int result = 255 - color;
+        if (color > 100 && color < 150) {   // treat "middle" value color a lil' bit differently :)
+            result = color >> 1;
+        }
+        return result;
+    }
+    
     private static Options getOptions() {
         Options options = new Options();
-        options.addOption("h", "help", false, "print this message and exit");
+        options.addOption("h", "help", false, "prints this message and exits");
         options.addOption("c", "headless", false, "headless mode (cli mode) - autostarts measurements based on config");
-        options.addOption("s", "screenshot", true, "takes a screenshot of main window every measurment, the argument is filename where png will be (re)written");
-        options.addOption("v", "version", false, "print version information and exit");
+        options.addOption("s", "screenshot", true, "takes a screenshot of the main window every measurement, the argument is a filename where png will be (re)written");
+        options.addOption("f", "fullscreen", false, "opens the main window in fullscreen mode");
+        options.addOption("k", "kiosk", false, "opens the main window in Kiosk mode if supported by OS (falls back to fullscreen mode otherwise)");
+        options.addOption("v", "version", false, "prints version information and exits");
         return options;
     }
 }

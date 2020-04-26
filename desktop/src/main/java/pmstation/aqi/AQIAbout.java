@@ -16,8 +16,8 @@ public class AQIAbout {
         table.append("<table>");
         table.append("<tr bgcolor=\"gray\">");
         table.append("<th>").append("Level name").append("</th>");
-        table.append("<th>").append("PM2.5 <small>(").append(Constants.UNITS).append(")</small></th>");
-        table.append("<th>").append("PM10 <small>(").append(Constants.UNITS).append(")</small></th>");
+        table.append("<th>").append("PM2.5 <small>(").append(Constants.PM_UNITS).append(")</small></th>");
+        table.append("<th>").append("PM10 <small>(").append(Constants.PM_UNITS).append(")</small></th>");
         table.append("</tr>");
         for (AQIRiskLevel level : AQIRiskLevel.values()) {
             AQI25Level level25 = AQI25Level.fromRiskLevel(level);

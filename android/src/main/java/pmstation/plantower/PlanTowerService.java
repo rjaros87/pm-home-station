@@ -16,14 +16,19 @@ import java.lang.ref.WeakReference;
 
 import pmstation.core.plantower.ParticulateMatterSample;
 import pmstation.core.plantower.PlanTowerDevice;
+import pmstation.core.serial.SerialUARTUtils;
 
+// TODO Radek G, pls update this to use PlanTowerDevice in non-static way (take a look at PlanTowerSensor)
 public abstract class PlanTowerService extends Service {
     public static final int DATA_AVAILABLE = 0;
+    public static final int MODEL_IDENTIFIED = 1;
+    public static final int MODEL_UNIDENTIFIED = 2;
     private static final String TAG = PlanTowerService.class.getSimpleName();
     private WeakReference<Thread> workerThread;
     private Thread fakeDataThread;
     private int sampleCounter = 0;
     private SharedPreferences preferences;
+    protected PlanTowerDevice device = null;
 
     private Handler handler;
 
@@ -34,18 +39,32 @@ public abstract class PlanTowerService extends Service {
 
     protected void parseData(byte[] bytes) {
         workerThread = new WeakReference<>(Thread.currentThread());
-        final ParticulateMatterSample sample = PlanTowerDevice.parse(bytes);
-        if (sample != null) {
-            notifyActivity(sample);
-        } else if (bytes.length == 12) {
-            // BT notifies about the data in two turns - 20bytes (which we parse) and 12
-            // skip the 12 not to sleep twice
-            return;
+        Log.d(TAG, "Read " + bytes.length + " bytes");
+        Log.d(TAG, "Read " + SerialUARTUtils.bytesToHexString(bytes));
+        if (device == null) {
+            device = new PlanTowerDevice(bytes);
+            if (device.modelIdentified()) {
+                notifyActivity(MODEL_IDENTIFIED, device.model().name());
+                deviceDetected(device);
+            } else {
+                notifyActivity(MODEL_UNIDENTIFIED, null);
+            }
+        }
+
+        if (!device.modelIdentified()) {
+            device = null;
+        }
+
+        if (device != null) {
+            final ParticulateMatterSample sample = device.parse(bytes);
+            if (sample != null) {
+                notifyActivity(sample);
+            }
         }
 
         try {
             sampleCounter = ++sampleCounter % 10;
-            String intervalPref = preferences.getString("sampling_interval", "1000");
+            String intervalPref = preferences.getString("sampling_interval", "1500");
             int interval = Integer.parseInt(intervalPref);
             if (interval > 3000) {
                 if (sampleCounter == 0) {
@@ -53,9 +72,9 @@ public abstract class PlanTowerService extends Service {
                     Thread.sleep(interval);
                     wakeUp();
                 } else {
-                    Thread.sleep(1000);
+                    Thread.sleep(3000);
                 }
-            } else {
+            } else if (!(this instanceof BluetoothLeService)){
                 Thread.sleep(interval);
             }
         } catch (InterruptedException e) {
@@ -67,6 +86,8 @@ public abstract class PlanTowerService extends Service {
     protected abstract boolean wakeUp();
 
     protected abstract boolean sleep();
+
+    protected void deviceDetected(PlanTowerDevice device) {}
 
     public void wakeWorkerThread() {
         if (workerThread == null) {
@@ -88,9 +109,9 @@ public abstract class PlanTowerService extends Service {
                 i = (i + 1) % 14;
                 try {
                     notifyActivity(new ParticulateMatterSample(20, i * 10, 100));
-                    String intervalPref = preferences.getString("sampling_interval", "1000");
+                    String intervalPref = preferences.getString("sampling_interval", "1500");
                     int interval = Integer.parseInt(intervalPref);
-                    Thread.sleep(sampleCounter == 0 ? interval : 1000);
+                    Thread.sleep(sampleCounter == 0 ? interval : 1500);
                 } catch (InterruptedException e) {
                     Log.d(TAG, "Thread interrupted");
                     Thread.currentThread().interrupt();
@@ -101,8 +122,12 @@ public abstract class PlanTowerService extends Service {
     }
 
     private void notifyActivity(final ParticulateMatterSample sample) {
-        if (handler != null && sample != null) {
-            handler.obtainMessage(DATA_AVAILABLE, sample).sendToTarget();
+        notifyActivity(DATA_AVAILABLE, sample);
+    }
+
+    private void notifyActivity(final int code, final Object data) {
+        if (handler != null && data != null) {
+            handler.obtainMessage(code, data).sendToTarget();
         }
     }
 

@@ -18,7 +18,7 @@ import pmstation.core.plantower.IPlanTowerObserver;
 import pmstation.core.plantower.ParticulateMatterSample;
 
 
-public class ChartObserver implements IPlanTowerObserver {
+public class PMChartObserver implements IPlanTowerObserver {
     private final XYChart chart;
     private final JPanel chartPanel;
     private EvictingQueue<Integer> pm1_0 = EvictingQueue.create(Constants.CHART_MAX_SAMPLES);
@@ -26,7 +26,7 @@ public class ChartObserver implements IPlanTowerObserver {
     private EvictingQueue<Integer> pm10 = EvictingQueue.create(Constants.CHART_MAX_SAMPLES);
 
     
-    public ChartObserver(XYChart chart, JPanel chartPanel) {
+    public PMChartObserver(XYChart chart, JPanel chartPanel) {
         this.chart = chart;
         this.chartPanel = chartPanel;
     }
@@ -45,6 +45,9 @@ public class ChartObserver implements IPlanTowerObserver {
                 chart.updateXYSeries("PM 1.0", null, Arrays.asList(pm1_0.toArray(new Integer[0])), null);
                 chart.updateXYSeries("PM 2.5", null, Arrays.asList(pm2_5.toArray(new Integer[0])), null);
                 chart.updateXYSeries("PM 10", null, Arrays.asList(pm10.toArray(new Integer[0])), null);
+            }
+            if (!chart.getStyler().isYAxisTicksVisible()) {
+                chart.getStyler().setYAxisTicksVisible(true);
             }
             
             chartPanel.revalidate();

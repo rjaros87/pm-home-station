@@ -30,6 +30,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.WindowManager;
 import android.widget.ImageView;
+import android.widget.Toast;
 
 import com.crashlytics.android.Crashlytics;
 
@@ -248,9 +249,6 @@ public class MainActivity extends AppCompatActivity implements IPlanTowerObserve
             fm.beginTransaction().add(R.id.chart_dual, chartFragment, CHART_FRAGMENT).commit();
         }
 
-//        handlerThread = new HandlerThread("bluetoothHandler");
-//        handlerThread.start();
-
         deviceAddress = PreferenceManager.getDefaultSharedPreferences(this).getString("bt_mac", "00:25:83:00:62:E7");
         startService(BluetoothLeService.class, btConnection);
     }
@@ -398,6 +396,9 @@ public class MainActivity extends AppCompatActivity implements IPlanTowerObserve
 
     @Override
     public void update(ParticulateMatterSample sample) {
+        if (sample.getErrCode() != 0) {
+            return;
+        }
         values.add(sample);
         AQIColor pm25Color = AQIColor.fromPM25Level(sample.getPm2_5());
         runOnUiThread(() -> smog.animate().alpha(pm25Color.getAlpha()));
@@ -460,6 +461,29 @@ public class MainActivity extends AppCompatActivity implements IPlanTowerObserve
                     MainActivity mainActivity = activity.get();
                     if (mainActivity != null) {
                         mainActivity.notifyAllObservers(sample);
+                    }
+                    break;
+                case PlanTowerService.MODEL_IDENTIFIED:
+                    String model = (String) msg.obj;
+                    mainActivity = activity.get();
+                    if (mainActivity != null) {
+                        String text = mainActivity.getResources()
+                                                    .getString(R.string.device_identified, model);
+                        Log.d(TAG, text);
+                        Toast.makeText(mainActivity,
+                                       text,
+                                       Toast.LENGTH_SHORT).show();
+                    }
+                    break;
+                case PlanTowerService.MODEL_UNIDENTIFIED:
+                    mainActivity = activity.get();
+                    if (mainActivity != null) {
+                        String text = mainActivity.getResources()
+                                                  .getString(R.string.device_unidentified);
+                        Log.d(TAG, text);
+                        Toast.makeText(mainActivity,
+                                       text,
+                                       Toast.LENGTH_SHORT).show();
                     }
                     break;
             }

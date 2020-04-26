@@ -90,10 +90,19 @@ public class NativeTrayIntegration {
                 public void update(ParticulateMatterSample sample) {
                     infoMenuItem.setLabel("PM1.0: " + sample.getPm1_0() + ", " +
                             "PM2.5: " + sample.getPm2_5() + ", " +
-                            "PM10: " + sample.getPm10() + " (" + Constants.UNITS + ")");
-                    menuBarIcon.setToolTip("PM1.0 : " + sample.getPm1_0() + Constants.UNITS + " \n" + // space before \n required for Linux/Gnome as they don't support line breaks 
-                            "PM2.5 : " + sample.getPm2_5() + Constants.UNITS + " \n" +
-                            "PM10  : " + sample.getPm10() + Constants.UNITS);
+                            "PM10: " + sample.getPm10() + " (" + Constants.PM_UNITS + ")");
+                    
+                    String toolTip = "PM1.0 : " + sample.getPm1_0() + Constants.PM_UNITS + " \n" + // space before \n required for Linux/Gnome as they don't support line breaks 
+                                     "PM2.5 : " + sample.getPm2_5() + Constants.PM_UNITS + " \n" +
+                                     "PM10  : " + sample.getPm10() + Constants.PM_UNITS;
+                    
+                    if (sample.getHcho() >= 0 && sample.getHumidity() >= 0 && sample.getTemperature() != Double.NaN) {
+                        toolTip += " \n" +
+                                     "CH\u2082O  : " + ((double)sample.getHcho())/1000 + Constants.HHCO_MG_UNITS + " \n" + 
+                                     "RH      : " + sample.getHumidity() + Constants.HUMI_UNITS + " \n" + // add'l spaces for macOS (non monospace fonts :/)
+                                     "Temp  : " + sample.getTemperature() + Constants.TEMP_UNITS;
+                    }
+                    menuBarIcon.setToolTip(toolTip);
                     
                     setScaryIcon(menuBarIcon, AQI25Level.fromValue(sample.getPm2_5()), AQI10Level.fromValue(sample.getPm10()));
                 }
