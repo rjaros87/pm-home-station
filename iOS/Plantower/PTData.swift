@@ -14,6 +14,11 @@ class PTData {
     private(set) var pm1_0 : UInt16 = 0
     private(set) var pm2_5 : UInt16 = 0
     private(set) var pm10  : UInt16 = 0
+
+    private(set) var formaldehyde : Float? = nil
+    private(set) var temperature  : Float? = nil
+    private(set) var humidity     : Float? = nil
+
     private(set) var date  : Date = Date.distantPast
 
     func appendData(_ input: Data) -> Bool {
@@ -40,18 +45,13 @@ class PTData {
             d.append(frame)
         }
 
-        let ints = d.withUnsafeBytes { (int16Ptr: UnsafePointer<UInt16>) -> [UInt16] in
-            var x = [UInt16]()
-
-            for i in 0...15 {
-                let n = UInt16(bigEndian: int16Ptr[i])
-                x.append(n)
-            }
-
-            return x
+        guard d.count == 32 || d.count == 40 else {
+            return false
         }
 
-        guard ints[0] == 16973, ints[1] == 28 else { // begin, length
+        let ints: [UInt16] = makeArray(from: d)
+
+        guard ints[0] == 16973, (ints[1] == 28 || ints[1] == 36 ) else { // begin, length
             return false
         }
 
@@ -61,7 +61,7 @@ class PTData {
 
         for i in b {
             c+=1
-            if (c>30) {
+            if (c>2+ints[1]) {
                 break
             }
             sum += UInt16(i)
@@ -75,6 +75,41 @@ class PTData {
         pm2_5 = ints[6]
         pm10  = ints[7]
 
+        if (ints[1] == 36) {
+            formaldehyde = makeFloat(from: ints[14]) / 1000
+            if let rawTemperature = signedInt(from: d, offset: 30) {
+                temperature = makeFloat(from: rawTemperature) / 10.0
+            }
+            humidity = makeFloat(from: ints[16]) / 10.0
+        }
+
         return true
+    }
+
+    private func makeFloat<T: FixedWidthInteger>(from int: T) -> Float {
+        return Float(integerLiteral: Int64(int))
+    }
+
+    private func makeArray<T: FixedWidthInteger>(from data: Data) -> [T] {
+        let byteLength = T.bitWidth / 8
+        return data.withUnsafeBytes { (ptr: UnsafePointer<T>) -> [T] in
+            var x = [T]()
+
+            for i in 0...((data.count-1)/byteLength) {
+                let n = T(bigEndian: ptr[i])
+                x.append(n)
+            }
+
+            return x
+        }
+    }
+
+    private func signedInt(from data: Data, offset: Int) -> Int16? {
+        guard data.count>offset+2 else {
+            return nil
+        }
+        let truncatedData = data.subdata(in: offset..<offset+2)
+        let ints: [Int16] = makeArray(from: truncatedData)
+        return ints.first
     }
 }

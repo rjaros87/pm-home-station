@@ -71,16 +71,29 @@ class InterfaceController: WKInterfaceController {
             return
         }
 
-        if self.table.numberOfRows != 3 {
-            self.table.setNumberOfRows(3, withRowType: "dataCell")
+        let numberOfRows: Int
+        if data.formaldehyde != nil {
+            numberOfRows = 6
+        } else {
+            numberOfRows = 3
         }
 
-        let row0 = self.table.rowController(at: 0) as! DataRow
-        let row1 = self.table.rowController(at: 1) as! DataRow
-        let row2 = self.table.rowController(at: 2) as! DataRow
+        if self.table.numberOfRows != numberOfRows {
+            self.table.setNumberOfRows(numberOfRows, withRowType: "dataCell")
+        }
 
-        row0.set(from: data, forPSize: PSize.pm1_0)
-        row1.set(from: data, forPSize: PSize.pm2_5)
-        row2.set(from: data, forPSize: PSize.pm10)
+        row(0).set(amount: data.pm1_0, for: "PM 1.0")
+        row(1).set(amount: data.pm2_5, for: "PM 2.5")
+        row(2).set(amount: data.pm10,  for: "PM 10")
+
+        if numberOfRows == 6 {
+            row(3).set(amount: data.formaldehyde, for: "H₂CO")
+            row(4).set(amount: data.temperature,  for: "Temp. (°C)")
+            row(5).set(amount: data.humidity,  for: "Humid. (%)")
+        }
+    }
+
+    func row(_ index: Int) -> DataRow {
+        return self.table.rowController(at: index) as! DataRow
     }
 }

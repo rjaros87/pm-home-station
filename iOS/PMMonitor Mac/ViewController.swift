@@ -68,8 +68,14 @@ class ViewController: NSViewController {
     }
 
     private func setOutput(data : PTData) {
-        let str = String(format: "PM 1.0  = %i μ/㎥\nPM 2.5 = %i μ/㎥\nPM 10  = %i μ/㎥",data.pm1_0, data.pm2_5, data.pm10)
-        setOutput(string: str)
+        if data.formaldehyde != nil {
+            let formatString = "PM 1.0     = %i μ/㎥\nPM 2.5     = %i μ/㎥\nPM 10      = %i μ/㎥\n\nH₂CO       = %.2f mg/㎥\nTemp.      = %.2f °C\nHumidity = %.2f %"
+            let str = String(format: formatString, data.pm1_0, data.pm2_5, data.pm10, data.formaldehyde ?? "UNKNOWN", data.temperature ?? "UNKNOWN", data.humidity ?? "UNKNOWN")
+            setOutput(string: str)
+        } else {
+            let str = String(format: "PM 1.0  = %i μ/㎥\nPM 2.5 = %i μ/㎥\nPM 10  = %i μ/㎥",data.pm1_0, data.pm2_5, data.pm10)
+            setOutput(string: str)
+        }
     }
 
 

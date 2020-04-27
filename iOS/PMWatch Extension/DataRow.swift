@@ -8,34 +8,21 @@
 
 import WatchKit
 
-enum PSize : String{
-    case pm1_0 = "PM 1.0"
-    case pm2_5 = "PM 2.5"
-    case pm10  = "PM 10"
-}
-
 class DataRow: NSObject {
     @IBOutlet var unitLabel : WKInterfaceLabel!
     @IBOutlet var amountLabel : WKInterfaceLabel!
 
-    func set(from data: PTData, forPSize size: PSize) {
-        unitLabel.setText(size.rawValue)
+    func set(amount: UInt16, for unit: String) {
+        unitLabel.setText(unit)
+        amountLabel.setText(String(format:"%i", amount))
+    }
 
-        let amt : UInt16
-
-        switch size {
-        case .pm1_0:
-            amt = data.pm1_0
-        case .pm2_5:
-            amt = data.pm2_5
-        case .pm10:
-            amt = data.pm10
+    func set(amount: Float?, for unit: String) {
+        unitLabel.setText(unit)
+        if let amount = amount {
+            amountLabel.setText(String(format:"%0.2f", amount))
+        } else {
+            amountLabel.setText("??")
         }
-
-        let str = String(format:"%i",amt)
-
-        amountLabel.setText(str)
-
-
     }
 }

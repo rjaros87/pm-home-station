@@ -77,7 +77,7 @@ class PTDevice : NSObject, CBCentralManagerDelegate, CBPeripheralDelegate {
 
     internal func centralManagerDidUpdateState(_ central: CBCentralManager) {
         if (central.state == .poweredOn){
-            self.cm?.scanForPeripherals(withServices: nil, options: nil)
+            central.scanForPeripherals(withServices: nil, options: nil)
         }
         else {
             let err : PTDeviceError
