@@ -1,10 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="13771" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES" initialViewController="Svt-FS-Bwb">
-    <device id="retina4_7" orientation="portrait">
-        <adaptation id="fullscreen"/>
-    </device>
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="16096" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES" initialViewController="Svt-FS-Bwb">
+    <device id="retina4_7" orientation="portrait" appearance="light"/>
     <dependencies>
-        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="13772"/>
+        <deployment identifier="iOS"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="16087"/>
         <capability name="Safe area layout guides" minToolsVersion="9.0"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
@@ -29,7 +28,7 @@
                                     <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="air quality" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="6lt-No-uwM">
                                         <rect key="frame" x="150" y="67" width="75" height="21"/>
                                         <fontDescription key="fontDescription" type="system" pointSize="17"/>
-                                        <nil key="textColor"/>
+                                        <color key="textColor" cocoaTouchSystemColor="darkTextColor"/>
                                         <nil key="highlightedColor"/>
                                     </label>
                                 </subviews>
@@ -43,7 +42,7 @@
                                 </constraints>
                             </view>
                             <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="JHb-iU-eww" customClass="AQScaleView" customModule="PMMonitor" customModuleProvider="target">
-                                <rect key="frame" x="153.5" y="70" width="68" height="160"/>
+                                <rect key="frame" x="153.5" y="70.5" width="68" height="160"/>
                                 <subviews>
                                     <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="PM 1.0" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="EhC-k0-8cf">
                                         <rect key="frame" x="0.0" y="116" width="68" height="21"/>
@@ -107,7 +106,7 @@
                                         <nil key="highlightedColor"/>
                                     </label>
                                 </subviews>
-                                <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                <color key="backgroundColor" systemColor="systemBackgroundColor" cocoaTouchSystemColor="whiteColor"/>
                                 <constraints>
                                     <constraint firstItem="8Ih-dE-5OH" firstAttribute="leading" secondItem="JHb-iU-eww" secondAttribute="leading" constant="28" id="0XO-2r-Oxl"/>
                                     <constraint firstAttribute="trailing" secondItem="EhC-k0-8cf" secondAttribute="trailing" id="1p7-Zc-w1w"/>
@@ -143,7 +142,7 @@
                                 </connections>
                             </view>
                             <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="8yy-al-re3" customClass="AQScaleView" customModule="PMMonitor" customModuleProvider="target">
-                                <rect key="frame" x="35" y="70" width="68" height="160"/>
+                                <rect key="frame" x="35" y="70.5" width="68" height="160"/>
                                 <subviews>
                                     <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="PM 1.0" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="Yzn-IV-3Nc">
                                         <rect key="frame" x="0.0" y="116" width="68" height="21"/>
@@ -207,7 +206,7 @@
                                         <nil key="highlightedColor"/>
                                     </label>
                                 </subviews>
-                                <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                <color key="backgroundColor" systemColor="systemBackgroundColor" cocoaTouchSystemColor="whiteColor"/>
                                 <constraints>
                                     <constraint firstItem="Nu2-qp-aV9" firstAttribute="leading" secondItem="8yy-al-re3" secondAttribute="leading" constant="28" id="2Vl-Gb-MCI"/>
                                     <constraint firstItem="VJE-B8-pI7" firstAttribute="leading" secondItem="8yy-al-re3" secondAttribute="leading" id="7Bz-Lr-zJJ"/>
@@ -243,7 +242,7 @@
                                 </connections>
                             </view>
                             <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="TOx-eo-aMY" customClass="AQScaleView" customModule="PMMonitor" customModuleProvider="target">
-                                <rect key="frame" x="272" y="70" width="68" height="160"/>
+                                <rect key="frame" x="272" y="70.5" width="68" height="160"/>
                                 <subviews>
                                     <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="PM 1.0" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="91V-9Z-hyB">
                                         <rect key="frame" x="0.0" y="116" width="68" height="21"/>
@@ -307,7 +306,7 @@
                                         <nil key="highlightedColor"/>
                                     </label>
                                 </subviews>
-                                <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                <color key="backgroundColor" systemColor="systemBackgroundColor" cocoaTouchSystemColor="whiteColor"/>
                                 <constraints>
                                     <constraint firstItem="9DT-f9-YQ4" firstAttribute="leading" secondItem="TOx-eo-aMY" secondAttribute="leading" constant="28" id="1Ye-mC-qLe"/>
                                     <constraint firstItem="vRc-bl-ktI" firstAttribute="top" secondItem="9DT-f9-YQ4" secondAttribute="bottom" constant="8" id="28Z-ZB-dKw"/>
@@ -343,17 +342,17 @@
                                 </connections>
                             </view>
                             <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="detailDisclosure" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="5Bb-xN-awt">
-                                <rect key="frame" x="337" y="36" width="22" height="22"/>
+                                <rect key="frame" x="334" y="16" width="25" height="24"/>
                                 <connections>
                                     <segue destination="P9f-B4-Kh7" kind="presentation" modalTransitionStyle="flipHorizontal" id="rRS-fe-Df1"/>
                                 </connections>
                             </button>
                             <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="UI1-7L-jgE" customClass="LineChartView" customModule="Charts">
                                 <rect key="frame" x="0.0" y="356.5" width="375" height="310.5"/>
-                                <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                <color key="backgroundColor" systemColor="systemBackgroundColor" cocoaTouchSystemColor="whiteColor"/>
                             </view>
                         </subviews>
-                        <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                        <color key="backgroundColor" systemColor="systemBackgroundColor" cocoaTouchSystemColor="whiteColor"/>
                         <constraints>
                             <constraint firstItem="MAe-1o-xe9" firstAttribute="centerY" secondItem="SCG-Du-tZA" secondAttribute="centerY" constant="-25" id="3mY-fw-UR1"/>
                             <constraint firstItem="MAe-1o-xe9" firstAttribute="top" secondItem="JHb-iU-eww" secondAttribute="bottom" constant="30" id="AaO-x8-p2a"/>
@@ -392,11 +391,11 @@
             <objects>
                 <viewController id="P9f-B4-Kh7" customClass="InfoViewController" customModule="PMMonitor" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" contentMode="scaleToFill" id="Pyi-Bg-MWz">
-                        <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
+                        <rect key="frame" x="0.0" y="0.0" width="375" height="647"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
                             <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="qaN-Yt-z3u">
-                                <rect key="frame" x="0.0" y="622" width="375" height="45"/>
+                                <rect key="frame" x="0.0" y="602" width="375" height="45"/>
                                 <constraints>
                                     <constraint firstAttribute="height" constant="45" id="vAk-HM-wVW"/>
                                 </constraints>
@@ -407,7 +406,7 @@
                                 </connections>
                             </button>
                             <wkWebView contentMode="scaleToFill" allowsLinkPreview="NO" translatesAutoresizingMaskIntoConstraints="NO" id="OeW-FD-eM5">
-                                <rect key="frame" x="0.0" y="45" width="375" height="577"/>
+                                <rect key="frame" x="0.0" y="25" width="375" height="577"/>
                                 <color key="backgroundColor" red="0.36078431370000003" green="0.38823529410000002" blue="0.4039215686" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                                 <wkWebViewConfiguration key="configuration" allowsAirPlayForMediaPlayback="NO" allowsPictureInPictureMediaPlayback="NO">
                                     <dataDetectorTypes key="dataDetectorTypes" none="YES"/>
