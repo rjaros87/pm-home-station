@@ -1,0 +1,3 @@
+[submodule "iOS/3rd party/Charts"]
+	path = iOS/3rd party/Charts
+	url = https://github.com/danielgindi/Charts.git
