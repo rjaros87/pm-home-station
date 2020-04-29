@@ -39,12 +39,7 @@ class PTData {
     }
 
     func parse() -> Bool {
-        var d = Data()
-
-        for frame in frames {
-            d.append(frame)
-        }
-
+        let d = frames.reduce(into: Data()) { $0.append($1) }
         guard d.count == 32 || d.count == 40 else {
             return false
         }
@@ -55,17 +50,8 @@ class PTData {
             return false
         }
 
-        let b = [UInt8](d)
-        var sum : UInt16 = 0;
-        var c = 0;
-
-        for i in b {
-            c+=1
-            if (c>2+ints[1]) {
-                break
-            }
-            sum += UInt16(i)
-        }
+        let arrayToSum = d.dropLast(d.count - (2+Int(ints[1])))
+        let sum = arrayToSum.reduce(0) { $0+UInt16($1) }
 
         guard sum == ints.last else {
             return false
@@ -91,16 +77,8 @@ class PTData {
     }
 
     private func makeArray<T: FixedWidthInteger>(from data: Data) -> [T] {
-        let byteLength = T.bitWidth / 8
-        return data.withUnsafeBytes { (ptr: UnsafePointer<T>) -> [T] in
-            var x = [T]()
-
-            for i in 0...((data.count-1)/byteLength) {
-                let n = T(bigEndian: ptr[i])
-                x.append(n)
-            }
-
-            return x
+        return data.withUnsafeBytes {
+            $0.bindMemory(to: T.self).map { T(bigEndian: $0) }
         }
     }
 
@@ -108,8 +86,6 @@ class PTData {
         guard data.count>offset+2 else {
             return nil
         }
-        let truncatedData = data.subdata(in: offset..<offset+2)
-        let ints: [Int16] = makeArray(from: truncatedData)
-        return ints.first
+        return makeArray(from: data.subdata(in: offset..<offset+2)).first
     }
 }

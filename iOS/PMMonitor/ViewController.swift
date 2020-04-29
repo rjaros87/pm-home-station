@@ -32,11 +32,11 @@ class ViewController: UIViewController {
 
         let nCenter = NotificationCenter.default
 
-        nCenter.addObserver(forName: .UIApplicationWillResignActive, object: nil, queue: nil) { (_) in
+        nCenter.addObserver(forName: UIApplication.willResignActiveNotification, object: nil, queue: nil) { (_) in
             self.supressDialogs = true
             self.device.disconnect()
         }
-        nCenter.addObserver(forName: .UIApplicationDidBecomeActive, object: nil, queue: nil) { (_) in
+        nCenter.addObserver(forName: UIApplication.didBecomeActiveNotification, object: nil, queue: nil) { (_) in
             self.start()
         }
 
@@ -110,7 +110,7 @@ class ViewController: UIViewController {
     }
 
     func showDisconnectedDialog() {
-        let ctrl = UIAlertController(title: "Disconnected", message: "Start to search for devices?", preferredStyle: UIAlertControllerStyle.alert)
+        let ctrl = UIAlertController(title: "Disconnected", message: "Start to search for devices?", preferredStyle: .alert)
 
         let scanAction = UIAlertAction(title: "Search", style: .default) { (_) in
             self.mainLabel.text = "Disconnected"
@@ -126,5 +126,4 @@ class ViewController: UIViewController {
 
         self.present(ctrl, animated: true, completion: nil)
     }
-
 }

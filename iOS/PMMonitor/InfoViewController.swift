@@ -52,7 +52,7 @@ class InfoViewController: UIViewController, WKNavigationDelegate {
         if navigationAction.navigationType == .linkActivated {
             let app = UIApplication.shared
             if let url = navigationAction.request.url, app.canOpenURL(url) {
-                app.open(url, options: [:], completionHandler: nil)
+                app.open(url)
                 decisionHandler(.cancel)
                 return
             }
@@ -60,7 +60,4 @@ class InfoViewController: UIViewController, WKNavigationDelegate {
 
         decisionHandler(.allow)
     }
-
-    
-
 }

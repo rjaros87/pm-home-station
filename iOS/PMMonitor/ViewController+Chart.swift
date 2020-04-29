@@ -50,9 +50,9 @@ extension ViewController {
             d3.append(e3)
         }
 
-        let ds1 = LineChartDataSet(values: d1, label: "PM 1.0")
-        let ds2 = LineChartDataSet(values: d2, label: "PM 2.5")
-        let ds3 = LineChartDataSet(values: d3, label: "PM 10")
+        let ds1 = LineChartDataSet(entries: d1, label: "PM 1.0")
+        let ds2 = LineChartDataSet(entries: d2, label: "PM 2.5")
+        let ds3 = LineChartDataSet(entries: d3, label: "PM 10")
 
         ds1.setColor(NSUIColor.orange)
         ds2.setColor(NSUIColor.purple)

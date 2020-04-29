@@ -30,6 +30,7 @@
 		A36C11C1202F2BDD0024E841 /* ViewController+Chart.swift in Sources */ = {isa = PBXBuildFile; fileRef = A36C11C0202F2BDD0024E841 /* ViewController+Chart.swift */; };
 		A372F4B62459DFDC0045028B /* Charts.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A372F4B32459DFBF0045028B /* Charts.framework */; };
 		A372F4B72459DFDC0045028B /* Charts.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = A372F4B32459DFBF0045028B /* Charts.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		A372F4B92459E2FD0045028B /* WebKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A372F4B82459E2FD0045028B /* WebKit.framework */; };
 		A3AEA08B203F3BBB00C4420F /* Settings.bundle in Resources */ = {isa = PBXBuildFile; fileRef = A3AEA08A203F3BBB00C4420F /* Settings.bundle */; };
 		A3CCDC80203897F7003ADDE9 /* About.html in Resources */ = {isa = PBXBuildFile; fileRef = A3CCDC7F203897F7003ADDE9 /* About.html */; };
 		A3F855E8202F3AFC00640BD3 /* Interface.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = A3F855E6202F3AFC00640BD3 /* Interface.storyboard */; };
@@ -147,6 +148,7 @@
 		A36C11BE202F21BC0024E841 /* PTDeviceCallbacks.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PTDeviceCallbacks.swift; sourceTree = "<group>"; };
 		A36C11C0202F2BDD0024E841 /* ViewController+Chart.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ViewController+Chart.swift"; sourceTree = "<group>"; };
 		A372F4AD2459DFBF0045028B /* Charts.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = Charts.xcodeproj; path = Charts/Charts.xcodeproj; sourceTree = "<group>"; };
+		A372F4B82459E2FD0045028B /* WebKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = WebKit.framework; path = System/Library/Frameworks/WebKit.framework; sourceTree = SDKROOT; };
 		A3AEA08A203F3BBB00C4420F /* Settings.bundle */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.plug-in"; path = Settings.bundle; sourceTree = "<group>"; };
 		A3CCDC7F203897F7003ADDE9 /* About.html */ = {isa = PBXFileReference; lastKnownFileType = text.html; path = About.html; sourceTree = "<group>"; };
 		A3F855E4202F3AFB00640BD3 /* PMWatch.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = PMWatch.app; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -166,6 +168,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				A372F4B92459E2FD0045028B /* WebKit.framework in Frameworks */,
 				A372F4B62459DFDC0045028B /* Charts.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -258,6 +261,7 @@
 		A342932B2034DAFF00A3ED82 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				A372F4B82459E2FD0045028B /* WebKit.framework */,
 				A3F8560C202F4FFB00640BD3 /* 3rd party */,
 			);
 			name = Frameworks;
@@ -427,11 +431,12 @@
 			isa = PBXProject;
 			attributes = {
 				LastSwiftUpdateCheck = 0920;
-				LastUpgradeCheck = 0920;
+				LastUpgradeCheck = 1140;
 				ORGANIZATIONNAME = dflab;
 				TargetAttributes = {
 					A304E87E202E32AD00B43B5A = {
 						CreatedOnToolsVersion = 9.2;
+						LastSwiftMigration = 1140;
 						ProvisioningStyle = Automatic;
 					};
 					A335078620599F2700EE62AD = {
@@ -441,6 +446,7 @@
 					};
 					A3352516203798DA009458B3 = {
 						CreatedOnToolsVersion = 9.2;
+						LastSwiftMigration = 1140;
 						ProvisioningStyle = Manual;
 					};
 					A3F855E3202F3AFB00640BD3 = {
@@ -449,6 +455,7 @@
 					};
 					A3F855EF202F3AFD00640BD3 = {
 						CreatedOnToolsVersion = 9.2;
+						LastSwiftMigration = 1140;
 						ProvisioningStyle = Automatic;
 					};
 				};
@@ -667,6 +674,7 @@
 				CLANG_WARN_BOOL_CONVERSION = YES;
 				CLANG_WARN_COMMA = YES;
 				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
 				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
 				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
 				CLANG_WARN_EMPTY_BODY = YES;
@@ -674,6 +682,7 @@
 				CLANG_WARN_INFINITE_RECURSION = YES;
 				CLANG_WARN_INT_CONVERSION = YES;
 				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
 				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
 				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
 				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
@@ -724,6 +733,7 @@
 				CLANG_WARN_BOOL_CONVERSION = YES;
 				CLANG_WARN_COMMA = YES;
 				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
 				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
 				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
 				CLANG_WARN_EMPTY_BODY = YES;
@@ -731,6 +741,7 @@
 				CLANG_WARN_INFINITE_RECURSION = YES;
 				CLANG_WARN_INT_CONVERSION = YES;
 				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
 				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
 				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
 				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
@@ -776,7 +787,7 @@
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = net.dflab.PMMonitor;
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				SWIFT_VERSION = 4.0;
+				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = 1;
 			};
 			name = Debug;
@@ -797,7 +808,7 @@
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = net.dflab.PMMonitor;
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				SWIFT_VERSION = 4.0;
+				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = 1;
 			};
 			name = Release;
@@ -854,7 +865,7 @@
 				PRODUCT_NAME = PMMonitor;
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				SDKROOT = macosx;
-				SWIFT_VERSION = 4.0;
+				SWIFT_VERSION = 5.0;
 			};
 			name = Debug;
 		};
@@ -874,7 +885,7 @@
 				PRODUCT_NAME = PMMonitor;
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				SDKROOT = macosx;
-				SWIFT_VERSION = 4.0;
+				SWIFT_VERSION = 5.0;
 			};
 			name = Release;
 		};
@@ -928,7 +939,7 @@
 				PRODUCT_NAME = "${TARGET_NAME}";
 				SDKROOT = watchos;
 				SKIP_INSTALL = YES;
-				SWIFT_VERSION = 4.0;
+				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = 4;
 				WATCHOS_DEPLOYMENT_TARGET = 4.0;
 			};
@@ -946,7 +957,7 @@
 				PRODUCT_NAME = "${TARGET_NAME}";
 				SDKROOT = watchos;
 				SKIP_INSTALL = YES;
-				SWIFT_VERSION = 4.0;
+				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = 4;
 				WATCHOS_DEPLOYMENT_TARGET = 4.0;
 			};
