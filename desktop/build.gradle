@@ -50,7 +50,7 @@ launch4j {
     copyConfigurable = project.tasks.shadowJar.outputs.files
     mainClassName = local_mainClassName
     icon = "${projectDir}/icons/app-icon.ico"
-    outfile = "${project.name}-${version}.exe"
+    outfile = "${project.name}-${project.version}.exe"
     supportUrl = local_projectUrl
     companyName = local_projectUrl
     version = version
