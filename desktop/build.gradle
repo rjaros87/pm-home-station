@@ -23,6 +23,10 @@ repositories {
 configurations {
     // configuration that holds jars to include in the jar
     extraLibs
+
+    // xchart lib versions >3.5.0 started to have transitive dependency to pdfbox and fontbox (those libs caused shadowjar to grow from ~8MB to 12MB)
+    compile.exclude module: 'pdfbox'
+    compile.exclude module: 'fontbox'
 }
 
 shadowJar {
@@ -71,19 +75,21 @@ macAppBundle {
 }
 
 dependencies {
-    extraLibs group: 'org.knowm.xchart', name: 'xchart', version: '3.6.1'
-    extraLibs group: 'com.fazecast', name: 'jSerialComm', version: '2.5.3'
+    extraLibs group: 'org.knowm.xchart', name: 'xchart', version: '3.6.2'
+    extraLibs group: 'com.fazecast', name: 'jSerialComm', version: '2.6.2'
     extraLibs group: 'ch.qos.logback', name: 'logback-classic', version: '1.2.3'
     extraLibs group: 'com.miglayout', name: 'miglayout-swing', version: '5.2'
-    extraLibs group: 'org.apache.commons', name: 'commons-lang3', version: '3.9'
-    extraLibs group: 'org.apache.commons', name: 'commons-configuration2', version: '2.6'
+    extraLibs group: 'org.apache.commons', name: 'commons-lang3', version: '3.10'
+    extraLibs group: 'org.apache.commons', name: 'commons-configuration2', version: '2.7'
     extraLibs group: 'commons-io', name: 'commons-io', version: '2.6'
     extraLibs group: 'commons-cli', name: 'commons-cli', version: '1.4'
-    extraLibs group: 'com.google.guava', name: 'guava', version: '28.2-jre'
+    extraLibs group: 'com.google.guava', name: 'guava', version: '29.0-jre'
     extraLibs group: 'javax.json', name: 'javax.json-api', version: '1.1.4'
     extraLibs group: 'org.glassfish', name: 'javax.json', version: '1.1.4'
+    // it is required by configuration2.builder
+    extraLibs group: 'commons-beanutils', name: 'commons-beanutils', version: '1.9.4'
 
     extraLibs project(':core')
     configurations.compile.extendsFrom(configurations.extraLibs)
-    testCompile group: 'junit', name: 'junit', version: '4.12'
+    testCompile group: 'junit', name: 'junit', version: '4.13'
 }

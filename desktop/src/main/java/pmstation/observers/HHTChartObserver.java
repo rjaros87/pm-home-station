@@ -47,6 +47,9 @@ public class HHTChartObserver implements IPlanTowerObserver {
                 chart.updateXYSeries("Temp", null, Arrays.asList(temp.toArray(new Double[0])), null);
             }
             if (sample.getHcho() >= 0 && sample.getHumidity() >= 0 && sample.getTemperature() != Double.NaN) {
+                if (!chart.getStyler().isYAxisTicksVisible()) {
+                    chart.getStyler().setYAxisTicksVisible(true);
+                }
                 chartPanel.setVisible(true);
                 chartPanel.revalidate();
                 chartPanel.repaint();                
