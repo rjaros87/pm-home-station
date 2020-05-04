@@ -32,11 +32,11 @@ configurations {
 shadowJar {
     baseName = project.name
     classifier = null
-    version = version
+    version = project.version
     
     manifest {
         attributes 'Implementation-Title': "${local_appName} - the standalone application (uber) JAR"
-        attributes 'Implementation-Version': version
+        attributes 'Implementation-Version': project.version
         attributes 'Implementation-Vendor': local_projectUrl
         attributes 'Built-By': System.getProperty('user.name')
         attributes 'Built-JDK': System.getProperty('java.version')
