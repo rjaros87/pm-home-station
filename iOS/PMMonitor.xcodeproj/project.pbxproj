@@ -13,10 +13,7 @@
 		A304E88A202E32AD00B43B5A /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = A304E889202E32AD00B43B5A /* Assets.xcassets */; };
 		A304E88D202E32AD00B43B5A /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = A304E88B202E32AD00B43B5A /* LaunchScreen.storyboard */; };
 		A335078A20599F2700EE62AD /* PMMonitorTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = A335078920599F2700EE62AD /* PMMonitorTests.swift */; };
-		A335251A203798DB009458B3 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = A3352519203798DB009458B3 /* AppDelegate.swift */; };
-		A335251C203798DB009458B3 /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = A335251B203798DB009458B3 /* ViewController.swift */; };
 		A335251E203798DB009458B3 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = A335251D203798DB009458B3 /* Assets.xcassets */; };
-		A3352521203798DB009458B3 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = A335251F203798DB009458B3 /* Main.storyboard */; };
 		A34293132030E4D200A3ED82 /* PTData+Levels.swift in Sources */ = {isa = PBXBuildFile; fileRef = A34293122030E4D200A3ED82 /* PTData+Levels.swift */; };
 		A34293172033A72800A3ED82 /* AQScaleView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A34293162033A72800A3ED82 /* AQScaleView.swift */; };
 		A342933E2034FDC000A3ED82 /* InfoViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = A342933D2034FDC000A3ED82 /* InfoViewController.swift */; };
@@ -31,6 +28,9 @@
 		A372F4B62459DFDC0045028B /* Charts.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A372F4B32459DFBF0045028B /* Charts.framework */; };
 		A372F4B72459DFDC0045028B /* Charts.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = A372F4B32459DFBF0045028B /* Charts.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		A372F4B92459E2FD0045028B /* WebKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A372F4B82459E2FD0045028B /* WebKit.framework */; };
+		A38F368128D51B3800ABB95A /* PMMonitorMac.swift in Sources */ = {isa = PBXBuildFile; fileRef = A38F368028D51B3800ABB95A /* PMMonitorMac.swift */; };
+		A38F368328D51BF800ABB95A /* MainView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A38F368228D51BF800ABB95A /* MainView.swift */; };
+		A38F368528D5251F00ABB95A /* ObservableDevice.swift in Sources */ = {isa = PBXBuildFile; fileRef = A38F368428D5251F00ABB95A /* ObservableDevice.swift */; };
 		A3AEA08B203F3BBB00C4420F /* Settings.bundle in Resources */ = {isa = PBXBuildFile; fileRef = A3AEA08A203F3BBB00C4420F /* Settings.bundle */; };
 		A3CCDC80203897F7003ADDE9 /* About.html in Resources */ = {isa = PBXBuildFile; fileRef = A3CCDC7F203897F7003ADDE9 /* About.html */; };
 		A3F855E8202F3AFC00640BD3 /* Interface.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = A3F855E6202F3AFC00640BD3 /* Interface.storyboard */; };
@@ -133,10 +133,7 @@
 		A335078920599F2700EE62AD /* PMMonitorTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PMMonitorTests.swift; sourceTree = "<group>"; };
 		A335078B20599F2700EE62AD /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		A3352517203798DA009458B3 /* PMMonitor.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = PMMonitor.app; sourceTree = BUILT_PRODUCTS_DIR; };
-		A3352519203798DB009458B3 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
-		A335251B203798DB009458B3 /* ViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewController.swift; sourceTree = "<group>"; };
 		A335251D203798DB009458B3 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
-		A3352520203798DB009458B3 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
 		A3352522203798DB009458B3 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		A34293122030E4D200A3ED82 /* PTData+Levels.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "PTData+Levels.swift"; sourceTree = "<group>"; };
 		A34293162033A72800A3ED82 /* AQScaleView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AQScaleView.swift; sourceTree = "<group>"; };
@@ -149,6 +146,9 @@
 		A36C11C0202F2BDD0024E841 /* ViewController+Chart.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ViewController+Chart.swift"; sourceTree = "<group>"; };
 		A372F4AD2459DFBF0045028B /* Charts.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = Charts.xcodeproj; path = Charts/Charts.xcodeproj; sourceTree = "<group>"; };
 		A372F4B82459E2FD0045028B /* WebKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = WebKit.framework; path = System/Library/Frameworks/WebKit.framework; sourceTree = SDKROOT; };
+		A38F368028D51B3800ABB95A /* PMMonitorMac.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PMMonitorMac.swift; sourceTree = "<group>"; };
+		A38F368228D51BF800ABB95A /* MainView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MainView.swift; sourceTree = "<group>"; };
+		A38F368428D5251F00ABB95A /* ObservableDevice.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ObservableDevice.swift; sourceTree = "<group>"; };
 		A3AEA08A203F3BBB00C4420F /* Settings.bundle */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.plug-in"; path = Settings.bundle; sourceTree = "<group>"; };
 		A3CCDC7F203897F7003ADDE9 /* About.html */ = {isa = PBXFileReference; lastKnownFileType = text.html; path = About.html; sourceTree = "<group>"; };
 		A3F855E4202F3AFB00640BD3 /* PMWatch.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = PMWatch.app; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -249,11 +249,11 @@
 			isa = PBXGroup;
 			children = (
 				A308C65B2037A4520077D57B /* PMMonitor.entitlements */,
-				A3352519203798DB009458B3 /* AppDelegate.swift */,
-				A335251B203798DB009458B3 /* ViewController.swift */,
 				A335251D203798DB009458B3 /* Assets.xcassets */,
-				A335251F203798DB009458B3 /* Main.storyboard */,
 				A3352522203798DB009458B3 /* Info.plist */,
+				A38F368028D51B3800ABB95A /* PMMonitorMac.swift */,
+				A38F368228D51BF800ABB95A /* MainView.swift */,
+				A38F368428D5251F00ABB95A /* ObservableDevice.swift */,
 			);
 			path = "PMMonitor Mac";
 			sourceTree = "<group>";
@@ -531,7 +531,6 @@
 			buildActionMask = 2147483647;
 			files = (
 				A335251E203798DB009458B3 /* Assets.xcassets in Resources */,
-				A3352521203798DB009458B3 /* Main.storyboard in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -583,11 +582,12 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				A335251C203798DB009458B3 /* ViewController.swift in Sources */,
 				A34E37C220379F7C00EB3B8C /* PTDevice.swift in Sources */,
 				A34E37C320379F7C00EB3B8C /* PTDeviceCallbacks.swift in Sources */,
+				A38F368528D5251F00ABB95A /* ObservableDevice.swift in Sources */,
 				A34E37C120379F7C00EB3B8C /* PTData.swift in Sources */,
-				A335251A203798DB009458B3 /* AppDelegate.swift in Sources */,
+				A38F368328D51BF800ABB95A /* MainView.swift in Sources */,
+				A38F368128D51B3800ABB95A /* PMMonitorMac.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -639,14 +639,6 @@
 				A304E88C202E32AD00B43B5A /* Base */,
 			);
 			name = LaunchScreen.storyboard;
-			sourceTree = "<group>";
-		};
-		A335251F203798DB009458B3 /* Main.storyboard */ = {
-			isa = PBXVariantGroup;
-			children = (
-				A3352520203798DB009458B3 /* Base */,
-			);
-			name = Main.storyboard;
 			sourceTree = "<group>";
 		};
 		A3F855E6202F3AFC00640BD3 /* Interface.storyboard */ = {
@@ -860,7 +852,7 @@
 				DEVELOPMENT_TEAM = "";
 				INFOPLIST_FILE = "PMMonitor Mac/Info.plist";
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks";
-				MACOSX_DEPLOYMENT_TARGET = 10.10;
+				MACOSX_DEPLOYMENT_TARGET = 12.3;
 				PRODUCT_BUNDLE_IDENTIFIER = net.dflab.mac.pmmonitor;
 				PRODUCT_NAME = PMMonitor;
 				PROVISIONING_PROFILE_SPECIFIER = "";
@@ -880,7 +872,7 @@
 				DEVELOPMENT_TEAM = "";
 				INFOPLIST_FILE = "PMMonitor Mac/Info.plist";
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks";
-				MACOSX_DEPLOYMENT_TARGET = 10.10;
+				MACOSX_DEPLOYMENT_TARGET = 12.3;
 				PRODUCT_BUNDLE_IDENTIFIER = net.dflab.mac.pmmonitor;
 				PRODUCT_NAME = PMMonitor;
 				PROVISIONING_PROFILE_SPECIFIER = "";
