@@ -9,13 +9,9 @@ import SwiftUI
 
 private struct DataFormat {
     static let Full = """
-    PM 1.0     = %i μ/㎥
-    PM 2.5     = %i μ/㎥
-    PM 10      = %i μ/㎥
-
-    H₂CO       = %.2f mg/㎥
-    Temp.      = %.2f °C
-    Humidity = %.2f %
+    PM 1.0     = %i μ/㎥       H₂CO       = %.2f mg/㎥
+    PM 2.5     = %i μ/㎥       Temp.      = %.2f °C
+    PM 10      = %i μ/㎥       Humidity   = %.2f %
     """
 
     static let Short = """
@@ -27,6 +23,7 @@ private struct DataFormat {
 
 class ObservableDevice: ObservableObject {
     @Published var message = ""
+    @Published var data = [ChartDataPoint]()
 
     private let device: PTDevice
 
@@ -50,7 +47,7 @@ class ObservableDevice: ObservableObject {
 
     private func start() {
         device.start { [weak self] data, error in
-            if let data = data {
+            if let data {
                 self?.showData(data)
             } else {
                 self?.showError(error)
@@ -67,12 +64,9 @@ class ObservableDevice: ObservableObject {
         }
         if let formaldehyde = data.formaldehyde {
             message = String(format: DataFormat.Full,
-                             data.pm1_0,
-                             data.pm2_5,
-                             data.pm10,
-                             formaldehyde,
-                             data.temperature ?? "UNKNOWN",
-                             data.humidity ?? "UNKNOWN"
+                             data.pm1_0,  formaldehyde,
+                             data.pm2_5,  data.temperature ?? "UNKNOWN",
+                             data.pm10,   data.humidity ?? "UNKNOWN"
             )
         } else {
             message = String(format: DataFormat.Short,
@@ -81,7 +75,7 @@ class ObservableDevice: ObservableObject {
                              data.pm10
             )
         }
-
+        self.data.append(contentsOf: data.chartData)
     }
 
     private func showError(_ error: Error?) {
@@ -109,5 +103,35 @@ class ObservableDevice: ObservableObject {
         case .connection(let errorMessage):
             message = errorMessage
         }
+    }
+
+    struct ChartDataPoint: Identifiable {
+        let id = UUID()
+        let name: String
+        let date: Date
+        let value: Float
+    }
+}
+
+fileprivate extension PTData {
+    var chartData: [ObservableDevice.ChartDataPoint] {
+        var result = [ObservableDevice.ChartDataPoint]()
+
+        result.append(.init(name: "PM 1.0", date: date, value: Float(pm1_0)))
+        result.append(.init(name: "PM 2.5", date: date, value: Float(pm2_5)))
+
+        if let formaldehyde {
+            result.append(.init(name: "H₂CO", date: date, value: formaldehyde))
+        }
+
+        if let temperature {
+            result.append(.init(name: "t", date: date, value: temperature))
+        }
+
+        if let humidity {
+            result.append(.init(name: "RH", date: date, value: humidity))
+        }
+
+        return result
     }
 }

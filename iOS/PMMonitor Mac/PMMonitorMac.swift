@@ -12,7 +12,7 @@ struct PMMonitorMac: App {
     var body: some Scene {
         WindowGroup {
             MainView()
-                .frame(width: 300.0, height: 200.0)
+                .frame(minWidth: 800.0, minHeight: 500.0)
         }
     }
 }

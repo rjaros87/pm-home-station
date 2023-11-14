@@ -852,7 +852,7 @@
 				DEVELOPMENT_TEAM = "";
 				INFOPLIST_FILE = "PMMonitor Mac/Info.plist";
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks";
-				MACOSX_DEPLOYMENT_TARGET = 12.3;
+				MACOSX_DEPLOYMENT_TARGET = 13.0;
 				PRODUCT_BUNDLE_IDENTIFIER = net.dflab.mac.pmmonitor;
 				PRODUCT_NAME = PMMonitor;
 				PROVISIONING_PROFILE_SPECIFIER = "";
@@ -872,7 +872,7 @@
 				DEVELOPMENT_TEAM = "";
 				INFOPLIST_FILE = "PMMonitor Mac/Info.plist";
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks";
-				MACOSX_DEPLOYMENT_TARGET = 12.3;
+				MACOSX_DEPLOYMENT_TARGET = 13.0;
 				PRODUCT_BUNDLE_IDENTIFIER = net.dflab.mac.pmmonitor;
 				PRODUCT_NAME = PMMonitor;
 				PROVISIONING_PROFILE_SPECIFIER = "";
