@@ -47,7 +47,13 @@ public class Config {
         CHECK_LATEST_VERSION("check.latest.version"),
         WINDOW_THEME("window.theme"),
         CSV_LOG_ENABLED("csv.log.enabled"),
-        CSV_LOG_FILE("csv.log.file");
+        CSV_LOG_FILE("csv.log.file"),
+        MQTT_CLIENT_ID("mqtt.client_id"),
+        MQTT_BROKER("mqtt.broker"),
+        MQTT_USERNAME("mqtt.user"),
+        MQTT_PASSWORD("mqtt.password"),
+        MQTT_TOPIC("mqtt.topic")
+        ;
         
         
         private String key;

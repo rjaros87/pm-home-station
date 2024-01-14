@@ -29,6 +29,7 @@ import pmstation.configuration.Config;
 import pmstation.configuration.Constants;
 import pmstation.observers.CSVObserver;
 import pmstation.observers.ConsoleObserver;
+import pmstation.observers.MqttObserver;
 import pmstation.observers.UIScreenShotObserver;
 import pmstation.plantower.PlanTowerSensor;
 
@@ -51,6 +52,7 @@ public class Start {
                 logger.info("Starting pm-home-station (headless mode), v.{} ({})...", Constants.VERSION, Constants.PROJECT_URL);
                 PlanTowerSensor planTowerSensor = new PlanTowerSensor();
                 planTowerSensor.addObserver(new ConsoleObserver());
+                planTowerSensor.addObserver(new MqttObserver());
                 planTowerSensor.addObserver(new CSVObserver());
                 planTowerSensor.connectDevice();
                 if (planTowerSensor.isConnected()) {
