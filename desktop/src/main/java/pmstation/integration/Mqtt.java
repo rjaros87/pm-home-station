@@ -56,6 +56,8 @@ public class Mqtt {
         } catch (MqttException e) {
             logger.error("Unable to create a MQTT Client", e);
         }
+
+        connect();
     }
 
     private void connect() {
@@ -74,23 +76,26 @@ public class Mqtt {
             client.connect(options);
             client.subscribe(topic);
         } catch (MqttException e) {
-            logger.error("Unable to connect/subscribe with the Mqtt Server", e);
+            logger.error("Unable to connect/subscribe to MQTT Server {}", client.getServerURI(), e);
         }
     }
 
     public void publish(ParticulateMatterSample sample) {
         if (client != null) {
-            if (!client.isConnected()) {
-                connect();
+            if (client.isConnected()) {
+                MqttMessage message = new MqttMessage();
+                String jsonString = gson.toJson(sample.getMap());
+                message.setPayload(jsonString.getBytes());
+                try {
+                    client.publish(topic, message);
+                } catch (MqttException e) {
+                    logger.error("Unable to publish message", e);
+                }
+            } else {
+                logger.error("MQTT Client not connected to server: {}. Reconnection not supported yet. Please " +
+                        "restart application.", client.getServerURI());
             }
-            MqttMessage message = new MqttMessage();
-            String jsonString = gson.toJson(sample);
-            message.setPayload(jsonString.getBytes());
-            try {
-                client.publish(topic, message);
-            } catch (MqttException e) {
-                logger.error("Unable to publish message", e);
-            }
+
         }
     }
 
@@ -99,7 +104,7 @@ public class Mqtt {
             try {
                 client.disconnect();
             } catch (MqttException e) {
-                logger.error("Unable to disconnect" ,e);
+                logger.error("Unable to disconnect from MQTT server: {}", client.getServerURI() ,e);
             }
         }
     }

@@ -17,7 +17,7 @@ public class MqttObserver implements IPlanTowerObserver {
 
     @Override
     public void update(ParticulateMatterSample sample) {
-        if (Mqtt.getInstance() != null && Config.instance().to().getBoolean(Config.Entry.MQTT_ENABLED.key(), false)) {
+        if (Config.instance().to().getBoolean(Config.Entry.MQTT_ENABLED.key(), false)) {
             logger.debug("MQTT going to send: {}", sample);
             Mqtt.getInstance().publish(sample);
         }
@@ -25,9 +25,9 @@ public class MqttObserver implements IPlanTowerObserver {
 
     @Override
     public void disconnecting() {
-        if (Mqtt.getInstance() != null && Config.instance().to().getBoolean(Config.Entry.MQTT_ENABLED.key(), false)) {
+        if (Config.instance().to().getBoolean(Config.Entry.MQTT_ENABLED.key(), false)) {
             Mqtt.getInstance().disconnect();
-            logger.info("Disconnecting from the sensor...");
+            logger.info("MQTT observer shut down...");
         }
     }
 
