@@ -7,30 +7,28 @@ package pmstation.observers;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import pmstation.configuration.Config;
 import pmstation.core.plantower.IPlanTowerObserver;
 import pmstation.core.plantower.ParticulateMatterSample;
 import pmstation.integration.Mqtt;
 
 public class MqttObserver implements IPlanTowerObserver {
     private static final Logger logger = LoggerFactory.getLogger(MqttObserver.class);
-    private final Mqtt mqttClient;
-
-    public MqttObserver() {
-        mqttClient = Mqtt.getInstance();
-    }
 
     @Override
     public void update(ParticulateMatterSample sample) {
-        if (mqttClient != null) {
+        if (Mqtt.getInstance() != null && Config.instance().to().getBoolean(Config.Entry.MQTT_ENABLED.key(), false)) {
             logger.debug("MQTT going to send: {}", sample);
-            mqttClient.publish(sample);
+            Mqtt.getInstance().publish(sample);
         }
     }
 
     @Override
     public void disconnecting() {
-        mqttClient.disconnect();
-        logger.info("Disconnecting from the sensor...");
+        if (Mqtt.getInstance() != null && Config.instance().to().getBoolean(Config.Entry.MQTT_ENABLED.key(), false)) {
+            Mqtt.getInstance().disconnect();
+            logger.info("Disconnecting from the sensor...");
+        }
     }
 
     @Override

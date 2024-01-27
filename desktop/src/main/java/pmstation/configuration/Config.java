@@ -48,6 +48,7 @@ public class Config {
         WINDOW_THEME("window.theme"),
         CSV_LOG_ENABLED("csv.log.enabled"),
         CSV_LOG_FILE("csv.log.file"),
+        MQTT_ENABLED("mqtt.enabled"),
         MQTT_CLIENT_ID("mqtt.client_id"),
         MQTT_BROKER("mqtt.broker"),
         MQTT_USERNAME("mqtt.user"),
