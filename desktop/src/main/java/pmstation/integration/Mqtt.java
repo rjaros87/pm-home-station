@@ -31,7 +31,7 @@ public class Mqtt {
 
     private Mqtt() {
         topic = Config.instance().to().getString(Config.Entry.MQTT_TOPIC.key(),
-                "home/aqi");
+                "pm-home-station/aqi");
         String broker = Config.instance().to().getString(Config.Entry.MQTT_BROKER.key(),
                 "tcp://localhost:1883");
         String clientId = Config.instance().to().getString(Config.Entry.MQTT_CLIENT_ID.key(),
