@@ -47,14 +47,14 @@ public class Mqtt {
 
                 @Override
                 public void messageArrived(String topic, MqttMessage message) {
-                    logger.info("Message received. Topic: {}, Message: {}", topic, new String(message.getPayload()));
+                    logger.info("Message received. Topic: {}, Message: {}", topic, message.getPayload());
                 }
 
                 @Override
                 public void deliveryComplete(IMqttDeliveryToken token) {}
             });
         } catch (MqttException e) {
-            logger.error("Unable to create a Mqtt Client", e);
+            logger.error("Unable to create a MQTT Client", e);
         }
     }
 
