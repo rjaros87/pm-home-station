@@ -12,7 +12,7 @@ Let's live healthier life and start measuring the air quality and filtering it i
 
 |  Android  | iPhone & Watch |    Desktop    |
 |-----------|----------------|---------------|
-|<a href="https://play.google.com/store/apps/details?id=pmstation.android&pcampaignid=MKT-Other-global-all-co-prtnr-py-PartBadge-Mar2515-1"><img alt="Get it on Google Play" src="https://play.google.com/intl/en_us/badges/images/generic/en_badge_web_generic.png" height="58" /></a>|<a href="https://itunes.apple.com/us/app/pm-home-station/id1347597971?mt=8"><img src="https://linkmaker.itunes.apple.com/assets/shared/badges/en-us/appstore-lrg.png" width="135" height="40" /></a>|<a href="https://github.com/rjaros87/pm-home-station/releases"><img alt="Download and install" src="https://github.com/rjaros87/pm-home-station/raw/master/www/other/laptop+install.png" width="135" height="58" align="top"/></a>|
+|<a href="https://play.google.com/store/apps/details?id=pmstation.android&pcampaignid=MKT-Other-global-all-co-prtnr-py-PartBadge-Mar2515-1"><img alt="Get it on Google Play" src="https://play.google.com/intl/en_us/badges/images/generic/en_badge_web_generic.png" height="58" /></a>|<a href="https://itunes.apple.com/us/app/pm-home-station/id1347597971?mt=8"><img src="https://developer.apple.com/assets/elements/badges/download-on-the-app-store.svg" width="135" height="40" /></a>|<a href="https://github.com/rjaros87/pm-home-station/releases"><img alt="Download and install" src="https://github.com/rjaros87/pm-home-station/raw/master/www/other/laptop+install.png" width="135" height="58" align="top"/></a>|
 
 ## Hardware Requirements
 
