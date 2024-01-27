@@ -72,11 +72,14 @@ public class Mqtt {
             options.setPassword(password.toCharArray());
         }
 
-        try {
-            client.connect(options);
-            client.subscribe(topic);
-        } catch (MqttException e) {
-            logger.error("Unable to connect/subscribe to MQTT Server {}", client.getServerURI(), e);
+        if (Config.instance().to().getBoolean(Config.Entry.MQTT_ENABLED.key(), false)) {
+            try {
+                logger.info("Going to connect to MQTT Server: {}", client.getServerURI());
+                client.connect(options);
+                client.subscribe(topic);
+            } catch (MqttException e) {
+                logger.error("Unable to connect/subscribe to MQTT Server {}", client.getServerURI(), e);
+            }
         }
     }
 
