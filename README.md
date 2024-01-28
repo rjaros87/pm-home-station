@@ -1,8 +1,7 @@
 _Language versions:_\
 [![EN](https://github.com/rjaros87/pm-home-station/raw/master/www/flags/lang-US.png)](https://github.com/rjaros87/pm-home-station) 
 [![PL](https://github.com/rjaros87/pm-home-station/raw/master/www/flags/lang-PL.png)](https://translate.googleusercontent.com/translate_c?sl=en&tl=pl&u=https://github.com/rjaros87/pm-home-station)
-[![DE](https://github.com/rjaros87/pm-home-station/raw/master/www/flags/lang-DE.png)](https://translate.googleusercontent.com/translate_c?sl=en&tl=de&u=https://github.com/rjaros87/pm-home-station) 
-<a href="https://zrzutka.pl/en/ra6pw7/wplac"><img src="https://img.shields.io/badge/Donate-zrzutka.pl-green.svg" height="24" align="right" /></a>
+[![DE](https://github.com/rjaros87/pm-home-station/raw/master/www/flags/lang-DE.png)](https://translate.googleusercontent.com/translate_c?sl=en&tl=de&u=https://github.com/rjaros87/pm-home-station)
 
 # Home use particulate matter sensor [![Build Status](https://travis-ci.org/rjaros87/pm-home-station.svg?branch=master)](https://travis-ci.org/rjaros87/pm-home-station)
 
