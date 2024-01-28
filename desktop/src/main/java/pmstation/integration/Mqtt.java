@@ -18,15 +18,23 @@ import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 
 public class Mqtt {
+    private static final String ONLINE = "online";
+    private static final String OFFLINE = "offline";
+
     private static final Logger logger = LoggerFactory.getLogger(Mqtt.class);
     private static final Gson gson = new Gson();
     private final String topic;
     private final ScheduledExecutorService scheduler = Executors.newScheduledThreadPool(1);
     private MqttClient client;
 
+    private enum SubTopic {
+        AQI,
+        STATUS,
+    }
+
     public Mqtt() {
         topic = Config.instance().to().getString(Config.Entry.MQTT_TOPIC.key(),
-                "pm-home-station/aqi");
+                "pm-home-station");
         String address = Config.instance().to().getString(Config.Entry.MQTT_ADDRESS.key(),
                 "tcp://localhost:1883");
         String clientId = Config.instance().to().getString(Config.Entry.MQTT_CLIENT_ID.key(),
@@ -97,14 +105,10 @@ public class Mqtt {
     public void publish(ParticulateMatterSample sample) {
         if (client != null) {
             if (client.isConnected()) {
-                MqttMessage message = new MqttMessage();
                 String jsonString = gson.toJson(sample.getAsMap());
-                message.setPayload(jsonString.getBytes());
-                try {
-                    client.publish(topic, message);
-                } catch (MqttException e) {
-                    logger.error("Unable to publish message", e);
-                }
+                publishMessageToTopic(SubTopic.AQI.name(), jsonString);
+
+                publishMessageToTopic(SubTopic.STATUS.name(), ONLINE);
             } else {
                 logger.error("MQTT Client not connected yet to server: {}.", client.getServerURI());
             }
@@ -112,9 +116,20 @@ public class Mqtt {
         }
     }
 
+    private void publishMessageToTopic(String subtopic, String message) {
+        MqttMessage mqttMessage = new MqttMessage();
+        mqttMessage.setPayload(message.getBytes());
+        try {
+            client.publish(String.join("/", topic, subtopic.toLowerCase()), mqttMessage);
+        } catch (MqttException e) {
+            logger.error("Unable to publish message", e);
+        }
+    }
+
     public void disconnect() {
         if (client != null && client.isConnected()) {
             try {
+                publishMessageToTopic(SubTopic.STATUS.name(), OFFLINE);
                 client.disconnect();
             } catch (MqttException e) {
                 logger.error("Unable to disconnect from MQTT server: {}", client.getServerURI() ,e);

@@ -100,7 +100,7 @@ public class PlanTowerDevice {
         int pm10 = ((dataFrame[14] & 0xFF) << 8) + (dataFrame[15] & 0xFF);
 
         int hcho = -1;
-        int temperature = -1;
+        int temperature = Integer.MIN_VALUE;
         int humidity = -1;
         byte modelVersion = 0;
         byte errCode = 0;
