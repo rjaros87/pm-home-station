@@ -13,7 +13,7 @@ def local_appName = 'PM Home Station'
 def local_mainClassName = 'pmstation.Start'
 def local_projectUrl = 'https://github.com/rjaros87/pm-home-station'
 
-sourceCompatibility = 1.8
+sourceCompatibility = 1.9
 mainClassName = local_mainClassName
 
 repositories {

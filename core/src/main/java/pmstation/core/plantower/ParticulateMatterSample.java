@@ -7,11 +7,14 @@ package pmstation.core.plantower;
 
 import java.io.Serializable;
 import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
 
 public class ParticulateMatterSample implements Serializable {
 
     private static final long serialVersionUID = 3387284515078504042L;
 
+    private final Map<String, Map<String, Object>> pmMap;
     private int hcho;
     private double humidity;
     private int pm1_0;
@@ -30,18 +33,30 @@ public class ParticulateMatterSample implements Serializable {
     public ParticulateMatterSample(int pm1_0, int pm2_5, int pm10,
             int hcho, int humidity, int temperature,
             byte modelVersion, byte errCode) {
-
+        pmMap = new HashMap<>();
         date = new Date();
         this.hcho = hcho; // ug/m^3
                 // see levels in mg/m^3:
                 // http://archiwum.ciop.pl/13999 (quite old, 1995),
                 // or here in ug/m^3:
                 // https://www.canada.ca/content/dam/canada/health-canada/migration/healthy-canadians/publications/healthy-living-vie-saine/formaldehyde/alt/formaldehyde-eng.pdf (2006)
+        addFieldToMap("hcho", Map.of("value", hcho, "unit", "µg/m³"));
+
         this.humidity = humidity >= 0 ? (double) humidity / 10.0 : -1; // %
+        addFieldToMap("hcho", Map.of("value", humidity, "unit", "%"));
+
         this.pm1_0 = pm1_0; // ug/m^3
+        addFieldToMap("pm1_0", Map.of("value", pm1_0, "unit", "µg/m³"));
+
         this.pm2_5 = pm2_5; // ug/m^3
+        addFieldToMap("pm2_5", Map.of("value", pm2_5, "unit", "µg/m³"));
+
         this.pm10 = pm10; // ug/m^3
+        addFieldToMap("pm10", Map.of("value", pm10, "unit", "µg/m³"));
+
         this.temperature = temperature != Integer.MIN_VALUE ? (double) temperature / 10.0 : Double.NaN; // Celsius
+        addFieldToMap("temperature", Map.of("value", temperature, "unit", "°C"));
+
         this.modelVersion = modelVersion;
         this.errCode = errCode;
     }
@@ -102,4 +117,13 @@ public class ParticulateMatterSample implements Serializable {
         return temperature;
     }
 
+    public Map<String, Map<String, Object>> getMap() {
+        return pmMap;
+    }
+
+    private void addFieldToMap(String field, Map<String, Object> map) {
+        if (map != null && !map.containsValue(-1) && !map.containsValue(Double.NaN)) {
+            pmMap.put(field, map);
+        }
+    }
 }
