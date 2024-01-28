@@ -43,7 +43,7 @@ public class ParticulateMatterSample implements Serializable {
         addFieldToMap("hcho", Map.of("value", hcho, "unit", "µg/m³"));
 
         this.humidity = humidity >= 0 ? (double) humidity / 10.0 : -1; // %
-        addFieldToMap("hcho", Map.of("value", humidity, "unit", "%"));
+        addFieldToMap("humidity", Map.of("value", humidity, "unit", "%"));
 
         this.pm1_0 = pm1_0; // ug/m^3
         addFieldToMap("pm1_0", Map.of("value", pm1_0, "unit", "µg/m³"));
@@ -117,7 +117,7 @@ public class ParticulateMatterSample implements Serializable {
         return temperature;
     }
 
-    public Map<String, Map<String, Object>> getMap() {
+    public Map<String, Map<String, Object>> getAsMap() {
         return pmMap;
     }
 

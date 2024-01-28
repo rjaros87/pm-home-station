@@ -27,13 +27,13 @@ public class Mqtt {
     public Mqtt() {
         topic = Config.instance().to().getString(Config.Entry.MQTT_TOPIC.key(),
                 "pm-home-station/aqi");
-        String broker = Config.instance().to().getString(Config.Entry.MQTT_BROKER.key(),
+        String address = Config.instance().to().getString(Config.Entry.MQTT_ADDRESS.key(),
                 "tcp://localhost:1883");
         String clientId = Config.instance().to().getString(Config.Entry.MQTT_CLIENT_ID.key(),
                 "PMStationClient");
 
         try {
-            client = new MqttClient(broker, clientId);
+            client = new MqttClient(address, clientId);
             client.setCallback(new MqttCallback() {
                 @Override
                 public void connectionLost(Throwable cause) {
@@ -98,7 +98,7 @@ public class Mqtt {
         if (client != null) {
             if (client.isConnected()) {
                 MqttMessage message = new MqttMessage();
-                String jsonString = gson.toJson(sample.getMap());
+                String jsonString = gson.toJson(sample.getAsMap());
                 message.setPayload(jsonString.getBytes());
                 try {
                     client.publish(topic, message);
