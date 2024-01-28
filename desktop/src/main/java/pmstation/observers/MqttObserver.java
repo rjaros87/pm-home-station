@@ -14,19 +14,39 @@ import pmstation.integration.Mqtt;
 
 public class MqttObserver implements IPlanTowerObserver {
     private static final Logger logger = LoggerFactory.getLogger(MqttObserver.class);
+    private volatile Mqtt mqtt;
+
+    private boolean mqttInitialized() {
+        boolean mqttInitialized = mqtt != null;
+
+        if (!mqttInitialized) {
+            synchronized (this) {
+                if (mqtt == null) {
+                    mqtt = new Mqtt();
+                    mqttInitialized = true;
+                }
+            }
+        }
+
+        return mqttInitialized;
+    }
 
     @Override
     public void update(ParticulateMatterSample sample) {
         if (Config.instance().to().getBoolean(Config.Entry.MQTT_ENABLED.key(), false)) {
             logger.debug("MQTT going to send: {}", sample);
-            Mqtt.getInstance().publish(sample);
+
+            if (mqttInitialized()) {
+                mqtt.publish(sample);
+            }
         }
     }
 
     @Override
     public void disconnecting() {
-        if (Config.instance().to().getBoolean(Config.Entry.MQTT_ENABLED.key(), false)) {
-            Mqtt.getInstance().disconnect();
+        if (Config.instance().to().getBoolean(Config.Entry.MQTT_ENABLED.key(), false) && mqtt != null) {
+            mqtt.disconnect();
+            mqtt = null;
             logger.info("MQTT observer shut down...");
         }
     }

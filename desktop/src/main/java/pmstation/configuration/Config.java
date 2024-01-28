@@ -53,7 +53,8 @@ public class Config {
         MQTT_BROKER("mqtt.broker"),
         MQTT_USERNAME("mqtt.user"),
         MQTT_PASSWORD("mqtt.password"),
-        MQTT_TOPIC("mqtt.topic")
+        MQTT_TOPIC("mqtt.topic"),
+        MQTT_RECONNECT_DELAY("mqtt.reconnect_delay"),
         ;
         
         

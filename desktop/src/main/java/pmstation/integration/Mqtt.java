@@ -13,23 +13,18 @@ import org.slf4j.LoggerFactory;
 import pmstation.configuration.Config;
 import pmstation.core.plantower.ParticulateMatterSample;
 
-public class Mqtt {
-    private static class MqttHolder {
-        private static final Mqtt INSTANCE = new Mqtt();
-    }
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
 
+public class Mqtt {
     private static final Logger logger = LoggerFactory.getLogger(Mqtt.class);
     private static final Gson gson = new Gson();
     private final String topic;
+    private final ScheduledExecutorService scheduler = Executors.newScheduledThreadPool(1);
     private MqttClient client;
 
-
-
-    public static Mqtt getInstance() {
-        return MqttHolder.INSTANCE;
-    }
-
-    private Mqtt() {
+    public Mqtt() {
         topic = Config.instance().to().getString(Config.Entry.MQTT_TOPIC.key(),
                 "pm-home-station/aqi");
         String broker = Config.instance().to().getString(Config.Entry.MQTT_BROKER.key(),
@@ -43,6 +38,7 @@ public class Mqtt {
                 @Override
                 public void connectionLost(Throwable cause) {
                     logger.info("Connection lost!");
+                    scheduleReconnection(0);
                 }
 
                 @Override
@@ -58,6 +54,19 @@ public class Mqtt {
         }
 
         connect();
+    }
+
+    private void scheduleReconnection() {
+        scheduleReconnection(Config.instance().to().getInt(Config.Entry.MQTT_RECONNECT_DELAY.key(), 5));
+    }
+
+    private void scheduleReconnection(Integer delay) {
+        boolean isScheduled = !scheduler.isShutdown() && !scheduler.isTerminated();
+
+        if (isScheduled) {
+            scheduler.schedule(this::connect, delay, TimeUnit.SECONDS);
+            logger.info("Reconnection scheduled within: {} s", delay);
+        }
     }
 
     private void connect() {
@@ -79,6 +88,8 @@ public class Mqtt {
                 client.subscribe(topic);
             } catch (MqttException e) {
                 logger.error("Unable to connect/subscribe to MQTT Server {}", client.getServerURI(), e);
+                scheduleReconnection();
+
             }
         }
     }
@@ -95,8 +106,7 @@ public class Mqtt {
                     logger.error("Unable to publish message", e);
                 }
             } else {
-                logger.error("MQTT Client not connected to server: {}. Reconnection not supported yet. Please " +
-                        "restart application.", client.getServerURI());
+                logger.error("MQTT Client not connected yet to server: {}.", client.getServerURI());
             }
 
         }
