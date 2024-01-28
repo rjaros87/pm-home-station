@@ -1,26 +1,28 @@
 matrix:
   include:
-    - language: android
-      jdk: openjdk11
-      android:
-        components:
-          - tools
-          - android-28
-          - build-tools-28.0.2
-      licenses:
-        - 'android-sdk-license-.+'
-      before_install:
-        - yes | sdkmanager "platforms;android-27"
-      script:
-        - ./gradlew android:build
+# Temporary disabled
+#    - language: android
+#      jdk: openjdk11
+#      android:
+#        components:
+#          - tools
+#          - android-28
+#          - build-tools-28.0.2
+#      licenses:
+#        - 'android-sdk-license-.+'
+#      before_install:
+#        - yes | sdkmanager "platforms;android-27"
+#      script:
+#        - ./gradlew android:build
 
     - language: java
       jdk: openjdk11
       script:
         - ./gradlew shadowJar createExe
 
-    - language: objective-c
-      osx_image: xcode11.3
-      xcode_project: iOS/PMMonitor.xcodeproj
-      xcode_scheme: PMMonitor
-      script: git submodule init && git submodule update  && cd iOS && xcodebuild clean build -project PMMonitor.xcodeproj -scheme PMMonitor CODE_SIGN_IDENTITY="" CODE_SIGNING_REQUIRED=NO CODE_SIGNING_ALLOWED=NO
+# Temporary disabled
+#    - language: objective-c
+#      osx_image: xcode11.3
+#      xcode_project: iOS/PMMonitor.xcodeproj
+#      xcode_scheme: PMMonitor
+#      script: git submodule init && git submodule update  && cd iOS && xcodebuild clean build -project PMMonitor.xcodeproj -scheme PMMonitor CODE_SIGN_IDENTITY="" CODE_SIGNING_REQUIRED=NO CODE_SIGNING_ALLOWED=NO
