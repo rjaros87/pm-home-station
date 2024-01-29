@@ -13,7 +13,7 @@ def local_appName = 'PM Home Station'
 def local_mainClassName = 'pmstation.Start'
 def local_projectUrl = 'https://github.com/rjaros87/pm-home-station'
 
-sourceCompatibility = 1.8
+sourceCompatibility = JavaVersion.VERSION_11
 mainClassName = local_mainClassName
 
 repositories {
@@ -88,6 +88,8 @@ dependencies {
     extraLibs group: 'org.glassfish', name: 'javax.json', version: '1.1.4'
     // it is required by configuration2.builder
     extraLibs group: 'commons-beanutils', name: 'commons-beanutils', version: '1.9.4'
+    extraLibs group: 'org.eclipse.paho', name: 'org.eclipse.paho.client.mqttv3', version: '1.2.5'
+    extraLibs group: 'com.google.code.gson', name: 'gson', version: '2.10.1'
 
     extraLibs project(':core')
     configurations.compile.extendsFrom(configurations.extraLibs)

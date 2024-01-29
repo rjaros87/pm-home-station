@@ -13,6 +13,7 @@ import org.slf4j.LoggerFactory;
 import pmstation.configuration.Constants;
 import pmstation.core.plantower.IPlanTowerObserver;
 import pmstation.core.plantower.ParticulateMatterSample;
+import pmstation.core.plantower.Unit;
 
 public class ConsoleObserver implements IPlanTowerObserver {
     
@@ -27,12 +28,12 @@ public class ConsoleObserver implements IPlanTowerObserver {
                     + "HCHO: {} [{}], Humidity: {} [{}], Temperature: {} [{}], "
                     + "Model revision: {}, Error Code: {}",
                     Constants.DATE_FORMAT.format(sample.getDate()),
-                    sample.getPm1_0(), Constants.PM_UNITS,
-                    sample.getPm2_5(), Constants.PM_UNITS,
-                    sample.getPm10(), Constants.PM_UNITS,
-                    formatNonNeg("%.3f", ((double)sample.getHcho())/1000), Constants.HHCO_MG_UNITS,
-                    formatNonNeg("%.1f", sample.getHumidity()), Constants.HUMI_UNITS,
-                    formatNonNan("%.1f", sample.getTemperature()), Constants.TEMP_UNITS,
+                    sample.getPm1_0(), Unit.PARTICULATE_MATTER,
+                    sample.getPm2_5(), Unit.PARTICULATE_MATTER,
+                    sample.getPm10(), Unit.PARTICULATE_MATTER,
+                    formatNonNeg("%.3f", ((double)sample.getHcho())/1000), Unit.HCHO_UG,
+                    formatNonNeg("%.1f", sample.getHumidity()), Unit.HUMIDITY,
+                    formatNonNan("%.1f", sample.getTemperature()), Unit.TEMPERATURE,
                     "0x" + String.format("%02X", sample.getModelVersion()),
                     "0x" + String.format("%02X", sample.getErrCode())
             );

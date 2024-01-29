@@ -9,6 +9,7 @@ package pmstation.configuration;
 import java.util.Locale;
 
 import org.apache.commons.lang3.time.FastDateFormat;
+import pmstation.core.plantower.Unit;
 
 public class Constants {
     
@@ -22,11 +23,11 @@ public class Constants {
     public static final String GITHUB_LATEST_RELEASE = "https://api.github.com/repos/rjaros87/pm-home-station/releases/latest";
     
     
-    public static final String PM_UNITS = "\u03BCg/m\u00B3";
-    public static final String HHCO_MG_UNITS = "mg/m\u00B3";
-    public static final String HHCO_UG_UNITS = "\u03BCg/m\u00B3";
-    public static final String HUMI_UNITS = "%";
-    public static final String TEMP_UNITS = "\u2103";
+    public static final String PM_UNITS = Unit.PARTICULATE_MATTER.toString();
+    public static final String HHCO_MG_UNITS = Unit.HCHO_MG.toString();
+    public static final String HHCO_UG_UNITS = Unit.HCHO_UG.toString();
+    public static final String HUMI_UNITS = Unit.HUMIDITY.toString();
+    public static final String TEMP_UNITS = Unit.TEMPERATURE.toString();
     
     public static final String HHT_UNITS = HHCO_UG_UNITS + ", " + HUMI_UNITS + ", " + TEMP_UNITS; 
     
