@@ -12,37 +12,39 @@ import java.util.Map;
 import java.util.function.Function;
 
 public class ParticulateMatterSample implements Serializable {
+
     private enum ParticulateMatterSampleEnum {
-        PM1_0("pm1_0", "µg/m³", ParticulateMatterSample::getPm1_0),
-        PM2_5("pm2_5", "µg/m³", ParticulateMatterSample::getPm2_5),
-        PM10("pm10", "µg/m³", ParticulateMatterSample::getPm10),
-        HCHO("hcho", "µg/m³", ParticulateMatterSample::getHcho),
-        TEMPERATURE("temperature", "°C", ParticulateMatterSample::getTemperature),
-        HUMIDITY("humidity", "%", ParticulateMatterSample::getHumidity),
+        PM1_0("pm1_0", Unit.PARTICULATE_MATTER, ParticulateMatterSample::getPm1_0),
+        PM2_5("pm2_5", Unit.PARTICULATE_MATTER, ParticulateMatterSample::getPm2_5),
+        PM10("pm10", Unit.PARTICULATE_MATTER, ParticulateMatterSample::getPm10),
+        HCHO("hcho", Unit.HCHO_UG, ParticulateMatterSample::getHcho),
+        TEMPERATURE("temperature", Unit.TEMPERATURE, ParticulateMatterSample::getTemperature),
+        HUMIDITY("humidity", Unit.HUMIDITY, ParticulateMatterSample::getHumidity),
         ;
 
         private final String name;
-        private final String unit;
-        private final Function<ParticulateMatterSample, Number> valueSetter;
-        ParticulateMatterSampleEnum(String name, String unit,
-                                    Function<ParticulateMatterSample, Number> valueSetter) {
+        private final Unit unit;
+        private final Function<ParticulateMatterSample, Number> valueAccessor;
+
+        ParticulateMatterSampleEnum(String name, Unit unit,
+                                    Function<ParticulateMatterSample, Number> valueAccessor) {
             this.name = name;
             this.unit = unit;
-            this.valueSetter = valueSetter;
+            this.valueAccessor = valueAccessor;
         }
     }
 
     private static final long serialVersionUID = 3387284515078504042L;
 
-    private int hcho;
-    private double humidity;
-    private int pm1_0;
-    private int pm2_5;
-    private int pm10;
-    private double temperature;
-    private Date date;
-    private byte modelVersion;
-    private byte errCode;
+    private final int hcho;
+    private final double humidity;
+    private final int pm1_0;
+    private final int pm2_5;
+    private final int pm10;
+    private final double temperature;
+    private final Date date;
+    private final byte modelVersion;
+    private final byte errCode;
     
     
     public ParticulateMatterSample(int pm1_0, int pm2_5, int pm10) {
@@ -127,10 +129,10 @@ public class ParticulateMatterSample implements Serializable {
         Map<String, Map<String, Object>> pmMap = new HashMap<>();
 
         for (ParticulateMatterSampleEnum sample: ParticulateMatterSampleEnum.values()) {
-            Number value = sample.valueSetter.apply(this);
+            Number value = sample.valueAccessor.apply(this);
             if ((value instanceof Double && !((Double) value).isNaN())
                     || (value instanceof Integer && value.intValue() != -1)) {
-                pmMap.put(sample.name, Map.of("value", value, "unit", sample.unit));
+                pmMap.put(sample.name, Map.of("value", value, "unit", sample.unit.toString()));
             }
         }
 
