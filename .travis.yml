@@ -15,7 +15,7 @@ matrix:
         - ./gradlew android:build
 
     - language: java
-      jdk: openjdk17
+      jdk: openjdk20
       script:
         - ./gradlew shadowJar createExe
 
