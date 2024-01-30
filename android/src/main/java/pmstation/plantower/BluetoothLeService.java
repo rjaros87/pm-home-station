@@ -6,6 +6,7 @@
 
 package pmstation.plantower;
 
+import android.Manifest;
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
 import android.bluetooth.BluetoothGatt;
@@ -16,9 +17,12 @@ import android.bluetooth.BluetoothManager;
 import android.bluetooth.BluetoothProfile;
 import android.content.Context;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.os.Binder;
 import android.os.IBinder;
 import android.util.Log;
+
+import androidx.core.app.ActivityCompat;
 
 import java.util.List;
 
@@ -112,10 +116,10 @@ public class BluetoothLeService extends PlanTowerService {
             length = internalBuffer.length - internalBufferIndex;
         }
         System.arraycopy(bytes,
-                         0,
-                         internalBuffer,
-                         internalBufferIndex,
-                         length);
+                0,
+                internalBuffer,
+                internalBufferIndex,
+                length);
 
         Log.d(TAG, "parseData: internalBufferIndex " + internalBufferIndex);
         internalBufferIndex = newBufferIndex;

@@ -6,12 +6,14 @@
 
 package pmstation;
 
+import android.Manifest;
 import android.content.BroadcastReceiver;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.ServiceConnection;
+import android.content.pm.PackageManager;
 import android.graphics.Color;
 import android.graphics.PorterDuff;
 import android.graphics.drawable.Drawable;
@@ -21,6 +23,8 @@ import android.os.Handler;
 import android.os.IBinder;
 import android.os.Message;
 import android.preference.PreferenceManager;
+
+import androidx.core.app.ActivityCompat;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
@@ -115,6 +119,10 @@ public class MainActivity extends AppCompatActivity implements IPlanTowerObserve
     private final ServiceConnection btConnection = new ServiceConnection() {
         @Override
         public void onServiceConnected(ComponentName componentName, IBinder service) {
+            if (ActivityCompat.checkSelfPermission(MainActivity.this, Manifest.permission.BLUETOOTH_CONNECT) != PackageManager.PERMISSION_GRANTED) {
+                ActivityCompat.requestPermissions(MainActivity.this, new String[]{Manifest.permission.BLUETOOTH_CONNECT}, 2);
+                return;
+            }
             bluetoothLeService = ((BluetoothLeService.LocalBinder) service).getService();
             bluetoothLeService.setHandler(dataHandler);
             if (!bluetoothLeService.initialize()) {
@@ -272,7 +280,11 @@ public class MainActivity extends AppCompatActivity implements IPlanTowerObserve
             usbService.wakeUp();
         }
 
-        registerReceiver(gattUpdateReceiver, makeGattUpdateIntentFilter());
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            registerReceiver(gattUpdateReceiver, makeGattUpdateIntentFilter(), RECEIVER_EXPORTED);
+        } else {
+            registerReceiver(gattUpdateReceiver, makeGattUpdateIntentFilter());
+        }
         if (bluetoothLeService != null) {
             final boolean result = bluetoothLeService.connect(deviceAddress);
             Log.d(TAG, "Connect request result=" + result);
@@ -391,7 +403,12 @@ public class MainActivity extends AppCompatActivity implements IPlanTowerObserve
         filter.addAction(USBService.ACTION_USB_PERMISSION_GRANTED);
         filter.addAction(USBService.ACTION_USB_DISCONNECTED);
         filter.addAction(USBService.ACTION_USB_PERMISSION_NOT_GRANTED);
-        registerReceiver(usbReceiver, filter);
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            registerReceiver(usbReceiver, filter, RECEIVER_EXPORTED);
+        } else {
+            registerReceiver(usbReceiver, filter);
+        }
     }
 
     @Override

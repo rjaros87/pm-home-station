@@ -6,11 +6,11 @@ matrix:
         components:
           - tools
           - android-34
-          - build-tools-28.0.2
+          - build-tools-34.0.0
       licenses:
         - 'android-sdk-license-.+'
-      before_install:
-        - yes | sdkmanager "platforms;android-34"
+#      before_install:
+#        - yes | sdkmanager "platforms;android-34"
       # https://github.com/travis-ci/travis-ci/issues/8667#issuecomment-366589908
       install:
         - true
