@@ -13,9 +13,10 @@ matrix:
         - yes | sdkmanager "platforms;android-34"
       script:
         - ./gradlew android:build
-
     - language: java
       jdk: openjdk20
+      install:
+        - true
       script:
         - ./gradlew shadowJar createExe
 
