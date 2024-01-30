@@ -10,7 +10,7 @@ matrix:
       licenses:
         - 'android-sdk-license-.+'
       before_install:
-        - yes | sdkmanager "platforms;android-27"
+        - yes | sdkmanager "platforms;android-34"
       script:
         - ./gradlew android:build
 

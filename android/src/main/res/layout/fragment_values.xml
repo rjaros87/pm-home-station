@@ -7,7 +7,7 @@
     android:layout_height="match_parent"
     tools:context="pmstation.MainActivity"
     android:padding="8dp">
-    <android.support.v7.widget.CardView
+    <androidx.cardview.widget.CardView
         android:id="@+id/pm1_card"
         android:layout_width="0dp"
         android:layout_height="112dp"
@@ -21,9 +21,9 @@
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintBottom_toTopOf="@id/pm25_card">
         <include layout="@layout/pm_card"/>
-    </android.support.v7.widget.CardView>
+    </androidx.cardview.widget.CardView>
 
-    <android.support.v7.widget.CardView
+    <androidx.cardview.widget.CardView
         android:id="@+id/pm25_card"
         android:layout_width="0dp"
         android:layout_height="112dp"
@@ -37,9 +37,9 @@
         app:layout_constraintTop_toBottomOf="@+id/pm1_card"
         app:layout_constraintBottom_toTopOf="@+id/pm10_card">
         <include layout="@layout/pm_card" />
-    </android.support.v7.widget.CardView>
+    </androidx.cardview.widget.CardView>
 
-    <android.support.v7.widget.CardView
+    <androidx.cardview.widget.CardView
         android:id="@+id/pm10_card"
         android:layout_width="0dp"
         android:layout_height="112dp"
@@ -51,9 +51,9 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/pm25_card">
         <include layout="@layout/pm_card"/>
-    </android.support.v7.widget.CardView>
+    </androidx.cardview.widget.CardView>
 
-    <android.support.v7.widget.CardView
+    <androidx.cardview.widget.CardView
         android:id="@+id/time_card"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
@@ -75,9 +75,9 @@
             android:textColor="@android:color/black"
             tools:text="1234"
             />
-    </android.support.v7.widget.CardView>
+    </androidx.cardview.widget.CardView>
 
-    <android.support.v7.widget.CardView
+    <androidx.cardview.widget.CardView
         android:id="@+id/temp_card"
         android:layout_width="0dp"
         android:layout_height="112dp"
@@ -87,8 +87,8 @@
         app:layout_constraintStart_toEndOf="@id/pm1_card"
         app:layout_constraintTop_toTopOf="@id/pm1_card">
         <include layout="@layout/single_value_card"/>
-    </android.support.v7.widget.CardView>
-    <android.support.v7.widget.CardView
+    </androidx.cardview.widget.CardView>
+    <androidx.cardview.widget.CardView
         android:id="@+id/rh_card"
         android:layout_width="0dp"
         android:layout_height="112dp"
@@ -98,9 +98,9 @@
         app:layout_constraintStart_toEndOf="@id/pm25_card"
         app:layout_constraintTop_toTopOf="@id/pm25_card">
         <include layout="@layout/single_value_card"/>
-    </android.support.v7.widget.CardView>
+    </androidx.cardview.widget.CardView>
 
-    <android.support.v7.widget.CardView
+    <androidx.cardview.widget.CardView
         android:id="@+id/hcho_card"
         android:layout_width="0dp"
         android:layout_height="112dp"
@@ -110,6 +110,6 @@
         app:layout_constraintStart_toEndOf="@id/pm10_card"
         app:layout_constraintTop_toTopOf="@id/pm10_card">
         <include layout="@layout/single_value_card"/>
-    </android.support.v7.widget.CardView>
+    </androidx.cardview.widget.CardView>
 
 </android.support.constraint.ConstraintLayout>
