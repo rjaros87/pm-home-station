@@ -30,6 +30,12 @@ configurations {
     compile.exclude module: 'fontbox'
 }
 
+run {
+    jvmArgs = [
+        "--add-exports=java.desktop/com.apple.eawt=ALL-UNNAMED"
+    ]
+}
+
 shadowJar {
     archiveBaseName.set(project.name)
     archiveClassifier.set(null)
