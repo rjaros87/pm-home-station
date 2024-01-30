@@ -13,9 +13,9 @@ buildscript {
         }
     }
     dependencies {
-        classpath 'com.android.tools.build:gradle:3.5.0'
-        classpath 'com.google.gms:google-services:3.1.2'
-        classpath 'io.fabric.tools:gradle:1.25.4'
+        classpath 'com.android.tools.build:gradle:8.2.2'
+        classpath 'com.google.gms:google-services:4.3.10'
+        classpath 'io.fabric.tools:gradle:1.28.0'
 
         // NOTE: Do not place your application dependencies here; they belong
         // in the individual module build.gradle files
@@ -24,8 +24,9 @@ buildscript {
 
 plugins {
     id 'edu.sc.seis.macAppBundle' version '2.3.0' apply false
-    id 'edu.sc.seis.launch4j' version '2.4.6' apply false
-    id 'com.github.johnrengelman.shadow' version '5.2.0' apply false
+    id 'edu.sc.seis.launch4j' version '3.0.5' apply false
+    id 'com.github.johnrengelman.shadow' version '8.1.1' apply false
+//    id 'com.android.application' version '8.2.2' apply false
 }
 
 allprojects {
