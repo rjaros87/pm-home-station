@@ -13,8 +13,8 @@ def local_appName = 'PM Home Station'
 def local_mainClassName = 'pmstation.Start'
 def local_projectUrl = 'https://github.com/rjaros87/pm-home-station'
 
-sourceCompatibility = JavaVersion.VERSION_17
-targetCompatibility = JavaVersion.VERSION_17
+sourceCompatibility = JavaVersion.VERSION_20
+targetCompatibility = JavaVersion.VERSION_20
 mainClassName = local_mainClassName
 
 repositories {
@@ -54,14 +54,17 @@ shadowJar {
 }
 
 launch4j {
-    copyConfigurable = project.tasks.shadowJar.outputs.files
+    // https://github.com/TheBoegl/gradle-launch4j?tab=readme-ov-file#configurable-input-configuration
+    copyConfigurable = []
+    jarTask = project.tasks.shadowJar
+
     mainClassName = local_mainClassName
     icon = "${projectDir}/icons/app-icon.ico"
     outfile = "${project.name}-${project.version}.exe"
     supportUrl = local_projectUrl
     companyName = local_projectUrl
-    version = version
-    textVersion = version
+    version = project.version
+    textVersion = project.version
     productName = local_appName
     copyright = 'Copyright (C), licence: GPL-3.0'
 }
