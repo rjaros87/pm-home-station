@@ -17,7 +17,9 @@ matrix:
         - mv * tools | mkdir tools && cd $TRAVIS_BUILD_DIR
 
         # SETUP PATH(s)
-        - export PATH=$ANDROID_HOME/cmdline-tools/tools/bin/:$PATH
+        - export PATH=$ANDROID_HOME/cmdline-tools/bin/:$PATH
+        - export PATH=$ANDROID_HOME/cmdline-tools/tools/:$PATH
+        - export PATH=$ANDROID_HOME/cmdline-tools/bin/:$PATH
         - export PATH=$ANDROID_HOME/emulator/:$PATH
         - export PATH=$ANDROID_HOME/platform-tools/:$PATH
 
@@ -29,7 +31,9 @@ matrix:
         - env
         - ls -la /home/travis/travis-tools/android/
         - ls -la /home/travis/travis-tools/android/cmdline-tools/
-        - ls -la /home/travis/travis-tools/android/cmdline-tools/tools/bin/
+        - ls -la /home/travis/travis-tools/android/cmdline-tools/bin
+        - ls -la /home/travis/travis-tools/android/cmdline-tools/tools/
+#        - ls -la /home/travis/travis-tools/android/cmdline-tools/tools/bin/
         # INSTALL REQUIRED ANDROID SDK TOOLS
         - sdkmanager --sdk_root=$ANDROID_HOME --list | awk '/Installed/{flag=1; next} /Available/{flag=0} flag'
         - yes | sdkmanager --sdk_root=$ANDROID_HOME --install "platform-tools" "platforms;android-34" "build-tools;34.0.0"
