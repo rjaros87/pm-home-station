@@ -10,7 +10,9 @@ matrix:
       licenses:
         - 'android-sdk-license-.+'
       before_install:
-        - yes | sdkmanager --install "platforms;android-34"
+        - which sdkmanager
+        - sdkmanager --version || true
+        - yes | sdkmanager "platforms;android-34"
       # https://github.com/travis-ci/travis-ci/issues/8667#issuecomment-366589908
       install:
         - true
