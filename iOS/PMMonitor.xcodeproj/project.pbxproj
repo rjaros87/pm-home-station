@@ -3,7 +3,7 @@
 	archiveVersion = 1;
 	classes = {
 	};
-	objectVersion = 48;
+	objectVersion = 54;
 	objects = {
 
 /* Begin PBXBuildFile section */
@@ -25,8 +25,8 @@
 		A36C11BB202E93B40024E841 /* PTDevice.swift in Sources */ = {isa = PBXBuildFile; fileRef = A36C11BA202E93B40024E841 /* PTDevice.swift */; };
 		A36C11BF202F21BC0024E841 /* PTDeviceCallbacks.swift in Sources */ = {isa = PBXBuildFile; fileRef = A36C11BE202F21BC0024E841 /* PTDeviceCallbacks.swift */; };
 		A36C11C1202F2BDD0024E841 /* ViewController+Chart.swift in Sources */ = {isa = PBXBuildFile; fileRef = A36C11C0202F2BDD0024E841 /* ViewController+Chart.swift */; };
-		A372F4B62459DFDC0045028B /* Charts.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A372F4B32459DFBF0045028B /* Charts.framework */; };
-		A372F4B72459DFDC0045028B /* Charts.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = A372F4B32459DFBF0045028B /* Charts.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		A372F4B62459DFDC0045028B /* DGCharts.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A372F4B32459DFBF0045028B /* DGCharts.framework */; };
+		A372F4B72459DFDC0045028B /* DGCharts.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = A372F4B32459DFBF0045028B /* DGCharts.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		A372F4B92459E2FD0045028B /* WebKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A372F4B82459E2FD0045028B /* WebKit.framework */; };
 		A38F368128D51B3800ABB95A /* PMMonitorMac.swift in Sources */ = {isa = PBXBuildFile; fileRef = A38F368028D51B3800ABB95A /* PMMonitorMac.swift */; };
 		A38F368328D51BF800ABB95A /* MainView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A38F368228D51BF800ABB95A /* MainView.swift */; };
@@ -35,7 +35,7 @@
 		A3CCDC80203897F7003ADDE9 /* About.html in Resources */ = {isa = PBXBuildFile; fileRef = A3CCDC7F203897F7003ADDE9 /* About.html */; };
 		A3F855E8202F3AFC00640BD3 /* Interface.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = A3F855E6202F3AFC00640BD3 /* Interface.storyboard */; };
 		A3F855EA202F3AFC00640BD3 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = A3F855E9202F3AFC00640BD3 /* Assets.xcassets */; };
-		A3F855F1202F3AFD00640BD3 /* PMWatch Extension.appex in Embed App Extensions */ = {isa = PBXBuildFile; fileRef = A3F855F0202F3AFD00640BD3 /* PMWatch Extension.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
+		A3F855F1202F3AFD00640BD3 /* PMWatch Extension.appex in Embed Foundation Extensions */ = {isa = PBXBuildFile; fileRef = A3F855F0202F3AFD00640BD3 /* PMWatch Extension.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
 		A3F855F6202F3AFD00640BD3 /* InterfaceController.swift in Sources */ = {isa = PBXBuildFile; fileRef = A3F855F5202F3AFD00640BD3 /* InterfaceController.swift */; };
 		A3F855F8202F3AFD00640BD3 /* ExtensionDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = A3F855F7202F3AFD00640BD3 /* ExtensionDelegate.swift */; };
 		A3F855FA202F3AFD00640BD3 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = A3F855F9202F3AFD00640BD3 /* Assets.xcassets */; };
@@ -91,20 +91,20 @@
 			dstPath = "";
 			dstSubfolderSpec = 10;
 			files = (
-				A372F4B72459DFDC0045028B /* Charts.framework in Embed Frameworks */,
+				A372F4B72459DFDC0045028B /* DGCharts.framework in Embed Frameworks */,
 			);
 			name = "Embed Frameworks";
 			runOnlyForDeploymentPostprocessing = 0;
 		};
-		A3F85604202F3AFD00640BD3 /* Embed App Extensions */ = {
+		A3F85604202F3AFD00640BD3 /* Embed Foundation Extensions */ = {
 			isa = PBXCopyFilesBuildPhase;
 			buildActionMask = 2147483647;
 			dstPath = "";
 			dstSubfolderSpec = 13;
 			files = (
-				A3F855F1202F3AFD00640BD3 /* PMWatch Extension.appex in Embed App Extensions */,
+				A3F855F1202F3AFD00640BD3 /* PMWatch Extension.appex in Embed Foundation Extensions */,
 			);
-			name = "Embed App Extensions";
+			name = "Embed Foundation Extensions";
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 		A3F85606202F3AFD00640BD3 /* Embed Watch Content */ = {
@@ -169,7 +169,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				A372F4B92459E2FD0045028B /* WebKit.framework in Frameworks */,
-				A372F4B62459DFDC0045028B /* Charts.framework in Frameworks */,
+				A372F4B62459DFDC0045028B /* DGCharts.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -281,8 +281,8 @@
 		A372F4AE2459DFBF0045028B /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				A372F4B32459DFBF0045028B /* Charts.framework */,
-				A372F4B52459DFBF0045028B /* ChartsTests.xctest */,
+				A372F4B32459DFBF0045028B /* DGCharts.framework */,
+				A372F4B52459DFBF0045028B /* DGChartsTests.xctest */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -395,7 +395,7 @@
 			buildConfigurationList = A3F85605202F3AFD00640BD3 /* Build configuration list for PBXNativeTarget "PMWatch" */;
 			buildPhases = (
 				A3F855E2202F3AFB00640BD3 /* Resources */,
-				A3F85604202F3AFD00640BD3 /* Embed App Extensions */,
+				A3F85604202F3AFD00640BD3 /* Embed Foundation Extensions */,
 			);
 			buildRules = (
 			);
@@ -430,8 +430,9 @@
 		A304E877202E32AD00B43B5A /* Project object */ = {
 			isa = PBXProject;
 			attributes = {
+				BuildIndependentTargetsInParallel = YES;
 				LastSwiftUpdateCheck = 0920;
-				LastUpgradeCheck = 1140;
+				LastUpgradeCheck = 1520;
 				ORGANIZATIONNAME = dflab;
 				TargetAttributes = {
 					A304E87E202E32AD00B43B5A = {
@@ -489,17 +490,17 @@
 /* End PBXProject section */
 
 /* Begin PBXReferenceProxy section */
-		A372F4B32459DFBF0045028B /* Charts.framework */ = {
+		A372F4B32459DFBF0045028B /* DGCharts.framework */ = {
 			isa = PBXReferenceProxy;
 			fileType = wrapper.framework;
-			path = Charts.framework;
+			path = DGCharts.framework;
 			remoteRef = A372F4B22459DFBF0045028B /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
-		A372F4B52459DFBF0045028B /* ChartsTests.xctest */ = {
+		A372F4B52459DFBF0045028B /* DGChartsTests.xctest */ = {
 			isa = PBXReferenceProxy;
 			fileType = wrapper.cfbundle;
-			path = ChartsTests.xctest;
+			path = DGChartsTests.xctest;
 			remoteRef = A372F4B42459DFBF0045028B /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
@@ -677,6 +678,7 @@
 				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
 				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
 				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
 				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
 				CLANG_WARN_STRICT_PROTOTYPES = YES;
 				CLANG_WARN_SUSPICIOUS_MOVE = YES;
@@ -688,6 +690,7 @@
 				DEBUG_INFORMATION_FORMAT = dwarf;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				ENABLE_TESTABILITY = YES;
+				ENABLE_USER_SCRIPT_SANDBOXING = YES;
 				GCC_C_LANGUAGE_STANDARD = gnu11;
 				GCC_DYNAMIC_NO_PIC = NO;
 				GCC_NO_COMMON_BLOCKS = YES;
@@ -702,7 +705,7 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 10.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 12.0;
 				MTL_ENABLE_DEBUG_INFO = YES;
 				ONLY_ACTIVE_ARCH = YES;
 				SDKROOT = iphoneos;
@@ -736,6 +739,7 @@
 				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
 				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
 				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
 				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
 				CLANG_WARN_STRICT_PROTOTYPES = YES;
 				CLANG_WARN_SUSPICIOUS_MOVE = YES;
@@ -747,6 +751,7 @@
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				ENABLE_NS_ASSERTIONS = NO;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_USER_SCRIPT_SANDBOXING = YES;
 				GCC_C_LANGUAGE_STANDARD = gnu11;
 				GCC_NO_COMMON_BLOCKS = YES;
 				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
@@ -755,10 +760,11 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 10.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 12.0;
 				MTL_ENABLE_DEBUG_INFO = NO;
 				SDKROOT = iphoneos;
-				SWIFT_OPTIMIZATION_LEVEL = "-Owholemodule";
+				SWIFT_COMPILATION_MODE = wholemodule;
+				SWIFT_OPTIMIZATION_LEVEL = "-O";
 				VALIDATE_PRODUCT = YES;
 			};
 			name = Release;
@@ -775,8 +781,11 @@
 					"$(PROJECT_DIR)/3rd\\ party",
 				);
 				INFOPLIST_FILE = PMMonitor/Info.plist;
-				IPHONEOS_DEPLOYMENT_TARGET = 11.0;
-				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
+				IPHONEOS_DEPLOYMENT_TARGET = 12.0;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
 				PRODUCT_BUNDLE_IDENTIFIER = net.dflab.PMMonitor;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_VERSION = 5.0;
@@ -796,8 +805,11 @@
 					"$(PROJECT_DIR)/3rd\\ party",
 				);
 				INFOPLIST_FILE = PMMonitor/Info.plist;
-				IPHONEOS_DEPLOYMENT_TARGET = 11.0;
-				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
+				IPHONEOS_DEPLOYMENT_TARGET = 12.0;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
 				PRODUCT_BUNDLE_IDENTIFIER = net.dflab.PMMonitor;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_VERSION = 5.0;
@@ -812,8 +824,12 @@
 				CODE_SIGN_STYLE = Manual;
 				DEVELOPMENT_TEAM = "";
 				INFOPLIST_FILE = PMMonitorTests/Info.plist;
-				IPHONEOS_DEPLOYMENT_TARGET = 11.2;
-				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
+				IPHONEOS_DEPLOYMENT_TARGET = 12.0;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@loader_path/Frameworks",
+				);
 				PRODUCT_BUNDLE_IDENTIFIER = net.dflab.PMMonitorTests;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "";
@@ -830,8 +846,12 @@
 				CODE_SIGN_STYLE = Manual;
 				DEVELOPMENT_TEAM = "";
 				INFOPLIST_FILE = PMMonitorTests/Info.plist;
-				IPHONEOS_DEPLOYMENT_TARGET = 11.2;
-				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
+				IPHONEOS_DEPLOYMENT_TARGET = 12.0;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@loader_path/Frameworks",
+				);
 				PRODUCT_BUNDLE_IDENTIFIER = net.dflab.PMMonitorTests;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "";
@@ -849,9 +869,13 @@
 				CODE_SIGN_IDENTITY = "-";
 				CODE_SIGN_STYLE = Manual;
 				COMBINE_HIDPI_IMAGES = YES;
+				DEAD_CODE_STRIPPING = YES;
 				DEVELOPMENT_TEAM = "";
 				INFOPLIST_FILE = "PMMonitor Mac/Info.plist";
-				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/../Frameworks",
+				);
 				MACOSX_DEPLOYMENT_TARGET = 13.0;
 				PRODUCT_BUNDLE_IDENTIFIER = net.dflab.mac.pmmonitor;
 				PRODUCT_NAME = PMMonitor;
@@ -869,9 +893,13 @@
 				CODE_SIGN_IDENTITY = "-";
 				CODE_SIGN_STYLE = Manual;
 				COMBINE_HIDPI_IMAGES = YES;
+				DEAD_CODE_STRIPPING = YES;
 				DEVELOPMENT_TEAM = "";
 				INFOPLIST_FILE = "PMMonitor Mac/Info.plist";
-				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/../Frameworks",
+				);
 				MACOSX_DEPLOYMENT_TARGET = 13.0;
 				PRODUCT_BUNDLE_IDENTIFIER = net.dflab.mac.pmmonitor;
 				PRODUCT_NAME = PMMonitor;
@@ -926,7 +954,11 @@
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_TEAM = 2ES475U856;
 				INFOPLIST_FILE = "PMWatch Extension/Info.plist";
-				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @executable_path/../../Frameworks";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@executable_path/../../Frameworks",
+				);
 				PRODUCT_BUNDLE_IDENTIFIER = net.dflab.PMMonitor.watchkitapp.extension;
 				PRODUCT_NAME = "${TARGET_NAME}";
 				SDKROOT = watchos;
@@ -944,7 +976,11 @@
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_TEAM = 2ES475U856;
 				INFOPLIST_FILE = "PMWatch Extension/Info.plist";
-				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @executable_path/../../Frameworks";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@executable_path/../../Frameworks",
+				);
 				PRODUCT_BUNDLE_IDENTIFIER = net.dflab.PMMonitor.watchkitapp.extension;
 				PRODUCT_NAME = "${TARGET_NAME}";
 				SDKROOT = watchos;

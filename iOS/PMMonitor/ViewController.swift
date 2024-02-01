@@ -8,7 +8,7 @@
 
 import UIKit
 import CoreBluetooth
-import Charts
+import DGCharts
 
 class ViewController: UIViewController {
 

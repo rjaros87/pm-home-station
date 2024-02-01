@@ -20,9 +20,7 @@ matrix:
       script:
         - ./gradlew shadowJar createExe
 
-# Temporary disabled
-#    - language: objective-c
-#      osx_image: xcode11.3
-#      xcode_project: iOS/PMMonitor.xcodeproj
-#      xcode_scheme: PMMonitor
-#      script: git submodule init && git submodule update  && cd iOS && xcodebuild clean build -project PMMonitor.xcodeproj -scheme PMMonitor CODE_SIGN_IDENTITY="" CODE_SIGNING_REQUIRED=NO CODE_SIGNING_ALLOWED=NO
+    - language: objective-c
+      os: osx
+      osx_image: xcode14.2
+      script: git submodule init && git submodule update  && cd iOS && xcodebuild clean build -project PMMonitor.xcodeproj -scheme PMMonitor CODE_SIGN_IDENTITY="" CODE_SIGNING_REQUIRED=NO CODE_SIGNING_ALLOWED=NO

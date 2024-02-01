@@ -7,7 +7,7 @@
 //
 
 import UIKit
-import Charts
+import DGCharts
 
 fileprivate let dataLimit = 30
 fileprivate var chartRawData : [PTData] = [PTData]()
@@ -21,7 +21,7 @@ extension ViewController {
         xAxis.labelPosition = .bottom
 
         lineChart.rightAxis.enabled = false
-        lineChart.chartDescription?.enabled = false
+        lineChart.chartDescription.enabled = false
         lineChart.gridBackgroundColor = NSUIColor.white
     }
 
@@ -73,7 +73,7 @@ extension ViewController {
     }
 }
 
-public class TimeValueFormatter: NSObject, IAxisValueFormatter {
+public class TimeValueFormatter: NSObject, AxisValueFormatter {
     private let dateFormatter = DateFormatter()
 
     override init() {
