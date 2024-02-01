@@ -2,14 +2,12 @@ matrix:
   include:
     - language: java
       jdk: openjdk17
-      android:
-        components:
-          - platform-tools
-          - tools
-          - android-34
-          - build-tools-34.0.0
-      licenses:
-        - 'android-sdk-license-.+'
+
+      env:
+        global:
+          - ANDROID_HOME=$HOME/travis-tools/android
+          - ANDROID_SDK_ROOT=$HOME/travis-tools/android
+
       before_install:
         # PREPARE FOR ANDROID SDK SETUP
         - mkdir -p $HOME/travis-tools/android && mkdir $HOME/.android && touch $HOME/.android/repositories.cfg
@@ -25,9 +23,11 @@ matrix:
       # https://github.com/travis-ci/travis-ci/issues/8667#issuecomment-366589908
       install:
         - true
+        - echo $PATH
+        - ls -la $ANDROID_HOME/cmdline-tools/tools/bin
         # INSTALL REQUIRED ANDROID SDK TOOLS
         - sdkmanager --sdk_root=$ANDROID_HOME --list | awk '/Installed/{flag=1; next} /Available/{flag=0} flag'
-        - yes | sdkmanager --sdk_root=$ANDROID_HOME --install "platform-tools" "platforms;android-34" "build-tools;34.0.0" "emulator" "system-images;android-33;google_apis;x86_64"
+        - yes | sdkmanager --sdk_root=$ANDROID_HOME --install "platform-tools" "platforms;android-34" "build-tools;34.0.0"
         - sdkmanager --list --sdk_root=$ANDROID_HOME | awk '/Installed/{flag=1; next} /Available/{flag=0} flag'
       script:
         - ./gradlew android:build
