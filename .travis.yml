@@ -24,7 +24,7 @@ matrix:
       install:
         - true
         - echo $PATH
-        - ls -la $ANDROID_HOME/cmdline-tools/tools/bin
+        - env
         # INSTALL REQUIRED ANDROID SDK TOOLS
         - sdkmanager --sdk_root=$ANDROID_HOME --list | awk '/Installed/{flag=1; next} /Available/{flag=0} flag'
         - yes | sdkmanager --sdk_root=$ANDROID_HOME --install "platform-tools" "platforms;android-34" "build-tools;34.0.0"
