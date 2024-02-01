@@ -4,15 +4,14 @@ matrix:
       jdk: openjdk17
       android:
         components:
+          - platform-tools
           - tools
-          - android-34
-          - build-tools-34.0.0
+          - android-32
+          - build-tools-32.0.0
       licenses:
         - 'android-sdk-license-.+'
       before_install:
-        - which sdkmanager
-        - sdkmanager --version || true
-        - yes | sdkmanager "platforms;android-34"
+        - yes | sdkmanager "platforms;android-32"
       # https://github.com/travis-ci/travis-ci/issues/8667#issuecomment-366589908
       install:
         - true
