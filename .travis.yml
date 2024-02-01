@@ -2,11 +2,11 @@ matrix:
   include:
     - language: java
       jdk: openjdk17
+      os: linux
 
       env:
-        global:
-          - ANDROID_HOME=$HOME/travis-tools/android
-          - ANDROID_SDK_ROOT=$HOME/travis-tools/android
+        - ANDROID_HOME=$HOME/travis-tools/android
+        - ANDROID_SDK_ROOT=$HOME/travis-tools/android
 
       before_install:
         # PREPARE FOR ANDROID SDK SETUP
@@ -24,6 +24,7 @@ matrix:
       install:
         - true
         - echo $PATH
+        - echo $ANDROID_HOME
         - env
         # INSTALL REQUIRED ANDROID SDK TOOLS
         - sdkmanager --sdk_root=$ANDROID_HOME --list | awk '/Installed/{flag=1; next} /Available/{flag=0} flag'
