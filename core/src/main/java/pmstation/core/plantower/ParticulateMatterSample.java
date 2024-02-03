@@ -138,4 +138,9 @@ public class ParticulateMatterSample implements Serializable {
 
         return pmMap;
     }
+    
+    @Override
+    public String toString() {
+        return getAsMap().toString();
+    }
 }
