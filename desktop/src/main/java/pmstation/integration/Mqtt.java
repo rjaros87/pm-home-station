@@ -5,6 +5,7 @@
  */
 package pmstation.integration;
 
+import java.util.Map;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
@@ -22,6 +23,7 @@ import org.slf4j.LoggerFactory;
 
 import com.google.gson.Gson;
 
+import pmstation.configuration.Constants;
 import pmstation.core.plantower.ParticulateMatterSample;
 
 public class Mqtt {
@@ -69,6 +71,34 @@ public class Mqtt {
             });
         } catch (MqttException e) {
             logger.error("Unable to create a MQTT Client", e);
+        }
+    }
+    
+    public void advertise(String advertisementTopic, String deviceId) {
+        if (client == null || StringUtils.isEmpty(deviceId)) {
+            return;
+        }
+        if (client.isConnected()) {
+            for (SubTopic sub : SubTopic.values()) {
+                Map<String, Object> adv = Map.of(
+                        "name", sub.name().toLowerCase(),
+                        "uniq_id", (deviceId + "-" + sub.name()).toLowerCase(),
+                        "~", topic,
+                        "device", Map.of(
+                                // "ids", ? 
+                                "mf", Constants.PROJECT_URL,
+                                "name", Constants.PROJECT_NAME,
+                                "sw", Constants.VERSION
+                        )
+                    );                    
+                String jsonString = gson.toJson(adv);
+                publishMessageToTopic(advertisementTopic,
+                        Constants.PROJECT_NAME + "-" + deviceId + "/" + sub.name() + "/config", jsonString);
+                logger.debug("MQTT advertisement sent: {}", adv);
+            }
+            lastError = null;
+        } else {
+            logger.error("MQTT Client not yet connected to server: {}", client.getServerURI());
         }
     }
 
@@ -137,8 +167,12 @@ public class Mqtt {
             logger.info("Reconnection scheduled within: {}s", delay);
         }
     }
-
+    
     private void publishMessageToTopic(String subtopic, String message) {
+        publishMessageToTopic(topic, subtopic, message);
+    }
+
+    private void publishMessageToTopic(String topic, String subtopic, String message) {
         MqttMessage mqttMessage = new MqttMessage();
         mqttMessage.setPayload(message.getBytes());
         try {

@@ -13,9 +13,14 @@ def local_appName = 'PM Home Station'
 def local_mainClassName = 'pmstation.Start'
 def local_projectUrl = 'https://github.com/rjaros87/pm-home-station'
 
-sourceCompatibility = JavaVersion.VERSION_20
-targetCompatibility = JavaVersion.VERSION_20
-mainClassName = local_mainClassName
+java {
+    sourceCompatibility = JavaVersion.VERSION_17
+    targetCompatibility = JavaVersion.VERSION_17
+}
+
+application {
+    mainClass = local_mainClassName
+}
 
 repositories {
     mavenCentral()

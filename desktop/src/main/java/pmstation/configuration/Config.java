@@ -50,10 +50,11 @@ public class Config {
         CSV_LOG_FILE("csv.log.file"),
         MQTT_ENABLED("mqtt.enabled"),
         MQTT_CLIENT_ID("mqtt.client_id"),
+        MQTT_TOPIC("mqtt.topic"),
         MQTT_ADDRESS("mqtt.address"),
         MQTT_USERNAME("mqtt.user"),
         MQTT_PASSWORD("mqtt.password"),
-        MQTT_TOPIC("mqtt.topic"),
+        MQTT_DEVICE_ID("mqtt.device_id"),
         MQTT_RECONNECT_DELAY("mqtt.reconnect_delay"),
         ;
         
