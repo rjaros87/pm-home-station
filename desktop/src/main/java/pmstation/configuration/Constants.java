@@ -18,7 +18,8 @@ public class Constants {
     public static final String PROJECT_URL = "https://github.com/rjaros87/pm-home-station";
     public static final Locale DEFAULT_LOCALE = Locale.getDefault(); 
     public static final String DEFAULT_ICON = "app-icon.png";
-    public static final String MAIN_WINDOW_TITLE = String.format("Particulate Matter home station (v%s)", VERSION);
+    public static final String APPLICATION_TITLE = "Particulate Matter home station";
+    public static final String MAIN_WINDOW_TITLE = String.format("%s (v%s)", APPLICATION_TITLE, VERSION);
     
     public static final String GITHUB_LATEST_RELEASE = "https://api.github.com/repos/rjaros87/pm-home-station/releases/latest";
     

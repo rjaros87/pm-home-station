@@ -29,7 +29,7 @@ matrix:
       script:
         - ./gradlew android:build
     - language: java
-      jdk: openjdk20
+      jdk: openjdk17
       dist: jammy
       # https://github.com/travis-ci/travis-ci/issues/8667#issuecomment-366589908
       install:
