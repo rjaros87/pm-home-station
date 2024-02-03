@@ -17,6 +17,8 @@ import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -32,6 +34,7 @@ import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JList;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JSpinner;
@@ -58,6 +61,7 @@ import org.slf4j.LoggerFactory;
 
 import pmstation.configuration.Config;
 import pmstation.configuration.Constants;
+import pmstation.integration.Mqtt;
 import pmstation.serial.SerialUART;
 
 public class ConfigurationDlg {
@@ -312,7 +316,7 @@ public class ConfigurationDlg {
                 .addContainerGap()));
         groupLayout.setVerticalGroup(groupLayout.createParallelGroup(Alignment.TRAILING)
                 .addGroup(groupLayout.createSequentialGroup().addContainerGap()
-                        .addComponent(tabbedPane, GroupLayout.PREFERRED_SIZE, 401, GroupLayout.PREFERRED_SIZE)
+                        .addComponent(tabbedPane, GroupLayout.PREFERRED_SIZE, 421, GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(ComponentPlacement.RELATED)
                         .addComponent(panelBottom, GroupLayout.PREFERRED_SIZE, 55, GroupLayout.PREFERRED_SIZE)
                         .addContainerGap()));
@@ -576,6 +580,123 @@ public class ConfigurationDlg {
         btnChooseCSVFilePath.setToolTipText("Choose filepath to write meaurements in CSV format");
         btnChooseCSVFilePath.setBounds(508, 204, 28, 21);
         panelGeneral.add(btnChooseCSVFilePath);
+
+        JLabel lblMqttEnabled = new JLabel("<html>MQTT enabled:</html>");
+        lblMqttEnabled.setBounds(6, 244, 386, 16);
+        panelGeneral.add(lblMqttEnabled);
+
+        JCheckBox chkbxMqttEnabled = new JCheckBox();
+
+        var mqttEnabled = Config.instance().to().getBoolean(Config.Entry.MQTT_ENABLED.key(), false);
+        chkbxMqttEnabled.setBounds(471, 234, 78, 29);
+        chkbxMqttEnabled.setSelected(mqttEnabled);
+        chkbxMqttEnabled.addItemListener(new ItemListener() {
+            public void itemStateChanged(ItemEvent e) {
+                Config.instance().to().setProperty(Config.Entry.MQTT_ENABLED.key(),
+                        chkbxMqttEnabled.isSelected());
+            }
+        });
+        panelGeneral.add(chkbxMqttEnabled);
+
+        JLabel lblMqttConn = new JLabel("<html>MQTT server <i><small>(tcp://host:port)</small></i>:</html>");
+        lblMqttConn.setHorizontalAlignment(SwingConstants.LEFT);
+        lblMqttConn.setBounds(6, 261, 190, 16);
+        panelGeneral.add(lblMqttConn);
+
+        JTextField textMqttConn = new JTextField(Config.instance().to().getString(Config.Entry.MQTT_ADDRESS.key(), "tcp://localhost:1883"));
+        textMqttConn.setBounds(200, 256, 268, 26);
+        textMqttConn.setEnabled(mqttEnabled);
+        textMqttConn.addPropertyChangeListener(new PropertyChangeListener() {
+            public void propertyChange(PropertyChangeEvent e) {
+                Config.instance().to().setProperty(Config.Entry.MQTT_ADDRESS.key(), textMqttConn.getText());
+            }
+        });
+        panelGeneral.add(textMqttConn);
+
+        JButton btnMqttTest = new JButton("Test");
+        btnMqttTest.setBounds(476, 258, 70, 21);
+        btnMqttTest.setEnabled(mqttEnabled);
+        panelGeneral.add(btnMqttTest);
+
+        JLabel lblClientIdTopic = new JLabel("<html>Client Id & Topic:</html>");
+        lblClientIdTopic.setHorizontalAlignment(SwingConstants.LEFT);
+        lblClientIdTopic.setBounds(6, 288, 163, 16);
+        panelGeneral.add(lblClientIdTopic);
+
+        JTextField textMqttClientId = new JTextField(Config.instance().to().getString(Config.Entry.MQTT_CLIENT_ID.key(), "PMStationClient"));
+        textMqttClientId.setBounds(200, 283, 168, 26);
+        textMqttClientId.setEnabled(mqttEnabled);
+        textMqttClientId.addPropertyChangeListener(new PropertyChangeListener() {
+            public void propertyChange(PropertyChangeEvent e) {
+                Config.instance().to().setProperty(Config.Entry.MQTT_CLIENT_ID.key(), textMqttClientId.getText());
+            }
+        });
+        panelGeneral.add(textMqttClientId);
+
+        JTextField textMqttTopic = new JTextField(Config.instance().to().getString(Config.Entry.MQTT_TOPIC.key(), "pm-home-station"));
+        textMqttTopic.setBounds(380, 283, 168, 26);
+        textMqttTopic.setEnabled(mqttEnabled);
+        textMqttTopic.addPropertyChangeListener(new PropertyChangeListener() {
+            public void propertyChange(PropertyChangeEvent e) {
+                Config.instance().to().setProperty(Config.Entry.MQTT_TOPIC.key(), textMqttTopic.getText());
+            }
+        });
+        panelGeneral.add(textMqttTopic);
+
+        JLabel lblUserPass = new JLabel("<html>User & Password:<br/><i><small>both empty if anonymous<br/>Warning: password will be kept in plain-text</small></i></html>");
+        lblUserPass.setHorizontalAlignment(SwingConstants.LEFT);
+        lblUserPass.setBounds(6, 315, 263, 35);
+        panelGeneral.add(lblUserPass);
+
+        JTextField textMqttUser = new JTextField(Config.instance().to().getString(Config.Entry.MQTT_USERNAME.key(), ""));
+        textMqttUser.setBounds(200, 313, 168, 26);
+        textMqttUser.setEnabled(mqttEnabled);
+        textMqttUser.addPropertyChangeListener(new PropertyChangeListener() {
+            public void propertyChange(PropertyChangeEvent e) {
+                Config.instance().to().setProperty(Config.Entry.MQTT_USERNAME.key(), textMqttUser.getText());
+            }
+        });
+        panelGeneral.add(textMqttUser);
+
+        JTextField textMqttPasswd = new JTextField(Config.instance().to().getString(Config.Entry.MQTT_PASSWORD.key(), ""));
+        textMqttPasswd.setBounds(380, 313, 168, 26);
+        textMqttPasswd.setEnabled(mqttEnabled);
+        textMqttPasswd.addPropertyChangeListener(new PropertyChangeListener() {
+            public void propertyChange(PropertyChangeEvent e) {
+                Config.instance().to().setProperty(Config.Entry.MQTT_PASSWORD.key(), textMqttPasswd.getText());
+            }
+        });
+        panelGeneral.add(textMqttPasswd);
+
+        chkbxMqttEnabled.addItemListener(new ItemListener() {
+            public void itemStateChanged(ItemEvent e) {
+                var selected = chkbxMqttEnabled.isSelected();
+                Config.instance().to().setProperty(Config.Entry.MQTT_ENABLED.key(), selected);
+                textMqttConn.setEnabled(selected);
+                textMqttClientId.setEnabled(selected);
+                textMqttTopic.setEnabled(selected);
+                textMqttUser.setEnabled(selected);
+                textMqttPasswd.setEnabled(selected);
+                btnMqttTest.setEnabled(selected);
+            }
+        });
+
+        btnMqttTest.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                SwingUtilities.invokeLater(() -> {
+                    var mqtt = new Mqtt(textMqttConn.getText(), textMqttClientId.getText(), textMqttTopic.getText(),
+                            textMqttUser.getText(), textMqttPasswd.getText(), 0);
+
+                    if (mqtt.connect()) {
+                        JOptionPane.showMessageDialog(frame, "Connection successful!");
+                        mqtt.disconnect();
+                    } else {
+                        JOptionPane.showMessageDialog(frame, "<html>Connection failure!<br/>"
+                                + "<br/>Error:<br/>" + mqtt.getLastError() + "</html>");
+                    }
+                });
+            }
+        });
 
         frame.getContentPane().setLayout(groupLayout);
         frame.toFront();

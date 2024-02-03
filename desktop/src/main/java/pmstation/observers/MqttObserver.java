@@ -22,7 +22,17 @@ public class MqttObserver implements IPlanTowerObserver {
         if (!mqttInitialized) {
             synchronized (this) {
                 if (mqtt == null) {
-                    mqtt = new Mqtt();
+                    var mqttConn = Config.instance().to().getString(Config.Entry.MQTT_ADDRESS.key(),
+                            "tcp://localhost:1883");
+                    var clientId = Config.instance().to().getString(Config.Entry.MQTT_CLIENT_ID.key(),
+                            "PMStationClient");
+                    var topic = Config.instance().to().getString(Config.Entry.MQTT_TOPIC.key(),
+                            "pm-home-station");
+                    var username = Config.instance().to().getString(Config.Entry.MQTT_USERNAME.key());
+                    var password = Config.instance().to().getString(Config.Entry.MQTT_PASSWORD.key());
+                    var reconnDelay = Config.instance().to().getInt(Config.Entry.MQTT_RECONNECT_DELAY.key(), 5);
+
+                    mqtt = new Mqtt(mqttConn, clientId, topic, username, password, reconnDelay);
                     mqttInitialized = true;
                 }
             }
