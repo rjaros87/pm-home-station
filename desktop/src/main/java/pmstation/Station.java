@@ -86,6 +86,7 @@ import pmstation.observers.CSVObserver;
 import pmstation.observers.ConsoleObserver;
 import pmstation.observers.HHTChartObserver;
 import pmstation.observers.LabelObserver;
+import pmstation.observers.MqttObserver;
 import pmstation.observers.PMChartObserver;
 import pmstation.plantower.PlanTowerSensor;
 
@@ -219,6 +220,7 @@ public class Station {
         addObserver(new HHTChartObserver(hhtChart, hhtChartPanel));
         addObserver(new ConsoleObserver());
         addObserver(new CSVObserver());
+        addObserver(new MqttObserver());
 
         JLabel labelStatus = new JLabel("Status...");
         labelsCollector.add(LabelObserver.LabelsCollector.LABEL.DEVICE_STATUS, labelStatus);

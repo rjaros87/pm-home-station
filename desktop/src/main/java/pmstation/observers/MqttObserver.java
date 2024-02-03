@@ -33,7 +33,7 @@ public class MqttObserver implements IPlanTowerObserver {
                     var reconnDelay = Config.instance().to().getInt(Config.Entry.MQTT_RECONNECT_DELAY.key(), 5);
 
                     mqtt = new Mqtt(mqttConn, clientId, topic, username, password, reconnDelay);
-                    mqttInitialized = true;
+                    mqttInitialized = mqtt.connect();
                 }
             }
         }
