@@ -5,17 +5,24 @@
  */
 package pmstation.integration;
 
-import com.google.gson.Gson;
-import org.apache.commons.lang3.StringUtils;
-import org.eclipse.paho.client.mqttv3.*;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import pmstation.configuration.Config;
-import pmstation.core.plantower.ParticulateMatterSample;
-
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
+
+import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.exception.ExceptionUtils;
+import org.eclipse.paho.client.mqttv3.IMqttDeliveryToken;
+import org.eclipse.paho.client.mqttv3.MqttCallback;
+import org.eclipse.paho.client.mqttv3.MqttClient;
+import org.eclipse.paho.client.mqttv3.MqttConnectOptions;
+import org.eclipse.paho.client.mqttv3.MqttException;
+import org.eclipse.paho.client.mqttv3.MqttMessage;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import com.google.gson.Gson;
+
+import pmstation.core.plantower.ParticulateMatterSample;
 
 public class Mqtt {
     private static final String ONLINE = "online";
@@ -23,25 +30,28 @@ public class Mqtt {
 
     private static final Logger logger = LoggerFactory.getLogger(Mqtt.class);
     private static final Gson gson = new Gson();
-    private final String topic;
     private final ScheduledExecutorService scheduler = Executors.newScheduledThreadPool(1);
     private MqttClient client;
+    private String lastError;
+
+    private String topic;
+    private String username;
+    private String password;
+    private int reconnectionDelay;
 
     private enum SubTopic {
         AQI,
         STATUS,
     }
 
-    public Mqtt() {
-        topic = Config.instance().to().getString(Config.Entry.MQTT_TOPIC.key(),
-                "pm-home-station");
-        String address = Config.instance().to().getString(Config.Entry.MQTT_ADDRESS.key(),
-                "tcp://localhost:1883");
-        String clientId = Config.instance().to().getString(Config.Entry.MQTT_CLIENT_ID.key(),
-                "PMStationClient");
+    public Mqtt(String mqttConnection, String clientId, String topic, String username, String password, int reconnectionDelay) {
+        this.topic = topic;
+        this.username = username;
+        this.password = password;
+        this.reconnectionDelay = reconnectionDelay;
 
         try {
-            client = new MqttClient(address, clientId);
+            client = new MqttClient(mqttConnection, clientId);
             client.setCallback(new MqttCallback() {
                 @Override
                 public void connectionLost(Throwable cause) {
@@ -60,46 +70,6 @@ public class Mqtt {
         } catch (MqttException e) {
             logger.error("Unable to create a MQTT Client", e);
         }
-
-        connect();
-    }
-
-    private void scheduleReconnection() {
-        scheduleReconnection(Config.instance().to().getInt(Config.Entry.MQTT_RECONNECT_DELAY.key(), 5));
-    }
-
-    private void scheduleReconnection(Integer delay) {
-        boolean isScheduled = !scheduler.isShutdown() && !scheduler.isTerminated();
-
-        if (isScheduled) {
-            scheduler.schedule(this::connect, delay, TimeUnit.SECONDS);
-            logger.info("Reconnection scheduled within: {} s", delay);
-        }
-    }
-
-    private void connect() {
-        String username = Config.instance().to().getString(Config.Entry.MQTT_USERNAME.key());
-        String password = Config.instance().to().getString(Config.Entry.MQTT_PASSWORD.key());
-
-        MqttConnectOptions options = new MqttConnectOptions();
-        options.setCleanSession(true);
-
-        if (!StringUtils.isEmpty(username) && !StringUtils.isEmpty(password)) {
-            options.setUserName(username);
-            options.setPassword(password.toCharArray());
-        }
-
-        if (Config.instance().to().getBoolean(Config.Entry.MQTT_ENABLED.key(), false)) {
-            try {
-                logger.info("Going to connect to MQTT Server: {}", client.getServerURI());
-                client.connect(options);
-                client.subscribe(topic);
-            } catch (MqttException e) {
-                logger.error("Unable to connect/subscribe to MQTT Server {}", client.getServerURI(), e);
-                scheduleReconnection();
-
-            }
-        }
     }
 
     public void publish(ParticulateMatterSample sample) {
@@ -109,10 +79,62 @@ public class Mqtt {
                 publishMessageToTopic(SubTopic.AQI.name(), jsonString);
 
                 publishMessageToTopic(SubTopic.STATUS.name(), ONLINE);
+                lastError = null;
             } else {
-                logger.error("MQTT Client not connected yet to server: {}.", client.getServerURI());
+                logger.error("MQTT Client not yet connected to server: {}", client.getServerURI());
             }
 
+        }
+    }
+
+    public boolean connect() {
+        if (client != null && client.isConnected()) {
+            return true;
+        }
+        var connected = false;
+        MqttConnectOptions options = new MqttConnectOptions();
+        options.setCleanSession(true);
+
+        if (!StringUtils.isEmpty(username) && !StringUtils.isEmpty(password)) {
+            options.setUserName(username);
+            options.setPassword(password.toCharArray());
+        }
+
+        try {
+            logger.info("Going to connect to MQTT Server: {}", client.getServerURI());
+            client.connect(options);
+            client.subscribe(topic);
+            lastError = null;
+            connected = true;
+        } catch (MqttException e) {
+            lastError = ExceptionUtils.getRootCauseMessage(e);
+            logger.error("Unable to connect/subscribe to MQTT Server {}", client.getServerURI(), e);
+            scheduleReconnection(reconnectionDelay);
+        }
+
+        return connected;
+    }
+
+    public void disconnect() {
+        if (client != null && client.isConnected()) {
+            try {
+                publishMessageToTopic(SubTopic.STATUS.name(), OFFLINE);
+                client.disconnect();
+            } catch (MqttException e) {
+                lastError = ExceptionUtils.getRootCauseMessage(e);
+                logger.error("Unable to disconnect from MQTT server: {}", client.getServerURI() ,e);
+            }
+        }
+    }
+
+    public String getLastError() {
+        return lastError;
+    }
+
+    private void scheduleReconnection(int delay) {
+        if (reconnectionDelay > 0) {
+            scheduler.schedule(this::connect, delay, TimeUnit.SECONDS);
+            logger.info("Reconnection scheduled within: {}s", delay);
         }
     }
 
@@ -122,18 +144,8 @@ public class Mqtt {
         try {
             client.publish(String.join("/", topic, subtopic.toLowerCase()), mqttMessage);
         } catch (MqttException e) {
+            lastError = e.getMessage();
             logger.error("Unable to publish message", e);
-        }
-    }
-
-    public void disconnect() {
-        if (client != null && client.isConnected()) {
-            try {
-                publishMessageToTopic(SubTopic.STATUS.name(), OFFLINE);
-                client.disconnect();
-            } catch (MqttException e) {
-                logger.error("Unable to disconnect from MQTT server: {}", client.getServerURI() ,e);
-            }
         }
     }
 }
