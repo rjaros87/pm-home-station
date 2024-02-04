@@ -220,7 +220,7 @@ public class Station {
         addObserver(new HHTChartObserver(hhtChart, hhtChartPanel));
         addObserver(new ConsoleObserver());
         addObserver(new CSVObserver());
-        addObserver(new MqttObserver());
+        addObserver(new MqttObserver(() -> planTowerSensor.getDeviceModelName()));
 
         JLabel labelStatus = new JLabel("Status...");
         labelsCollector.add(LabelObserver.LabelsCollector.LABEL.DEVICE_STATUS, labelStatus);

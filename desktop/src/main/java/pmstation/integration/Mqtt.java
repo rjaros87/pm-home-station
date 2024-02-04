@@ -73,8 +73,8 @@ public class Mqtt {
             logger.error("Unable to create a MQTT Client", e);
         }
     }
-    
-    public void advertise(String advertisementTopic, String deviceId) {
+
+    public void advertise(String advertisementTopic, String modelName, String deviceId) {
         if (client == null || StringUtils.isEmpty(deviceId)) {
             return;
         }
@@ -84,16 +84,20 @@ public class Mqtt {
                         "name", sub.name().toLowerCase(),
                         "uniq_id", (deviceId + "-" + sub.name()).toLowerCase(),
                         "~", topic,
+                        "state_topic", "~/" + sub.name().toLowerCase(),
                         "device", Map.of(
-                                // "ids", ? 
-                                "mf", Constants.PROJECT_URL,
+                                "configuration_url", Constants.PROJECT_URL,
+                                "identifiers", (Constants.PROJECT_NAME + "-" + deviceId).toLowerCase(),
+                                "manufacturer", Constants.PROJECT_URL,
+                                "model", modelName,
                                 "name", Constants.PROJECT_NAME,
-                                "sw", Constants.VERSION
+                                "sw_version", Constants.VERSION
                         )
                     );                    
                 String jsonString = gson.toJson(adv);
                 publishMessageToTopic(advertisementTopic,
-                        Constants.PROJECT_NAME + "-" + deviceId + "/" + sub.name() + "/config", jsonString);
+                        Constants.PROJECT_NAME + "-" + deviceId + "/" + sub.name() + "/config", jsonString,
+                        0, true);
                 logger.debug("MQTT advertisement sent: {}", adv);
             }
             lastError = null;
@@ -169,12 +173,16 @@ public class Mqtt {
     }
     
     private void publishMessageToTopic(String subtopic, String message) {
-        publishMessageToTopic(topic, subtopic, message);
+        publishMessageToTopic(topic, subtopic, message, -1 , false);
     }
 
-    private void publishMessageToTopic(String topic, String subtopic, String message) {
+    private void publishMessageToTopic(String topic, String subtopic, String message, int qos, boolean retain) {
         MqttMessage mqttMessage = new MqttMessage();
         mqttMessage.setPayload(message.getBytes());
+        if (qos >= 0 && qos <= 2) {
+            mqttMessage.setQos(qos);
+        }
+        mqttMessage.setRetained(retain);
         try {
             client.publish(String.join("/", topic, subtopic.toLowerCase()), mqttMessage);
         } catch (MqttException e) {
