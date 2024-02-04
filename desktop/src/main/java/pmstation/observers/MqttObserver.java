@@ -7,6 +7,7 @@ package pmstation.observers;
 
 import java.net.InetAddress;
 import java.net.UnknownHostException;
+import java.util.function.Supplier;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -23,36 +24,12 @@ public class MqttObserver implements IPlanTowerObserver {
     private static final String HA_DISCOVERY = "homeassistant/sensor";
     
     private volatile Mqtt mqtt;
+    private Supplier<String> deviceModelNameSupplier;
 
-    private boolean mqttInitialized() {
-        boolean mqttInitialized = mqtt != null;
-
-        if (!mqttInitialized) {
-            synchronized (this) {
-                if (mqtt == null) {
-                    var mqttConn = Config.instance().to().getString(Config.Entry.MQTT_ADDRESS.key(),
-                            "tcp://localhost:1883");
-                    var clientId = Config.instance().to().getString(Config.Entry.MQTT_CLIENT_ID.key(),
-                            Constants.PROJECT_NAME + "-client").toLowerCase();
-                    var deviceId = Config.instance().to().getString(Config.Entry.MQTT_DEVICE_ID.key(),
-                            getHostname());
-                    var topic = Config.instance().to().getString(Config.Entry.MQTT_TOPIC.key(),
-                            Constants.PROJECT_NAME).toLowerCase();
-                    var username = Config.instance().to().getString(Config.Entry.MQTT_USERNAME.key());
-                    var password = Config.instance().to().getString(Config.Entry.MQTT_PASSWORD.key());
-                    var reconnDelay = Config.instance().to().getInt(Config.Entry.MQTT_RECONNECT_DELAY.key(), 5);
-
-                    mqtt = new Mqtt(mqttConn, clientId, topic, username, password, reconnDelay);
-                    mqttInitialized = mqtt.connect();
-                    if (mqttInitialized) {
-                        mqtt.advertise(HA_DISCOVERY, deviceId);
-                    }
-                }
-            }
-        }
-
-        return mqttInitialized;
+    public MqttObserver(Supplier<String> deviceModelNameSupplier) {
+        this.deviceModelNameSupplier = deviceModelNameSupplier;
     }
+
 
     @Override
     public void update(ParticulateMatterSample sample) {
@@ -78,7 +55,37 @@ public class MqttObserver implements IPlanTowerObserver {
     public void disconnected() {
         logger.info("Sensor disconnected");
     }
-    
+
+    private boolean mqttInitialized() {
+        boolean mqttInitialized = mqtt != null;
+
+        if (!mqttInitialized) {
+            synchronized (this) {
+                if (mqtt == null) {
+                    var mqttConn = Config.instance().to().getString(Config.Entry.MQTT_ADDRESS.key(),
+                            "tcp://localhost:1883");
+                    var clientId = Config.instance().to().getString(Config.Entry.MQTT_CLIENT_ID.key(),
+                            Constants.PROJECT_NAME + "-client").toLowerCase();
+                    var deviceId = Config.instance().to().getString(Config.Entry.MQTT_DEVICE_ID.key(),
+                            getHostname());
+                    var topic = Config.instance().to().getString(Config.Entry.MQTT_TOPIC.key(),
+                            Constants.PROJECT_NAME).toLowerCase();
+                    var username = Config.instance().to().getString(Config.Entry.MQTT_USERNAME.key());
+                    var password = Config.instance().to().getString(Config.Entry.MQTT_PASSWORD.key());
+                    var reconnDelay = Config.instance().to().getInt(Config.Entry.MQTT_RECONNECT_DELAY.key(), 5);
+
+                    mqtt = new Mqtt(mqttConn, clientId, topic, username, password, reconnDelay);
+                    mqttInitialized = mqtt.connect();
+                    if (mqttInitialized) {
+                        mqtt.advertise(HA_DISCOVERY, deviceModelNameSupplier.get(), deviceId);
+                    }
+                }
+            }
+        }
+
+        return mqttInitialized;
+    }
+
     private String getHostname() {
         try {
             return InetAddress.getLocalHost().getHostName();
