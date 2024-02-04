@@ -372,11 +372,16 @@ public class MainActivity extends AppCompatActivity implements IPlanTowerObserve
     }
 
     private void showPermissionDialog() {
+        Log.i(TAG, "Going to check Bluetooth permission");
         if (!BluetoothLeService.checkPermission(this)) {
-            ActivityCompat.requestPermissions(
-                    this,
-                    new String[]{Manifest.permission.ACCESS_COARSE_LOCATION, Manifest.permission.ACCESS_FINE_LOCATION},
-                    2);
+            Log.i(TAG, "Going to request Bluetooth permission");
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+                ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.BLUETOOTH_CONNECT}, 2);
+            } else {
+                ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.BLUETOOTH}, 2);
+            }
+        } else {
+            Log.d(TAG, "App has Bluetooth permission");
         }
     }
 
