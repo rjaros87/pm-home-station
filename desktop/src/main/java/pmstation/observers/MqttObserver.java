@@ -15,7 +15,7 @@ import pmstation.configuration.Config;
 import pmstation.configuration.Constants;
 import pmstation.core.plantower.IPlanTowerObserver;
 import pmstation.core.plantower.ParticulateMatterSample;
-import pmstation.integration.Mqtt;
+import pmstation.observers.mqtt.Mqtt;
 
 public class MqttObserver implements IPlanTowerObserver {
     
@@ -29,7 +29,6 @@ public class MqttObserver implements IPlanTowerObserver {
     public MqttObserver(Supplier<String> deviceModelNameSupplier) {
         this.deviceModelNameSupplier = deviceModelNameSupplier;
     }
-
 
     @Override
     public void update(ParticulateMatterSample sample) {
