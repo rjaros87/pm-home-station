@@ -7,6 +7,7 @@
 package pmstation;
 
 import android.Manifest;
+import android.annotation.SuppressLint;
 import android.content.BroadcastReceiver;
 import android.content.ComponentName;
 import android.content.Context;
@@ -119,12 +120,11 @@ public class MainActivity extends AppCompatActivity implements IPlanTowerObserve
     private final ServiceConnection btConnection = new ServiceConnection() {
         @Override
         public void onServiceConnected(ComponentName componentName, IBinder service) {
-            if (ActivityCompat.checkSelfPermission(MainActivity.this, Manifest.permission.BLUETOOTH_CONNECT) != PackageManager.PERMISSION_GRANTED) {
-                ActivityCompat.requestPermissions(MainActivity.this, new String[]{Manifest.permission.BLUETOOTH_CONNECT}, 2);
-                return;
-            }
             bluetoothLeService = ((BluetoothLeService.LocalBinder) service).getService();
             bluetoothLeService.setHandler(dataHandler);
+
+            showPermissionDialog();
+
             if (!bluetoothLeService.initialize()) {
                 Log.e(TAG, "Unable to initialize Bluetooth");
                 return;
@@ -280,12 +280,13 @@ public class MainActivity extends AppCompatActivity implements IPlanTowerObserve
             usbService.wakeUp();
         }
 
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
             registerReceiver(gattUpdateReceiver, makeGattUpdateIntentFilter(), RECEIVER_EXPORTED);
         } else {
             registerReceiver(gattUpdateReceiver, makeGattUpdateIntentFilter());
         }
         if (bluetoothLeService != null) {
+            showPermissionDialog();
             final boolean result = bluetoothLeService.connect(deviceAddress);
             Log.d(TAG, "Connect request result=" + result);
         }
@@ -370,6 +371,15 @@ public class MainActivity extends AppCompatActivity implements IPlanTowerObserve
         openSinglePaneChartFragment();
     }
 
+    private void showPermissionDialog() {
+        if (!BluetoothLeService.checkPermission(this)) {
+            ActivityCompat.requestPermissions(
+                    this,
+                    new String[]{Manifest.permission.ACCESS_COARSE_LOCATION, Manifest.permission.ACCESS_FINE_LOCATION},
+                    2);
+        }
+    }
+
     private void showSingleFragment(String fragmentTag) {
         Fragment fragment = getSupportFragmentManager().findFragmentByTag(fragmentTag);
         if (fragment == null) {
@@ -398,6 +408,7 @@ public class MainActivity extends AppCompatActivity implements IPlanTowerObserve
         menu.getItem(1).setVisible(!connected);
     }
 
+    @SuppressLint("UnspecifiedRegisterReceiverFlag")
     private void registerReceiver() {
         IntentFilter filter = new IntentFilter();
         filter.addAction(USBService.ACTION_USB_PERMISSION_GRANTED);

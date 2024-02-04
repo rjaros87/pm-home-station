@@ -6,6 +6,7 @@
 
 package pmstation.plantower;
 
+import android.annotation.SuppressLint;
 import android.app.PendingIntent;
 import android.app.Service;
 import android.content.BroadcastReceiver;
@@ -183,7 +184,7 @@ public class USBService extends PlanTowerService {
     private void requestUserPermission() {
         if (!requested) {
             requested = true;
-            PendingIntent pendingIntent = PendingIntent.getBroadcast(this, 0, new Intent(ACTION_USB_PERMISSION), 0);
+            PendingIntent pendingIntent = PendingIntent.getBroadcast(this, 0, new Intent(ACTION_USB_PERMISSION), PendingIntent.FLAG_IMMUTABLE);
             usbManager.requestPermission(device, pendingIntent);
         }
     }
@@ -207,6 +208,7 @@ public class USBService extends PlanTowerService {
         findSerialPortDevice();
     }
 
+    @SuppressLint("UnspecifiedRegisterReceiverFlag")
     private void setFilter() {
         IntentFilter filter = new IntentFilter();
         filter.addAction(ACTION_USB_PERMISSION);

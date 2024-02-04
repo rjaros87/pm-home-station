@@ -7,6 +7,7 @@
 package pmstation.plantower;
 
 import android.Manifest;
+import android.annotation.SuppressLint;
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
 import android.bluetooth.BluetoothGatt;
@@ -19,13 +20,17 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.os.Binder;
+import android.os.Build;
 import android.os.IBinder;
 import android.util.Log;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.RequiresApi;
 import androidx.core.app.ActivityCompat;
 
 import java.util.List;
 
+import pmstation.MainActivity;
 import pmstation.core.plantower.PlanTowerDevice;
 
 /**
@@ -41,6 +46,7 @@ public class BluetoothLeService extends PlanTowerService {
     private static final int STATE_CONNECTED = 2;
     private static final String SERVICE_UUID = "0000ffe0";
     private static final String CHARACTERISTIC_UUID = "0000ffe1";
+    private static boolean bluetoothPermissionGranted = false;
     private final IBinder binder = new LocalBinder();
     private BluetoothManager bluetoothManager;
     private BluetoothAdapter bluetoothAdapter;
@@ -53,7 +59,20 @@ public class BluetoothLeService extends PlanTowerService {
     private int connectionState = STATE_DISCONNECTED;
     // Implements callback methods for GATT events that the app cares about.  For example,
     // connection change and services discovered.
+
+
+
+    public static boolean checkPermission(final Context context) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+            bluetoothPermissionGranted = ActivityCompat.checkSelfPermission(context, Manifest.permission.BLUETOOTH_CONNECT) == PackageManager.PERMISSION_GRANTED
+                    && ActivityCompat.checkSelfPermission(context, Manifest.permission.BLUETOOTH_CONNECT) == PackageManager.PERMISSION_GRANTED;
+        }
+
+        return bluetoothPermissionGranted;
+    }
+
     private final BluetoothGattCallback gattCallback = new BluetoothGattCallback() {
+        @SuppressLint("MissingPermission") //Permission is handled by variable bluetoothPermissionGranted
         @Override
         public void onConnectionStateChange(BluetoothGatt gatt, int status, int newState) {
             String intentAction;
@@ -63,8 +82,10 @@ public class BluetoothLeService extends PlanTowerService {
                 broadcastUpdate(intentAction);
                 Log.i(TAG, "Connected to GATT server.");
                 // Attempts to discover services after successful connection.
-                Log.i(TAG, "Attempting to start service discovery:" +
-                        bluetoothGatt.discoverServices());
+                if (bluetoothPermissionGranted) {
+                    Log.i(TAG, "Attempting to start service discovery:" +
+                            bluetoothGatt.discoverServices());
+                }
 
             } else if (newState == BluetoothProfile.STATE_DISCONNECTED) {
                 intentAction = ACTION_GATT_DISCONNECTED;
@@ -188,7 +209,7 @@ public class BluetoothLeService extends PlanTowerService {
      * callback.
      */
     public boolean connect(final String address) {
-        if (bluetoothAdapter == null || address == null) {
+        if (checkPermission(this) || bluetoothAdapter == null || address == null) {
             Log.w(TAG, "BluetoothAdapter not initialized or unspecified address.");
             return false;
         }
@@ -225,7 +246,7 @@ public class BluetoothLeService extends PlanTowerService {
      * callback.
      */
     public void disconnect() {
-        if (bluetoothAdapter == null || bluetoothGatt == null) {
+        if (checkPermission(this) || bluetoothAdapter == null || bluetoothGatt == null) {
             Log.w(TAG, "BluetoothAdapter not initialized");
             return;
         }
@@ -237,7 +258,7 @@ public class BluetoothLeService extends PlanTowerService {
      * released properly.
      */
     public void close() {
-        if (bluetoothGatt == null) {
+        if (checkPermission(this) || bluetoothGatt == null) {
             return;
         }
         bluetoothGatt.close();
@@ -252,7 +273,7 @@ public class BluetoothLeService extends PlanTowerService {
      * @param characteristic The characteristic to read from.
      */
     public void readCharacteristic(BluetoothGattCharacteristic characteristic) {
-        if (bluetoothAdapter == null || bluetoothGatt == null) {
+        if (checkPermission(this) || bluetoothAdapter == null || bluetoothGatt == null) {
             Log.w(TAG, "BluetoothAdapter not initialized");
             return;
         }
@@ -267,7 +288,7 @@ public class BluetoothLeService extends PlanTowerService {
      */
     public void setCharacteristicNotification(BluetoothGattCharacteristic characteristic,
                                               boolean enabled) {
-        if (bluetoothAdapter == null || bluetoothGatt == null) {
+        if (checkPermission(this) || bluetoothAdapter == null || bluetoothGatt == null) {
             Log.w(TAG, "BluetoothAdapter not initialized");
             return;
         }
