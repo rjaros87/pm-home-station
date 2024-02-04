@@ -12,7 +12,6 @@ matrix:
         # PREPARE FOR ANDROID SDK SETUP
         - mkdir -p $HOME/travis-tools/android && mkdir $HOME/.android && touch $HOME/.android/repositories.cfg
         - cd $ANDROID_HOME && wget -q "https://dl.google.com/android/repository/commandlinetools-linux-11076708_latest.zip" -O commandlinetools.zip
-        - ls -la
         - unzip -q commandlinetools.zip && cd cmdline-tools && cd $TRAVIS_BUILD_DIR
 
         # SETUP PATH(s)
