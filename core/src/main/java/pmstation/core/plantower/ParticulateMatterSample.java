@@ -25,6 +25,7 @@ public class ParticulateMatterSample implements Serializable {
         private final String name;
         private final Unit unit;
         // Icon names should come from: https://pictogrammers.com/library/mdi/icon/air-filter/
+        // Request for HCHO (and for PMs referenced in there): https://github.com/Templarian/MaterialDesign/issues/7371
         private final String iconName;
         private final Function<ParticulateMatterSample, Number> valueAccessor;
 

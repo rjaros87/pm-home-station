@@ -119,6 +119,7 @@ public class Mqtt {
                         advBody.put("icon", "mdi:" + type.getIconName());
                         // adjust device class names to what is defined here:
                         // https://www.home-assistant.io/integrations/sensor/#device-class
+                        // Request for HCHO: https://community.home-assistant.io/t/sensor-device-class-for-formaldehyde-hcho/684878
                         var deviceClass = type.getName().replaceAll("_0", "").replaceAll("_", "").replace("hcho", "");
                         if (!deviceClass.isEmpty()) {
                             advBody.put("device_class", deviceClass);
