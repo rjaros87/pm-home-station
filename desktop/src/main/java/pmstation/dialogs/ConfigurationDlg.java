@@ -61,7 +61,7 @@ import org.slf4j.LoggerFactory;
 
 import pmstation.configuration.Config;
 import pmstation.configuration.Constants;
-import pmstation.integration.Mqtt;
+import pmstation.observers.mqtt.Mqtt;
 import pmstation.serial.SerialUART;
 
 public class ConfigurationDlg {

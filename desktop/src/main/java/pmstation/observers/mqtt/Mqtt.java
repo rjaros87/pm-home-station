@@ -3,8 +3,9 @@
  * 2017-2024 (C) Copyright - https://github.com/rjaros87/pm-home-station
  * License: GPL 3.0
  */
-package pmstation.integration;
+package pmstation.observers.mqtt;
 
+import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
@@ -25,12 +26,15 @@ import com.google.gson.Gson;
 
 import pmstation.configuration.Constants;
 import pmstation.core.plantower.ParticulateMatterSample;
+import pmstation.core.plantower.ParticulateMatterSample.ParticulateMatterSampleEnum;
 
 public class Mqtt {
+
+    private static final Logger logger = LoggerFactory.getLogger(Mqtt.class);
+    
     private static final String ONLINE = "online";
     private static final String OFFLINE = "offline";
 
-    private static final Logger logger = LoggerFactory.getLogger(Mqtt.class);
     private static final Gson gson = new Gson();
     private final ScheduledExecutorService scheduler = Executors.newScheduledThreadPool(1);
     private MqttClient client;
@@ -42,7 +46,7 @@ public class Mqtt {
     private int reconnectionDelay;
 
     private enum SubTopic {
-        AQI,
+        READINGS,
         STATUS,
     }
 
@@ -74,31 +78,59 @@ public class Mqtt {
         }
     }
 
-    public void advertise(String advertisementTopic, String modelName, String deviceId) {
+    public void advertise(String advertisementTopic, String deviceModelName, String deviceId) {
         if (client == null || StringUtils.isEmpty(deviceId)) {
             return;
         }
         if (client.isConnected()) {
             for (SubTopic sub : SubTopic.values()) {
-                Map<String, Object> adv = Map.of(
-                        "name", sub.name().toLowerCase(),
-                        "uniq_id", (deviceId + "-" + sub.name()).toLowerCase(),
-                        "~", topic,
-                        "state_topic", "~/" + sub.name().toLowerCase(),
-                        "device", Map.of(
-                                "configuration_url", Constants.PROJECT_URL,
-                                "identifiers", (Constants.PROJECT_NAME + "-" + deviceId).toLowerCase(),
-                                "manufacturer", Constants.PROJECT_URL,
-                                "model", modelName,
-                                "name", Constants.PROJECT_NAME,
-                                "sw_version", Constants.VERSION
-                        )
-                    );                    
-                String jsonString = gson.toJson(adv);
-                publishMessageToTopic(advertisementTopic,
-                        Constants.PROJECT_NAME + "-" + deviceId + "/" + sub.name() + "/config", jsonString,
-                        0, true);
-                logger.debug("MQTT advertisement sent: {}", adv);
+
+                ParticulateMatterSampleEnum[] nestedValueTypes = 
+                        sub == SubTopic.STATUS ?
+                                new ParticulateMatterSampleEnum[] {null} :
+                                ParticulateMatterSampleEnum.values();
+                var valueEntryName = sub.name().toLowerCase();
+                var deviceIdNormalized = deviceId.toLowerCase().replaceAll("[^a-z0-9_\\-]", "");
+                
+                for (ParticulateMatterSampleEnum type : nestedValueTypes) {
+                    var configEntryName = sub == SubTopic.STATUS ? valueEntryName : type.getName();
+                    
+                    Map<String, Object> advBody = new HashMap<>(Map.of(
+                            "name", configEntryName.replaceAll("_", "."),
+                            "uniq_id", deviceIdNormalized + "-" + configEntryName,
+                            "~", topic,
+                            "state_topic", "~/" + valueEntryName,
+                            "device", Map.of(
+                                    "configuration_url", Constants.PROJECT_URL,
+                                    "identifiers", (Constants.PROJECT_NAME + "-" + deviceIdNormalized).toLowerCase(),
+                                    "manufacturer", Constants.PROJECT_URL,
+                                    "model", deviceModelName,
+                                    "name", Constants.PROJECT_NAME,
+                                    "sw_version", Constants.VERSION
+                            )
+                    ));
+                    
+                    if (type != null) {
+                        advBody.put("value_template", "{{ value_json." + type.getName() + ".value }}");
+                        advBody.put("unit_of_measurement", type.getUnit().getUnitString());
+                        advBody.put("availability_topic", "~/status");
+                        advBody.put("payload_available", "online");
+                        advBody.put("payload_not_available", "offline");
+                        advBody.put("icon", "mdi:" + type.getIconName());
+                        // adjust device class names to what is defined here:
+                        // https://www.home-assistant.io/integrations/sensor/#device-class
+                        var deviceClass = type.getName().replaceAll("_0", "").replaceAll("_", "").replace("hcho", "");
+                        if (!deviceClass.isEmpty()) {
+                            advBody.put("device_class", deviceClass);
+                        }
+                    }
+                    String jsonString = gson.toJson(advBody);
+                    publishMessageToTopic(advertisementTopic,
+                            Constants.PROJECT_NAME + "-" + deviceIdNormalized + "/" + configEntryName + "/config", jsonString,
+                            0, true);
+                    logger.debug("MQTT advertisement sent: {}", advBody);
+                }
+                
             }
             lastError = null;
         } else {
@@ -110,8 +142,7 @@ public class Mqtt {
         if (client != null) {
             if (client.isConnected()) {
                 String jsonString = gson.toJson(sample.getAsMap());
-                publishMessageToTopic(SubTopic.AQI.name(), jsonString);
-
+                publishMessageToTopic(SubTopic.READINGS.name(), jsonString);
                 publishMessageToTopic(SubTopic.STATUS.name(), ONLINE);
                 lastError = null;
             } else {

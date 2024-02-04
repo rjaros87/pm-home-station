@@ -1,3 +1,8 @@
+/*
+ * pm-home-station
+ * 2024 (C) Copyright - https://github.com/rjaros87/pm-home-station
+ * License: GPL 3.0
+ */
 package pmstation.core.plantower;
 
 public enum Unit {
@@ -13,9 +18,13 @@ public enum Unit {
     Unit(String unit) {
         this.unit = unit;
     }
+    
+    public String getUnitString() {
+        return unit;
+    }
 
     @Override
     public String toString() {
-        return unit;
+        return getUnitString();
     }
 }

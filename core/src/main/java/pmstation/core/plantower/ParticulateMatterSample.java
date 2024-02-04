@@ -13,24 +13,39 @@ import java.util.function.Function;
 
 public class ParticulateMatterSample implements Serializable {
 
-    private enum ParticulateMatterSampleEnum {
-        PM1_0("pm1_0", Unit.PARTICULATE_MATTER, ParticulateMatterSample::getPm1_0),
-        PM2_5("pm2_5", Unit.PARTICULATE_MATTER, ParticulateMatterSample::getPm2_5),
-        PM10("pm10", Unit.PARTICULATE_MATTER, ParticulateMatterSample::getPm10),
-        HCHO("hcho", Unit.HCHO_UG, ParticulateMatterSample::getHcho),
-        TEMPERATURE("temperature", Unit.TEMPERATURE, ParticulateMatterSample::getTemperature),
-        HUMIDITY("humidity", Unit.HUMIDITY, ParticulateMatterSample::getHumidity),
+    public enum ParticulateMatterSampleEnum {
+        PM1_0("pm1_0", Unit.PARTICULATE_MATTER, "air-filter", ParticulateMatterSample::getPm1_0),
+        PM2_5("pm2_5", Unit.PARTICULATE_MATTER, "air-filter", ParticulateMatterSample::getPm2_5),
+        PM10("pm10", Unit.PARTICULATE_MATTER, "air-filter", ParticulateMatterSample::getPm10),
+        HCHO("hcho", Unit.HCHO_UG, "emoticon-dead", ParticulateMatterSample::getHcho),
+        TEMPERATURE("temperature", Unit.TEMPERATURE, "thermometer", ParticulateMatterSample::getTemperature),
+        HUMIDITY("humidity", Unit.HUMIDITY, "water-percent", ParticulateMatterSample::getHumidity),
         ;
 
         private final String name;
         private final Unit unit;
+        // Icon names should come from: https://pictogrammers.com/library/mdi/icon/air-filter/
+        private final String iconName;
         private final Function<ParticulateMatterSample, Number> valueAccessor;
 
-        ParticulateMatterSampleEnum(String name, Unit unit,
+        ParticulateMatterSampleEnum(String name, Unit unit, String iconName,
                                     Function<ParticulateMatterSample, Number> valueAccessor) {
             this.name = name;
             this.unit = unit;
+            this.iconName = iconName;
             this.valueAccessor = valueAccessor;
+        }
+        
+        public String getName() {
+            return name;
+        }
+        
+        public Unit getUnit() {
+            return unit;
+        }
+        
+        public String getIconName() {
+            return iconName;
         }
     }
 
