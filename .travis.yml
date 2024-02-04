@@ -31,8 +31,8 @@ matrix:
         - env
         - ls -la /home/travis/travis-tools/android/
         - ls -la /home/travis/travis-tools/android/cmdline-tools/
-        - ls -la /home/travis/travis-tools/android/cmdline-tools/bin
         - ls -la /home/travis/travis-tools/android/cmdline-tools/tools/
+#        - ls -la /home/travis/travis-tools/android/cmdline-tools/bin
 #        - ls -la /home/travis/travis-tools/android/cmdline-tools/tools/bin/
         # INSTALL REQUIRED ANDROID SDK TOOLS
         - sdkmanager --sdk_root=$ANDROID_HOME --list | awk '/Installed/{flag=1; next} /Available/{flag=0} flag'
