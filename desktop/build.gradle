@@ -1,5 +1,5 @@
 plugins {
-    id 'edu.sc.seis.macAppBundle'
+//    id 'edu.sc.seis.macAppBundle'
     id 'edu.sc.seis.launch4j'
     id 'com.github.johnrengelman.shadow'
     id 'java'
@@ -13,7 +13,8 @@ def local_appName = 'PM Home Station'
 def local_mainClassName = 'pmstation.Start'
 def local_projectUrl = 'https://github.com/rjaros87/pm-home-station'
 
-sourceCompatibility = JavaVersion.VERSION_11
+sourceCompatibility = JavaVersion.VERSION_20
+targetCompatibility = JavaVersion.VERSION_20
 mainClassName = local_mainClassName
 
 repositories {
@@ -29,11 +30,22 @@ configurations {
     compile.exclude module: 'fontbox'
 }
 
+// for :run task
+run {
+    jvmArgs = [
+        "--add-exports=java.desktop/com.apple.eawt=ALL-UNNAMED"
+    ]
+}
+
+compileJava {
+    options.encoding = "UTF-8"
+}
+
 shadowJar {
-    baseName = project.name
-    classifier = null
-    version = project.version
-    
+    archiveBaseName.set(project.name)
+    archiveClassifier.set(null)
+    archiveVersion.set(project.version)
+
     manifest {
         attributes 'Implementation-Title': "${local_appName} - the standalone application (uber) JAR"
         attributes 'Implementation-Version': project.version
@@ -41,38 +53,42 @@ shadowJar {
         attributes 'Built-By': System.getProperty('user.name')
         attributes 'Built-JDK': System.getProperty('java.version')
         attributes 'Build-Time': new Date().format("yyyy-MM-dd'T'HH:mm:ssZ")
+        attributes 'Add-Exports': 'java.desktop/com.apple.eawt'
     }
-    
+
     exclude 'META-INF/*.txt'
 }
 
 launch4j {
-    copyConfigurable = project.tasks.shadowJar.outputs.files
+    // https://github.com/TheBoegl/gradle-launch4j?tab=readme-ov-file#configurable-input-configuration
+    copyConfigurable = []
+    jarTask = project.tasks.shadowJar
+
     mainClassName = local_mainClassName
     icon = "${projectDir}/icons/app-icon.ico"
     outfile = "${project.name}-${project.version}.exe"
     supportUrl = local_projectUrl
     companyName = local_projectUrl
-    version = version
-    textVersion = version
+    version = project.version
+    textVersion = project.version
     productName = local_appName
     copyright = 'Copyright (C), licence: GPL-3.0'
 }
 
-macAppBundle {
-    appName = local_appName
-    mainClassName = local_mainClassName
-    runtimeConfigurationName = 'shadow'
-    jarTask = 'shadowJar'
-    icon = 'icons/dmg-myIcon.icns'
-    bundleJRE = false
-    javaProperties.put('apple.laf.useScreenMenuBar', 'true')
-    backgroundImage = 'icons/dmg-bg.png'
-    appIconX = 50
-    appIconY = 120
-    appFolderX = 330
-    appFolderY = 120
-}
+//macAppBundle {
+//    appName = local_appName
+//    mainClassName = local_mainClassName
+//    runtimeConfigurationName = 'shadow'
+//    jarTask = 'shadowJar'
+//    icon = 'icons/dmg-myIcon.icns'
+//    bundleJRE = false
+//    javaProperties.put('apple.laf.useScreenMenuBar', 'true')
+//    backgroundImage = 'icons/dmg-bg.png'
+//    appIconX = 50
+//    appIconY = 120
+//    appFolderX = 330
+//    appFolderY = 120
+//}
 
 dependencies {
     extraLibs group: 'org.knowm.xchart', name: 'xchart', version: '3.6.2'
@@ -92,6 +108,6 @@ dependencies {
     extraLibs group: 'com.google.code.gson', name: 'gson', version: '2.10.1'
 
     extraLibs project(':core')
-    configurations.compile.extendsFrom(configurations.extraLibs)
-    testCompile group: 'junit', name: 'junit', version: '4.13'
+    configurations.implementation.extendsFrom(configurations.extraLibs)
+    testImplementation group: 'junit', name: 'junit', version: '4.13'
 }

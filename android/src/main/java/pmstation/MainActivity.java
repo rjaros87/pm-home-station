@@ -6,12 +6,15 @@
 
 package pmstation;
 
+import android.Manifest;
+import android.annotation.SuppressLint;
 import android.content.BroadcastReceiver;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.ServiceConnection;
+import android.content.pm.PackageManager;
 import android.graphics.Color;
 import android.graphics.PorterDuff;
 import android.graphics.drawable.Drawable;
@@ -21,10 +24,12 @@ import android.os.Handler;
 import android.os.IBinder;
 import android.os.Message;
 import android.preference.PreferenceManager;
-import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentManager;
-import android.support.v4.app.FragmentTransaction;
-import android.support.v7.app.AppCompatActivity;
+
+import androidx.core.app.ActivityCompat;
+import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentManager;
+import androidx.fragment.app.FragmentTransaction;
+import androidx.appcompat.app.AppCompatActivity;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -117,6 +122,9 @@ public class MainActivity extends AppCompatActivity implements IPlanTowerObserve
         public void onServiceConnected(ComponentName componentName, IBinder service) {
             bluetoothLeService = ((BluetoothLeService.LocalBinder) service).getService();
             bluetoothLeService.setHandler(dataHandler);
+
+            showPermissionDialog();
+
             if (!bluetoothLeService.initialize()) {
                 Log.e(TAG, "Unable to initialize Bluetooth");
                 return;
@@ -272,8 +280,13 @@ public class MainActivity extends AppCompatActivity implements IPlanTowerObserve
             usbService.wakeUp();
         }
 
-        registerReceiver(gattUpdateReceiver, makeGattUpdateIntentFilter());
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            registerReceiver(gattUpdateReceiver, makeGattUpdateIntentFilter(), RECEIVER_EXPORTED);
+        } else {
+            registerReceiver(gattUpdateReceiver, makeGattUpdateIntentFilter());
+        }
         if (bluetoothLeService != null) {
+            showPermissionDialog();
             final boolean result = bluetoothLeService.connect(deviceAddress);
             Log.d(TAG, "Connect request result=" + result);
         }
@@ -358,6 +371,20 @@ public class MainActivity extends AppCompatActivity implements IPlanTowerObserve
         openSinglePaneChartFragment();
     }
 
+    private void showPermissionDialog() {
+        Log.i(TAG, "Going to check Bluetooth permission");
+        if (!BluetoothLeService.checkPermission(this)) {
+            Log.i(TAG, "Going to request Bluetooth permission");
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+                ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.BLUETOOTH_CONNECT}, 2);
+            } else {
+                ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.BLUETOOTH}, 2);
+            }
+        } else {
+            Log.d(TAG, "App has Bluetooth permission");
+        }
+    }
+
     private void showSingleFragment(String fragmentTag) {
         Fragment fragment = getSupportFragmentManager().findFragmentByTag(fragmentTag);
         if (fragment == null) {
@@ -386,12 +413,18 @@ public class MainActivity extends AppCompatActivity implements IPlanTowerObserve
         menu.getItem(1).setVisible(!connected);
     }
 
+    @SuppressLint("UnspecifiedRegisterReceiverFlag")
     private void registerReceiver() {
         IntentFilter filter = new IntentFilter();
         filter.addAction(USBService.ACTION_USB_PERMISSION_GRANTED);
         filter.addAction(USBService.ACTION_USB_DISCONNECTED);
         filter.addAction(USBService.ACTION_USB_PERMISSION_NOT_GRANTED);
-        registerReceiver(usbReceiver, filter);
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            registerReceiver(usbReceiver, filter, RECEIVER_EXPORTED);
+        } else {
+            registerReceiver(usbReceiver, filter);
+        }
     }
 
     @Override

@@ -6,6 +6,7 @@
 
 package pmstation.plantower;
 
+import android.annotation.SuppressLint;
 import android.app.PendingIntent;
 import android.app.Service;
 import android.content.BroadcastReceiver;
@@ -16,9 +17,10 @@ import android.hardware.usb.UsbDevice;
 import android.hardware.usb.UsbDeviceConnection;
 import android.hardware.usb.UsbManager;
 import android.os.Binder;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.IBinder;
-import android.support.annotation.Nullable;
+import androidx.annotation.Nullable;
 import android.util.Log;
 
 import com.felhr.usbserial.UsbSerialDevice;
@@ -132,7 +134,7 @@ public class USBService extends PlanTowerService {
 
     public boolean connectDevice() {
         connection = usbManager.openDevice(device);
-
+        Log.d(TAG, "Going to connect USB device");
         serialPortConnected = connection != null;
         if (serialPortConnected) {
             new ConnectionThread().start();
@@ -179,10 +181,16 @@ public class USBService extends PlanTowerService {
     /*
      * Request user permission. The response will be received in the BroadcastReceiver
      */
+    @SuppressLint({"MutableImplicitPendingIntent", "UnspecifiedImmutableFlag"})
     private void requestUserPermission() {
         if (!requested) {
             requested = true;
-            PendingIntent pendingIntent = PendingIntent.getBroadcast(this, 0, new Intent(ACTION_USB_PERMISSION), 0);
+            PendingIntent pendingIntent;
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+                pendingIntent = PendingIntent.getBroadcast(this, 0, new Intent(ACTION_USB_PERMISSION), PendingIntent.FLAG_MUTABLE);
+            } else {
+                pendingIntent = PendingIntent.getBroadcast(this, 0, new Intent(ACTION_USB_PERMISSION), 0);
+            }
             usbManager.requestPermission(device, pendingIntent);
         }
     }
@@ -206,12 +214,18 @@ public class USBService extends PlanTowerService {
         findSerialPortDevice();
     }
 
+    @SuppressLint("UnspecifiedRegisterReceiverFlag")
     private void setFilter() {
         IntentFilter filter = new IntentFilter();
         filter.addAction(ACTION_USB_PERMISSION);
         filter.addAction(ACTION_USB_DETACHED);
         filter.addAction(ACTION_USB_ATTACHED);
-        registerReceiver(usbReceiver, filter);
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            registerReceiver(usbReceiver, filter, RECEIVER_EXPORTED);
+        } else {
+            registerReceiver(usbReceiver, filter);
+        }
     }
 
     @Override
@@ -255,6 +269,7 @@ public class USBService extends PlanTowerService {
             serialPort = UsbSerialDevice.createUsbSerialDevice(device, connection);
             if (serialPort != null) {
                 if (serialPort.open()) {
+                    Log.d(TAG, "Serial is OPEN");
                     serialPortConnected = true;
                     serialPort.setBaudRate(BAUD_RATE);
                     serialPort.setDataBits(UsbSerialInterface.DATA_BITS_8);

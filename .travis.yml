@@ -1,22 +1,38 @@
 matrix:
   include:
-# Temporary disabled
-#    - language: android
-#      jdk: openjdk11
-#      android:
-#        components:
-#          - tools
-#          - android-28
-#          - build-tools-28.0.2
-#      licenses:
-#        - 'android-sdk-license-.+'
-#      before_install:
-#        - yes | sdkmanager "platforms;android-27"
-#      script:
-#        - ./gradlew android:build
-
     - language: java
-      jdk: openjdk11
+      jdk: openjdk20
+      os: linux
+
+      env:
+        - ANDROID_HOME=$HOME/travis-tools/android
+        - ANDROID_SDK_ROOT=$HOME/travis-tools/android
+
+      before_install:
+        # PREPARE FOR ANDROID SDK SETUP
+        - mkdir -p $HOME/travis-tools/android && mkdir $HOME/.android && touch $HOME/.android/repositories.cfg
+        - cd $ANDROID_HOME && wget -q "https://dl.google.com/android/repository/commandlinetools-linux-11076708_latest.zip" -O commandlinetools.zip
+        - unzip -q commandlinetools.zip && cd cmdline-tools && cd $TRAVIS_BUILD_DIR
+
+        # SETUP PATH(s)
+        - export PATH=$ANDROID_HOME/cmdline-tools/bin/:$PATH
+        - export PATH=$ANDROID_HOME/emulator/:$PATH
+        - export PATH=$ANDROID_HOME/platform-tools/:$PATH
+
+      # https://github.com/travis-ci/travis-ci/issues/8667#issuecomment-366589908
+      install:
+        - true
+        # INSTALL REQUIRED ANDROID SDK TOOLS
+        - sdkmanager --sdk_root=$ANDROID_HOME --list | awk '/Installed/{flag=1; next} /Available/{flag=0} flag'
+        - yes | sdkmanager --sdk_root=$ANDROID_HOME --install "platform-tools" "platforms;android-34" "build-tools;34.0.0"
+        - sdkmanager --list --sdk_root=$ANDROID_HOME | awk '/Installed/{flag=1; next} /Available/{flag=0} flag'
+      script:
+        - ./gradlew android:build
+    - language: java
+      jdk: openjdk20
+      # https://github.com/travis-ci/travis-ci/issues/8667#issuecomment-366589908
+      install:
+        - true
       script:
         - ./gradlew shadowJar createExe
 
