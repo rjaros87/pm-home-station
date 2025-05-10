@@ -14,7 +14,7 @@ import pmstation.core.plantower.Unit;
 public class Constants {
     
     public static final String PROJECT_NAME = "pm-home-station";
-    public static final String VERSION = "1.3.0-alpha";
+    public static final String VERSION = "1.3.1-alpha";
     public static final String PROJECT_URL = "https://github.com/rjaros87/pm-home-station";
     public static final Locale DEFAULT_LOCALE = Locale.getDefault(); 
     public static final String DEFAULT_ICON = "app-icon.png";
