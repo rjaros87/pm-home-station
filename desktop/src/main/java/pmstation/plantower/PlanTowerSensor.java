@@ -120,6 +120,10 @@ public class PlanTowerSensor {
         }
     }
 
+    public String getDeviceModelName() {
+        return device != null ? device.model().name() : "<unknown>";
+    }
+
     private Runnable getMeasurementsRunnable() {
         return () -> {
             try {

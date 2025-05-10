@@ -1,5 +1,5 @@
 plugins {
-//    id 'edu.sc.seis.macAppBundle'
+    id 'edu.sc.seis.macAppBundle'
     id 'edu.sc.seis.launch4j'
     id 'com.github.johnrengelman.shadow'
     id 'java'
@@ -76,20 +76,22 @@ launch4j {
     copyright = 'Copyright (C), licence: GPL-3.0'
 }
 
-//macAppBundle {
-//    appName = local_appName
-//    mainClassName = local_mainClassName
-//    runtimeConfigurationName = 'shadow'
-//    jarTask = 'shadowJar'
-//    icon = 'icons/dmg-myIcon.icns'
-//    bundleJRE = false
-//    javaProperties.put('apple.laf.useScreenMenuBar', 'true')
-//    backgroundImage = 'icons/dmg-bg.png'
-//    appIconX = 50
-//    appIconY = 120
-//    appFolderX = 330
-//    appFolderY = 120
-//}
+macAppBundle {
+    appName = local_appName
+    mainClassName = local_mainClassName
+    runtimeConfigurationName = 'shadow'
+    jarTask = 'shadowJar'
+    appStyle = 'universalJavaApplicationStub'
+
+    icon = 'icons/dmg-myIcon.icns'
+    bundleJRE = false
+    javaProperties.put('apple.laf.useScreenMenuBar', 'true')
+    backgroundImage = 'icons/dmg-bg.png'
+    appIconX = 50
+    appIconY = 120
+    appFolderX = 330
+    appFolderY = 120
+}
 
 dependencies {
     extraLibs group: 'org.knowm.xchart', name: 'xchart', version: '3.6.2'

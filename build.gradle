@@ -4,7 +4,7 @@ buildscript {
 
     repositories {
         google()
-        jcenter()
+        mavenCentral()
         maven {
             url "https://plugins.gradle.org/m2/"
         }
@@ -23,7 +23,7 @@ buildscript {
 }
 
 plugins {
-    id 'edu.sc.seis.macAppBundle' version '2.3.0' apply false
+    id 'edu.sc.seis.macAppBundle' version '2.3.1' apply false
     id 'edu.sc.seis.launch4j' version '3.0.5' apply false
     id 'com.github.johnrengelman.shadow' version '8.1.1' apply false
 //    id 'com.android.application' version '8.2.2' apply false
@@ -32,7 +32,7 @@ plugins {
 allprojects {
     repositories {
         google()
-        jcenter()
+        mavenCentral()
         maven { url "https://jitpack.io" }
     }
 }

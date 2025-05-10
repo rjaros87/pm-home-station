@@ -52,8 +52,8 @@ public class Start {
                 logger.info("Starting pm-home-station (headless mode), v.{} ({})...", Constants.VERSION, Constants.PROJECT_URL);
                 PlanTowerSensor planTowerSensor = new PlanTowerSensor();
                 planTowerSensor.addObserver(new ConsoleObserver());
-                planTowerSensor.addObserver(new MqttObserver());
                 planTowerSensor.addObserver(new CSVObserver());
+                planTowerSensor.addObserver(new MqttObserver(() -> planTowerSensor.getDeviceModelName()));
                 planTowerSensor.connectDevice();
                 if (planTowerSensor.isConnected()) {
                     planTowerSensor.startMeasurements(Config.instance().to().getInt(Config.Entry.INTERVAL.key(), Constants.DEFAULT_INTERVAL) * 1000L);
