@@ -5,6 +5,7 @@
  */
 package pmstation.observers.mqtt;
 
+import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.Executors;
@@ -210,7 +211,7 @@ public class Mqtt {
 
     private void publishMessageToTopic(String topic, String subtopic, String message, int qos, boolean retain) {
         MqttMessage mqttMessage = new MqttMessage();
-        mqttMessage.setPayload(message.getBytes());
+        mqttMessage.setPayload(message.getBytes(StandardCharsets.UTF_8));
         if (qos >= 0 && qos <= 2) {
             mqttMessage.setQos(qos);
         }
